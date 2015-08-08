@@ -11,31 +11,41 @@ public class Movement : MonoBehaviour
         LeftWall,
     }
 
+    public Animator animator;
     // General
-    public Sprite standSprite;
-    public Sprite ballSprite;
     public float standingHeight = 40f;
     public float ballHeight = 30f;
     public float heightHalf
     {
         get
         {
-            if (grounded) { return standingHeight / 2f; }
-            else { return ballHeight / 2f; }
+            if (rolling || jumped) { return ballHeight / 2f; }
+            else { return standingHeight / 2f; }
         }
     }
+
+    public float standWidthHalf = 9f;
+    public float spinWidthHalf = 7f;
 
     // Ground Movement
     public float groundAcceleration = 168.75f;
     public float groundTopSpeed = 360f;
+    public float speedLimit = 960f;
+    public float rollingMinSpeed = 61.875f;
+    public float unrollThreshold = 30f;
     public float friction = 168.75f;
+    public float rollingFriction = 84.375f;
     public float deceleration = 1800f;
+    public float rollingDeceleration = 450f;
     public float slopeFactor = 450f;
+    public float rollUphillSlope = 281.25f;
+    public float rollDownhillSlope = 1125f;
     public float sideRaycastOffset = -4f;
     public float sideRaycastDist = 11f;
     public float groundRaycastDist = 36f;
     public float fallVelocityThreshold = 150f;
     public bool grounded { get; private set; }
+    public bool rolling { get; private set; }
 
     private float groundVelocity;
     private bool hControlLock;
@@ -46,43 +56,99 @@ public class Movement : MonoBehaviour
     // Air Movement
     public float airAcceleration = 337.5f;
     public float jumpVelocity = 390f;
+    public float jumpReleaseThreshold = 240f;
     public float gravity = -787.5f;
     public float terminalVelocity = 960f;
-    public float leftRaycastX = -9f;
-    public float rightRaycastX = 9f;
-
-    private Vector2 leftRaycastPos;
-    private Vector2 rightRaycastPos;
+    private bool jumped;
     private Vector2 velocity;
     private float characterAngle;
 
+    private Vector2 standLeftRPos;
+    private Vector2 spinLeftRPos;
+    private Vector2 standRightRPos;
+    private Vector2 spinRightRPos;
+
+    private Vector2 leftRaycastPos
+    {
+        get
+        {
+            if (rolling || jumped) { return spinLeftRPos; }
+            else { return standLeftRPos; }
+        }
+    }
+    private Vector2 rightRaycastPos
+    {
+        get
+        {
+            if (rolling || jumped) { return spinRightRPos; }
+            else { return standRightRPos; }
+        }
+    }
+    
+    private int speedHash;
+    private int standHash;
+    private int spinHash;
+    private int pushHash;
+
     void Awake()
     {
-        leftRaycastPos = new Vector2(leftRaycastX, 0f);
-        rightRaycastPos = new Vector2(rightRaycastX, 0f);
+        standLeftRPos = new Vector2(-standWidthHalf, 0f);
+        standRightRPos = new Vector2(standWidthHalf, 0f);
+        spinLeftRPos = new Vector2(-spinWidthHalf, 0f);
+        spinRightRPos = new Vector2(spinWidthHalf, 0f);
+        
+        speedHash = Animator.StringToHash("Speed");
+        standHash = Animator.StringToHash("Stand");
+        spinHash = Animator.StringToHash("Spin");
+        pushHash = Animator.StringToHash("Push");
     }
+
+    bool debug = false;
 
     void OnGUI()
     {
-        GUILayout.BeginArea(new Rect(10, 10, 200, 180), "Stats", "Window");
-        GUILayout.Label("Control Lock: " + (hControlLock ? "ON" : "OFF"));
-        GUILayout.Label("Current Ground Info:");
-        if (currentGroundInfo != null && currentGroundInfo.valid)
+        if (debug)
         {
-            GUILayout.Label("Ground Speed: " + groundVelocity);
-            GUILayout.Label("Angle (Deg): " + (currentGroundInfo.angle * Mathf.Rad2Deg));
-            GUILayout.Label("Ground Mode: " + groundMode);
+            GUILayout.BeginArea(new Rect(10, 10, 200, 160), "Stats", "Window");
+            GUILayout.Label("Control Lock: " + (hControlLock ? "ON" : "OFF"));
+            GUILayout.Label("Jumped: " + (jumped ? "YES" : "NO"));
+            GUILayout.Label("Rolling: " + (rolling ? "YES" : "NO"));
+            GUILayout.Label("Slope: " + (uphill ? "Uphill" : "Downhill"));
+            if (currentGroundInfo != null && currentGroundInfo.valid)
+            {
+                GUILayout.Label("Ground Speed: " + groundVelocity);
+                GUILayout.Label("Angle (Deg): " + (currentGroundInfo.angle * Mathf.Rad2Deg));
+                //GUILayout.Label("Ground Mode: " + groundMode);
+            }
+            GUILayout.EndArea();
         }
-        GUILayout.EndArea();
     }
-
+    
+    bool uphill;
     void FixedUpdate()
     {
+        if (Input.GetKeyDown(KeyCode.Tab)) { debug = !debug; }
+
         Vector2 input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
 
         if (grounded)
         {
-            groundVelocity += (slopeFactor * -Mathf.Sin(currentGroundInfo.angle)) * Time.fixedDeltaTime;
+            if (!rolling && input.y < -0.005f && Mathf.Abs(groundVelocity) >= rollingMinSpeed)
+            {
+                rolling = true;
+                transform.position -= new Vector3(0f, 5f);
+            }
+
+            float slope = 0f;
+            if (rolling)
+            {
+                float sin = Mathf.Sin(currentGroundInfo.angle);
+                bool uphill = (sin >= 0f && groundVelocity >= 0f) || (sin <= 0f && groundVelocity <= 0);
+                this.uphill = uphill;
+                slope = uphill ? rollUphillSlope : rollDownhillSlope;
+            }
+            else { slope = slopeFactor; }
+            groundVelocity += (slope * -Mathf.Sin(currentGroundInfo.angle)) * Time.fixedDeltaTime;
 
             bool lostFooting = false;
 
@@ -100,6 +166,7 @@ public class Movement : MonoBehaviour
                 velocity.x -= jumpVelocity * (Mathf.Sin(currentGroundInfo.angle));
                 velocity.y += jumpVelocity * (Mathf.Cos(currentGroundInfo.angle));
                 grounded = false;
+                jumped = true;
             }
             else
             {
@@ -111,52 +178,67 @@ public class Movement : MonoBehaviour
                         hControlLock = false;
                     }
                 }
-                else
+
+                if (rolling || Mathf.Abs(input.x) < 0.005f)
                 {
-                    if (Mathf.Abs(input.x) >= 0.005f)
+                    float frc = rolling ? rollingFriction : friction;
+                    if (groundVelocity > 0f)
                     {
-                        if (input.x < 0f)
+                        groundVelocity -= frc * Time.fixedDeltaTime;
+                        if (groundVelocity < 0f) { groundVelocity = 0f; }
+                    }
+                    else if (groundVelocity < 0f)
+                    {
+                        groundVelocity += frc * Time.fixedDeltaTime;
+                        if (groundVelocity > 0f) { groundVelocity = 0f; }
+                    }
+                }
+
+                if (!hControlLock && Mathf.Abs(input.x) >= 0.005f)
+                {
+                    if (input.x < 0f)
+                    {
+                        if (groundVelocity < 0f)
                         {
-                            if (groundVelocity < 0f)
-                            {
-                                Vector3 scale = Vector3.one;
-                                scale.x *= Mathf.Sign(groundVelocity);
-                                transform.localScale = scale;
-                            }
-                            float acceleration = groundVelocity > 0f ? deceleration : groundAcceleration;
-                            if (groundVelocity > -groundTopSpeed)
-                            {
-                                groundVelocity = Mathf.Max(-groundTopSpeed, groundVelocity + (input.x * acceleration) * Time.deltaTime);
-                            }
+                            // TODO: Set a direction variable instead
+                            Vector3 scale = Vector3.one;
+                            scale.x *= Mathf.Sign(groundVelocity);
+                            transform.localScale = scale;
                         }
-                        else
+                        float acceleration = 0f;
+                        if (rolling && groundVelocity > 0f) { acceleration = rollingDeceleration; }
+                        else if (!rolling) { acceleration = groundVelocity > 0f ? deceleration : groundAcceleration; }
+                        if (groundVelocity > -groundTopSpeed)
                         {
-                            if (groundVelocity > 0f)
-                            {
-                                Vector3 scale = Vector3.one;
-                                transform.localScale = scale;
-                            }
-                            float acceleration = groundVelocity < 0f ? deceleration : groundAcceleration;
-                            if (groundVelocity < groundTopSpeed)
-                            {
-                                groundVelocity = Mathf.Min(groundTopSpeed, groundVelocity + (input.x * acceleration) * Time.deltaTime);
-                            }
+                            groundVelocity = Mathf.Max(-groundTopSpeed, groundVelocity + (input.x * acceleration) * Time.deltaTime);
                         }
                     }
                     else
                     {
                         if (groundVelocity > 0f)
                         {
-                            groundVelocity -= friction * Time.fixedDeltaTime;
-                            if (groundVelocity < 0f) { groundVelocity = 0f; }
+                            Vector3 scale = Vector3.one;
+                            transform.localScale = scale;
                         }
-                        else if (groundVelocity < 0f)
+                        float acceleration = 0f;
+                        if (rolling && groundVelocity < 0f) { acceleration = rollingDeceleration; }
+                        else if (!rolling) { acceleration = groundVelocity < 0f ? deceleration : groundAcceleration; }
+                        if (groundVelocity < groundTopSpeed)
                         {
-                            groundVelocity += friction * Time.fixedDeltaTime;
-                            if (groundVelocity > 0f) { groundVelocity = 0f; }
+                            groundVelocity = Mathf.Min(groundTopSpeed, groundVelocity + (input.x * acceleration) * Time.deltaTime);
                         }
                     }
                 }
+
+                if (groundVelocity > speedLimit) { groundVelocity = speedLimit; }
+                else if (groundVelocity < -speedLimit) { groundVelocity = -speedLimit; }
+
+                if (rolling && Mathf.Abs(groundVelocity) < unrollThreshold)
+                {
+                    rolling = false;
+                }
+                
+                //animator.SetFloat(speedHash, Mathf.Abs(groundVelocity));
 
                 Vector2 angledSpeed = new Vector2(groundVelocity * Mathf.Cos(currentGroundInfo.angle), groundVelocity * Mathf.Sin(currentGroundInfo.angle));
                 velocity = angledSpeed;
@@ -168,7 +250,7 @@ public class Movement : MonoBehaviour
         }
         else
         {
-            if (Mathf.Abs(input.x) >= 0.005f)
+            if (!(rolling && jumped) && Mathf.Abs(input.x) >= 0.005f)
             {
                 if ((input.x < 0f && velocity.x > -groundTopSpeed) || (input.x > 0f && velocity.x < groundTopSpeed))
                 {
@@ -176,8 +258,19 @@ public class Movement : MonoBehaviour
                 }
             }
 
-            velocity.y = Mathf.Max(velocity.y + (gravity * Time.fixedDeltaTime), -terminalVelocity);
+            if (jumped && velocity.y > jumpReleaseThreshold && Input.GetButtonUp("Jump"))
+            {
+                velocity.y = jumpReleaseThreshold;
+            }
+            else
+            {
+                velocity.y = Mathf.Max(velocity.y + (gravity * Time.fixedDeltaTime), -terminalVelocity);
+            }
         }
+
+        // Clamp velocity to global speed limit; going any faster could result in passing through things
+        velocity.x = Mathf.Clamp(velocity.x, -speedLimit, speedLimit);
+        velocity.y = Mathf.Clamp(velocity.y, -speedLimit, speedLimit);
 
         // Apply movement
         transform.position += new Vector3(velocity.x, velocity.y, 0f) * Time.fixedDeltaTime;
@@ -227,13 +320,15 @@ public class Movement : MonoBehaviour
 
             if ((ceilingLeft || ceilingRight) && velocity.y > 0f)
             {
-                bool hitCeiling = transform.position.y >= (ceil.point.y - (ballHeight / 2f));
+                bool hitCeiling = transform.position.y >= (ceil.point.y - heightHalf);
                 float angleDeg = ceil.angle * Mathf.Rad2Deg;
 
                 // Check for attaching to ceiling
                 if (hitCeiling && ((angleDeg >= 225f && angleDeg <= 270f) || (angleDeg >= 90f && angleDeg <= 135f)))
                 {
                     grounded = true;
+                    jumped = false;
+                    rolling = false;
                     currentGroundInfo = ceil;
                     groundMode = GroundMode.Ceiling;
 
@@ -254,11 +349,13 @@ public class Movement : MonoBehaviour
             {
                 GroundInfo info = GroundedCheck(groundRaycastDist, GroundMode.Floor, out groundedLeft, out groundedRight);
 
-                grounded = (groundedLeft || groundedRight) && velocity.y <= 0f && transform.position.y <= (info.height + (standingHeight / 2f));
+                grounded = (groundedLeft || groundedRight) && velocity.y <= 0f && transform.position.y <= (info.height + heightHalf);
 
                 // Re-calculate ground velocity based on previous air velocity
                 if (grounded)
                 {
+                    jumped = false;
+                    rolling = false;
                     currentGroundInfo = info;
                     groundMode = GroundMode.Floor;
                     float angleDeg = currentGroundInfo.angle * Mathf.Rad2Deg;
@@ -285,6 +382,7 @@ public class Movement : MonoBehaviour
         if (grounded)
         {
             StickToGround(currentGroundInfo);
+            animator.SetFloat(speedHash, Mathf.Abs(groundVelocity));
         }
         else
         {
@@ -309,6 +407,7 @@ public class Movement : MonoBehaviour
                 if (characterAngle >= 360f) { characterAngle = 0f; }
             }
         }
+        animator.SetBool(spinHash, rolling || jumped);
 
         transform.localRotation = Quaternion.Euler(0f, 0f, SnapAngle(characterAngle));
     }
@@ -389,17 +488,6 @@ public class Movement : MonoBehaviour
         }
         */
         return found;
-    }
-
-    void CeilingCheck(float distance, out RaycastHit2D ceilingLeft, out RaycastHit2D ceilingRight)
-    {
-        Vector2 pos = new Vector2(transform.position.x, transform.position.y);
-        ceilingLeft = Physics2D.Raycast(pos + leftRaycastPos, Vector2.up, distance);
-
-        ceilingRight = Physics2D.Raycast(pos + rightRaycastPos, Vector2.up, distance);
-
-        Debug.DrawLine(pos + leftRaycastPos, pos + leftRaycastPos + (Vector2.up * distance), Color.blue);
-        Debug.DrawLine(pos + rightRaycastPos, pos + rightRaycastPos + (Vector2.up * distance), Color.blue);
     }
 
     GroundInfo GetGroundInfo(Vector3 center)
