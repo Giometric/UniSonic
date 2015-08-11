@@ -12,6 +12,11 @@ public class PlayerCamera : MonoBehaviour
     public float topLimit = 48f;
     public float bottomLimit = -16f;
 
+    public float camMinX;
+    public float camMaxX;
+    public float camMinY;
+    public float camMaxY;
+
     private float camZ;
 
     void Awake()
@@ -44,6 +49,8 @@ public class PlayerCamera : MonoBehaviour
             pos.y += (playerPos.y - (pos.y + bottomLimit));
         }
 
+        pos.x = Mathf.Clamp(pos.x, camMinX, camMaxX);
+        pos.y = Mathf.Clamp(pos.y, camMinY, camMaxY);
 
         transform.position = pos;
     }

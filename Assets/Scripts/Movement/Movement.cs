@@ -12,10 +12,15 @@ public class Movement : MonoBehaviour
     }
 
     public Animator animator;
+
+    public bool grounded { get; private set; }
+    public bool rolling { get; private set; }
+    public bool jumped { get; private set; }
+
     // General
     public float standingHeight = 40f;
     public float ballHeight = 30f;
-    public float heightHalf
+    private float heightHalf
     {
         get
         {
@@ -44,8 +49,6 @@ public class Movement : MonoBehaviour
     public float sideRaycastDist = 11f;
     public float groundRaycastDist = 36f;
     public float fallVelocityThreshold = 150f;
-    public bool grounded { get; private set; }
-    public bool rolling { get; private set; }
 
     private float groundVelocity;
     private bool hControlLock;
@@ -61,16 +64,28 @@ public class Movement : MonoBehaviour
     public float terminalVelocity = 960f;
     public float airDrag = 0.96875f;
 
-    public bool jumped { get; private set; }
+    // Underwater
+    public float uwAcceleration = 84.375f;
+    public float uwDeceleration = 900f;
+    public float uwFriction = 84.375f;
+    public float uwRollingFriction = 42.1875f;
+    public float uwGroundTopSpeed = 180f;
+    public float uwAirAcceleration = 168.75f;
+    public float uwGravity = -225f;
+    public float uwJumpVelocity = 210f;
+    public float uwJumpReleaseThreshold = 120f;
 
     private Vector2 velocity;
     private float characterAngle;
     private bool lowCeiling;
+    private bool underwater;
 
     private Vector2 standLeftRPos;
     private Vector2 spinLeftRPos;
     private Vector2 standRightRPos;
     private Vector2 spinRightRPos;
+
+    private Transform waterLevel;
 
     private Vector2 leftRaycastPos
     {
@@ -96,6 +111,8 @@ public class Movement : MonoBehaviour
 
     void Awake()
     {
+        waterLevel = GameObject.FindWithTag("WaterLevel").transform;
+
         standLeftRPos = new Vector2(-standWidthHalf, 0f);
         standRightRPos = new Vector2(standWidthHalf, 0f);
         spinLeftRPos = new Vector2(-spinWidthHalf, 0f);
@@ -114,14 +131,13 @@ public class Movement : MonoBehaviour
         if (debug)
         {
             GUILayout.BeginArea(new Rect(10, 10, 200, 160), "Stats", "Window");
-            GUILayout.Label("Control Lock: " + (hControlLock ? "ON" : "OFF"));
+            GUILayout.Label("Underwater: " + (underwater ? "YES" : "NO"));
             GUILayout.Label("Jumped: " + (jumped ? "YES" : "NO"));
             GUILayout.Label("Rolling: " + (rolling ? "YES" : "NO"));
             if (currentGroundInfo != null && currentGroundInfo.valid)
             {
                 GUILayout.Label("Ground Speed: " + groundVelocity);
                 GUILayout.Label("Angle (Deg): " + (currentGroundInfo.angle * Mathf.Rad2Deg));
-                //GUILayout.Label("Ground Mode: " + groundMode);
             }
             GUILayout.EndArea();
         }
@@ -132,6 +148,8 @@ public class Movement : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Tab)) { debug = !debug; }
 
         Vector2 input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+
+        float accelSpeedCap = underwater ? uwGroundTopSpeed : groundTopSpeed;
 
         if (grounded)
         {
@@ -164,8 +182,9 @@ public class Movement : MonoBehaviour
 
             if (Input.GetButtonDown("Jump") && !lowCeiling)
             {
-                velocity.x -= jumpVelocity * (Mathf.Sin(currentGroundInfo.angle));
-                velocity.y += jumpVelocity * (Mathf.Cos(currentGroundInfo.angle));
+                float jumpVel = underwater ? uwJumpVelocity : jumpVelocity;
+                velocity.x -= jumpVel * (Mathf.Sin(currentGroundInfo.angle));
+                velocity.y += jumpVel * (Mathf.Cos(currentGroundInfo.angle));
                 grounded = false;
                 jumped = true;
             }
@@ -182,7 +201,11 @@ public class Movement : MonoBehaviour
 
                 if (rolling || Mathf.Abs(input.x) < 0.005f)
                 {
-                    float frc = rolling ? rollingFriction : friction;
+                    // Mostly because I don't like chaining ternaries
+                    float fric = underwater ? uwFriction : friction;
+                    float rollFric = underwater ? uwRollingFriction : rollingFriction;
+
+                    float frc = rolling ? rollFric : fric;
                     if (groundVelocity > 0f)
                     {
                         groundVelocity -= frc * Time.fixedDeltaTime;
@@ -197,6 +220,9 @@ public class Movement : MonoBehaviour
 
                 if (!hControlLock && Mathf.Abs(input.x) >= 0.005f)
                 {
+                    float accel = underwater ? uwAcceleration : groundAcceleration;
+                    float decel = underwater ? uwDeceleration : deceleration;
+
                     if (input.x < 0f)
                     {
                         if (groundVelocity < 0f)
@@ -208,10 +234,12 @@ public class Movement : MonoBehaviour
                         }
                         float acceleration = 0f;
                         if (rolling && groundVelocity > 0f) { acceleration = rollingDeceleration; }
-                        else if (!rolling) { acceleration = groundVelocity > 0f ? deceleration : groundAcceleration; }
-                        if (groundVelocity > -groundTopSpeed)
+                        else if (!rolling && groundVelocity > 0f) { acceleration = decel; }
+                        else if (!rolling && groundVelocity <= 0f) { acceleration = accel; }
+
+                        if (groundVelocity > -accelSpeedCap)
                         {
-                            groundVelocity = Mathf.Max(-groundTopSpeed, groundVelocity + (input.x * acceleration) * Time.deltaTime);
+                            groundVelocity = Mathf.Max(-accelSpeedCap, groundVelocity + (input.x * acceleration) * Time.deltaTime);
                         }
                     }
                     else
@@ -223,10 +251,11 @@ public class Movement : MonoBehaviour
                         }
                         float acceleration = 0f;
                         if (rolling && groundVelocity < 0f) { acceleration = rollingDeceleration; }
-                        else if (!rolling) { acceleration = groundVelocity < 0f ? deceleration : groundAcceleration; }
-                        if (groundVelocity < groundTopSpeed)
+                        else if (!rolling && groundVelocity < 0f) { acceleration = decel; }
+                        else if (!rolling && groundVelocity >= 0f) { acceleration = accel; }
+                        if (groundVelocity < accelSpeedCap)
                         {
-                            groundVelocity = Mathf.Min(groundTopSpeed, groundVelocity + (input.x * acceleration) * Time.deltaTime);
+                            groundVelocity = Mathf.Min(accelSpeedCap, groundVelocity + (input.x * acceleration) * Time.deltaTime);
                         }
                     }
                 }
@@ -240,8 +269,6 @@ public class Movement : MonoBehaviour
                     transform.position += new Vector3(0f, 5f);
                 }
                 
-                //animator.SetFloat(speedHash, Mathf.Abs(groundVelocity));
-
                 Vector2 angledSpeed = new Vector2(groundVelocity * Mathf.Cos(currentGroundInfo.angle), groundVelocity * Mathf.Sin(currentGroundInfo.angle));
                 velocity = angledSpeed;
                 if (lostFooting)
@@ -252,9 +279,10 @@ public class Movement : MonoBehaviour
         }
         else
         {
-            if (jumped && velocity.y > jumpReleaseThreshold && Input.GetButtonUp("Jump"))
+            float jumpRelThreshold = underwater ? uwJumpReleaseThreshold : jumpReleaseThreshold;
+            if (jumped && velocity.y > jumpRelThreshold && Input.GetButtonUp("Jump"))
             {
-                velocity.y = jumpReleaseThreshold;
+                velocity.y = jumpRelThreshold;
             }
             else
             {
@@ -264,14 +292,17 @@ public class Movement : MonoBehaviour
                     velocity.x *= airDrag;
                 }
 
-                velocity.y = Mathf.Max(velocity.y + (gravity * Time.fixedDeltaTime), -terminalVelocity);
+                float grv = underwater ? uwGravity : gravity;
+
+                velocity.y = Mathf.Max(velocity.y + (grv * Time.fixedDeltaTime), -terminalVelocity);
             }
 
             if (!(rolling && jumped) && Mathf.Abs(input.x) >= 0.005f)
             {
-                if ((input.x < 0f && velocity.x > -groundTopSpeed) || (input.x > 0f && velocity.x < groundTopSpeed))
+                if ((input.x < 0f && velocity.x > -accelSpeedCap) || (input.x > 0f && velocity.x < accelSpeedCap))
                 {
-                    velocity.x = Mathf.Clamp(velocity.x + (input.x * airAcceleration * Time.fixedDeltaTime), -groundTopSpeed, groundTopSpeed);
+                    float airAcc = underwater ? uwAirAcceleration : airAcceleration;
+                    velocity.x = Mathf.Clamp(velocity.x + (input.x * airAcc * Time.fixedDeltaTime), -accelSpeedCap, accelSpeedCap);
                 }
             }
         }
@@ -315,7 +346,9 @@ public class Movement : MonoBehaviour
 
         bool ceilingLeft = false;
         bool ceilingRight = false;
-        GroundInfo ceil = GroundedCheck(groundRaycastDist, GroundMode.Ceiling, out ceilingLeft, out ceilingRight);
+        int ceilDir = (int)groundMode + 2;
+        if (ceilDir > 3) { ceilDir -= 4; }
+        GroundInfo ceil = GroundedCheck(groundRaycastDist, (GroundMode)ceilDir, out ceilingLeft, out ceilingRight);
 
         bool groundedLeft = false;
         bool groundedRight = false;
@@ -409,7 +442,7 @@ public class Movement : MonoBehaviour
             groundMode = GroundMode.Floor;
             lowCeiling = false;
 
-            if (Mathf.Abs(input.x) > 0.005f)
+            if (Mathf.Abs(input.x) > 0.005f && !(rolling && jumped))
             {
                 Vector3 scale = Vector3.one;
                 scale.x *= Mathf.Sign(input.x);
@@ -429,7 +462,30 @@ public class Movement : MonoBehaviour
         }
         animator.SetBool(spinHash, rolling || jumped);
 
+        if (!underwater && transform.position.y <= waterLevel.position.y)
+        {
+            EnterWater();
+        }
+        else if (underwater && transform.position.y > waterLevel.position.y)
+        {
+            ExitWater();
+        }
+
         transform.localRotation = Quaternion.Euler(0f, 0f, SnapAngle(characterAngle));
+    }
+
+    void EnterWater()
+    {
+        underwater = true;
+        groundVelocity *= 0.5f;
+        velocity.x *= 0.5f;
+        velocity.y *= 0.25f;
+    }
+
+    void ExitWater()
+    {
+        underwater = false;
+        velocity.y *= 2f;
     }
 
     void WallCheck(float distance, float heightOffset, out RaycastHit2D hitLeft, out RaycastHit2D hitRight)
@@ -456,8 +512,6 @@ public class Movement : MonoBehaviour
 
         RaycastHit2D rightHit = Physics2D.Raycast(pos + rightCastPos, dir, distance);
         groundedRight = rightHit.collider != null;
-
-        //RaycastHit2D centerHit = Physics2D.Raycast(pos, dir, distance);
 
         Debug.DrawLine(pos + leftCastPos, pos + leftCastPos + (dir * distance), Color.magenta);
         Debug.DrawLine(pos + rightCastPos, pos + rightCastPos + (dir * distance), Color.red);
@@ -498,15 +552,6 @@ public class Movement : MonoBehaviour
         else if (groundedRight) { found = GetGroundInfo(rightHit); }
         else { found = new GroundInfo(); }
 
-        /*
-        // This allows us to avoid the bug where being on a point with a different angle
-        // between two grounded points results in having the wrong angle to the ground
-        // Or it would, if it didn't cause other bugs
-        if (centerHit.collider != null)
-        {
-            found.angle = Vector2ToAngle(centerHit.normal);
-        }
-        */
         return found;
     }
 
