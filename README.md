@@ -41,7 +41,8 @@ All input is done via Unity's old InputManager, and the mappings can be edited f
 - Sonic Sprites by Shinbs, with some additional credits; obtained from spriters-resource.com: https://www.spriters-resource.com/custom_edited/sonicthehedgehogcustoms/sheet/111542/. Previously was using ripped Sonic 3 sprites, but these look great and won't get anyone in trouble for copyright :)
   - New sprites should be relatively easy to put in if desired, but Unity animates sprite swaps via direct references to the assets. To fully swap out all the animations, all the animation clips would need to be updated (or new ones created).
 - Pixels-per-unit setting of 1 was used to make it easier to map values from the guide to Unity units. Newly-added sprites should have the same setting, so pixels are consistently the same size.
-- SpriteShape and Tilemap are used in the test level, but aren't necessary for this implementation to work. Collisions work off of Raycast2D so any type of collision will work
+- Project uses Unity 2021.2.18. Update to 2021.3.4 (the 2021 LTS) coming soon if there are no issues.
+- SpriteShape and Tilemap are used in the test level, but aren't necessary for this implementation to work. Collisions work off of Raycast2D so any type of collision will work.
   - If mixing rigidbody-simulated objects in, note that they will likely behave strangely due to the funky scale.
 - As this is based on the original implementation of Sonic's physics from the Sega Genesis games, it does also include some of the same bugs. For instance, it is impossible to stand on the center of very thin platforms.
 - The project folder contains a handful of unfinished bits of code or not-yet-used assets. If something looks like it's not getting used, there's a good chance it isn't just yet.
