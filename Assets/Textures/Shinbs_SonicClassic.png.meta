@@ -1,0 +1,4391 @@
+fileFormatVersion: 2
+guid: 436dab2a2303741fda1a830de61c267a
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 11
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMasterTextureLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 1
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Server
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Shinbs_Idle_01
+      rect:
+        serializedVersion: 2
+        x: 11
+        y: 982
+        width: 30
+        height: 40
+      alignment: 9
+      pivot: {x: 0.5666667, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 345a87a12ed1045a98a381703652ec2c
+      internalID: -827601717
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_1
+      rect:
+        serializedVersion: 2
+        x: 44
+        y: 982
+        width: 30
+        height: 40
+      alignment: 9
+      pivot: {x: 0.5666667, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a408204e3c0d44be1bb956d22d7e8a74
+      internalID: 1829903070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_2
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 982
+        width: 30
+        height: 40
+      alignment: 9
+      pivot: {x: 0.5666667, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d2f88082fbd674a93bf6a2cf8e3718dc
+      internalID: -1462354815
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_3
+      rect:
+        serializedVersion: 2
+        x: 105
+        y: 982
+        width: 30
+        height: 40
+      alignment: 9
+      pivot: {x: 0.5666667, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1cb461770ecc64c1494c148a18448e92
+      internalID: 256821304
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_4
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 982
+        width: 30
+        height: 40
+      alignment: 9
+      pivot: {x: 0.5666667, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e86c3af2cf0a8420180b9d5f68bc5747
+      internalID: -910379295
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_5
+      rect:
+        serializedVersion: 2
+        x: 165
+        y: 982
+        width: 30
+        height: 40
+      alignment: 9
+      pivot: {x: 0.5666667, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 84b649860580e4c35a566e3087352499
+      internalID: 371986145
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_6
+      rect:
+        serializedVersion: 2
+        x: 195
+        y: 982
+        width: 30
+        height: 40
+      alignment: 9
+      pivot: {x: 0.5666667, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: eb6f9a84c47d84cdd8906151fc6d068c
+      internalID: -657849620
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_7
+      rect:
+        serializedVersion: 2
+        x: 225
+        y: 982
+        width: 30
+        height: 40
+      alignment: 9
+      pivot: {x: 0.5666667, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c2486e6aa19e14c26a32632de6848f54
+      internalID: 964877254
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_8
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 982
+        width: 32
+        height: 40
+      alignment: 9
+      pivot: {x: 0.5625, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a4e06a264449246bc843786314e1d32d
+      internalID: -1704945893
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_9
+      rect:
+        serializedVersion: 2
+        x: 289
+        y: 982
+        width: 30
+        height: 40
+      alignment: 9
+      pivot: {x: 0.5666667, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d4724064971534fa2a6b20500b9f3e75
+      internalID: 182680698
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_10
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 982
+        width: 31
+        height: 40
+      alignment: 9
+      pivot: {x: 0.54838705, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f90eb19b08a07466f98ae28d61e751e3
+      internalID: -1762743586
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_11
+      rect:
+        serializedVersion: 2
+        x: 352
+        y: 982
+        width: 34
+        height: 40
+      alignment: 9
+      pivot: {x: 0.4117647, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2b58ae5d42a53410089d55f1753e2376
+      internalID: 1930748297
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_13
+      rect:
+        serializedVersion: 2
+        x: 389
+        y: 982
+        width: 33
+        height: 40
+      alignment: 9
+      pivot: {x: 0.42424244, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5eb9d54baa8f84e4495bfdce8b5182d7
+      internalID: 711417959
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_14
+      rect:
+        serializedVersion: 2
+        x: 11
+        y: 940
+        width: 34
+        height: 30
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cf39da2f67fba4d37acba82cedc02849
+      internalID: -742468465
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_15
+      rect:
+        serializedVersion: 2
+        x: 47
+        y: 940
+        width: 39
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0d3b46129960e4c64b15d1245e1d1605
+      internalID: 832778280
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_16
+      rect:
+        serializedVersion: 2
+        x: 88
+        y: 940
+        width: 39
+        height: 25
+      alignment: 9
+      pivot: {x: 0.4871795, y: 0.52}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 359725ca0125f40819c4462bc70dcff6
+      internalID: -1137630946
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_17
+      rect:
+        serializedVersion: 2
+        x: 129
+        y: 940
+        width: 38
+        height: 26
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ffa29f2c505864e75ab6cacdf07db5c0
+      internalID: 1052641552
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_18
+      rect:
+        serializedVersion: 2
+        x: 170
+        y: 938
+        width: 37
+        height: 28
+      alignment: 9
+      pivot: {x: 0.5135135, y: 0.5357143}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2324a6394255849deb2012a07e6e9c5e
+      internalID: -440363857
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_19
+      rect:
+        serializedVersion: 2
+        x: 211
+        y: 938
+        width: 37
+        height: 28
+      alignment: 9
+      pivot: {x: 0.5135135, y: 0.5357143}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 11c787da852ee4327b6dea9c4fa93a09
+      internalID: -532798198
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_20
+      rect:
+        serializedVersion: 2
+        x: 251
+        y: 940
+        width: 27
+        height: 33
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c7dd6304aa8ec484984ebb46a36a1c78
+      internalID: -1922188479
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_21
+      rect:
+        serializedVersion: 2
+        x: 282
+        y: 940
+        width: 27
+        height: 36
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1b4ef5bdc109242dfbcf45f855237e83
+      internalID: 569638911
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_22
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 896
+        width: 29
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: db83c0740e4be455faa99f98b35e6a83
+      internalID: -306808263
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_23
+      rect:
+        serializedVersion: 2
+        x: 41
+        y: 896
+        width: 27
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 23cd83ee2c751442b99fdbd171f7c94d
+      internalID: 1935614976
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_24
+      rect:
+        serializedVersion: 2
+        x: 90
+        y: 897
+        width: 32
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b16b0e0ccb1be465a9fc805326253271
+      internalID: 2023151259
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_25
+      rect:
+        serializedVersion: 2
+        x: 124
+        y: 897
+        width: 32
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6e21e31722e8a4fb0a8d2739751121b1
+      internalID: 545055195
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_LookUp_01
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 897
+        width: 33
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cb678fe07d52e41c6bca56bbd0d0da4f
+      internalID: -531496424
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_LookUp_02
+      rect:
+        serializedVersion: 2
+        x: 195
+        y: 897
+        width: 33
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b700f45ccee094cac84895a633b5645e
+      internalID: 1991959628
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_Crouch_01
+      rect:
+        serializedVersion: 2
+        x: 234
+        y: 897
+        width: 28
+        height: 33
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5757576}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 15aa407e9fd5841088901ab4ebab969a
+      internalID: 1419708242
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_Crouch_02
+      rect:
+        serializedVersion: 2
+        x: 264
+        y: 897
+        width: 30
+        height: 28
+      alignment: 9
+      pivot: {x: 0.5, y: 0.67857146}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ded789d065a7740809180c003a81a274
+      internalID: -1035962044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_30
+      rect:
+        serializedVersion: 2
+        x: 302
+        y: 897
+        width: 30
+        height: 27
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1270d20c76a364554abfec0015db31dc
+      internalID: -839738753
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_31
+      rect:
+        serializedVersion: 2
+        x: 335
+        y: 897
+        width: 29
+        height: 27
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 11e34fe85edf34ccea92fe30ae776071
+      internalID: -1262360684
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_32
+      rect:
+        serializedVersion: 2
+        x: 367
+        y: 897
+        width: 29
+        height: 27
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8065d2c4b14eb41b5a1668643df5a9a8
+      internalID: -2060536935
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_33
+      rect:
+        serializedVersion: 2
+        x: 398
+        y: 897
+        width: 29
+        height: 27
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d6e62af98b8af4fcfa06b8bf09e1323b
+      internalID: -319004614
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_34
+      rect:
+        serializedVersion: 2
+        x: 429
+        y: 897
+        width: 29
+        height: 27
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 329ef15a516804398a4fb1c6f59e1cdc
+      internalID: 1741659333
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_35
+      rect:
+        serializedVersion: 2
+        x: 460
+        y: 897
+        width: 29
+        height: 27
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6a5fee9adfce2435f83dd59b64544f6a
+      internalID: 879716702
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_Spin_01
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 856
+        width: 30
+        height: 30
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1cd669922eeb74506be140ac7150c736
+      internalID: 1155696710
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_Spin_02
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 857
+        width: 30
+        height: 30
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: be04dd7e0338c463187c607ef8ea02d9
+      internalID: -2024575963
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_Spin_03
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 856
+        width: 30
+        height: 30
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 58e5ebade476c4509820cb803ed3d24a
+      internalID: -1243477855
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_Spin_04
+      rect:
+        serializedVersion: 2
+        x: 119
+        y: 856
+        width: 30
+        height: 30
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 81795db3dcbfe4da7b1b6963df6beafe
+      internalID: 1696464243
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_Spin_05
+      rect:
+        serializedVersion: 2
+        x: 158
+        y: 856
+        width: 30
+        height: 30
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 512d9b3c2f7c64782b8d338ab244eaa5
+      internalID: 1698816026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_41
+      rect:
+        serializedVersion: 2
+        x: 207
+        y: 851
+        width: 28
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 418a704c9be2f443d872f87b9852e287
+      internalID: 954850061
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_42
+      rect:
+        serializedVersion: 2
+        x: 239
+        y: 851
+        width: 29
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 203277e2950f6427caa1d61d077cd47d
+      internalID: -251585473
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_43
+      rect:
+        serializedVersion: 2
+        x: 273
+        y: 851
+        width: 32
+        height: 38
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 56c6e6fa5cd3b4db182574de9c6fab67
+      internalID: 1798130648
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_44
+      rect:
+        serializedVersion: 2
+        x: 310
+        y: 851
+        width: 30
+        height: 38
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 48079e175dc5341ab8395a606f2fdbe4
+      internalID: 1473361752
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_45
+      rect:
+        serializedVersion: 2
+        x: 346
+        y: 851
+        width: 28
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4e7d516593d0e4862ab318614b39fddd
+      internalID: -278989349
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_46
+      rect:
+        serializedVersion: 2
+        x: 379
+        y: 851
+        width: 30
+        height: 38
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d029a82b0837242548ea619dee21ea43
+      internalID: -1518862541
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_47
+      rect:
+        serializedVersion: 2
+        x: 414
+        y: 851
+        width: 33
+        height: 38
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4665d62b2575748c590f187a097be3fa
+      internalID: -665811889
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_48
+      rect:
+        serializedVersion: 2
+        x: 450
+        y: 851
+        width: 30
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e30e837751b5a45fbb8d7663bc67e634
+      internalID: 929857143
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_49
+      rect:
+        serializedVersion: 2
+        x: 11
+        y: 805
+        width: 37
+        height: 37
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b2d4bea66525f44aca2517767c31fcc3
+      internalID: 471783090
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_50
+      rect:
+        serializedVersion: 2
+        x: 49
+        y: 805
+        width: 33
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f60ed1486827d456bad0c5f83e229283
+      internalID: 65574945
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_51
+      rect:
+        serializedVersion: 2
+        x: 84
+        y: 805
+        width: 26
+        height: 38
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 04e8cd9be0dc14b73a485cfd27867d0f
+      internalID: -1208601693
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_52
+      rect:
+        serializedVersion: 2
+        x: 113
+        y: 805
+        width: 35
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 81258ce1a630e4ca6bdddfe791a14fad
+      internalID: -1250253323
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_53
+      rect:
+        serializedVersion: 2
+        x: 153
+        y: 806
+        width: 30
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d487d1cd0e8bd45e6b1af2120ed0e366
+      internalID: 262199687
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_54
+      rect:
+        serializedVersion: 2
+        x: 190
+        y: 805
+        width: 28
+        height: 38
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7754cebb0c1db4f3fa9dbb5b41de8938
+      internalID: -1101852300
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_55
+      rect:
+        serializedVersion: 2
+        x: 255
+        y: 806
+        width: 22
+        height: 36
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 40270e6ca32b94198a164c0d8f790d12
+      internalID: 1853838206
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_56
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 806
+        width: 24
+        height: 37
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7c2fc31cbc6d949349c9b536b5c709e8
+      internalID: 1712191727
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_57
+      rect:
+        serializedVersion: 2
+        x: 308
+        y: 806
+        width: 26
+        height: 37
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b66584882f89845d1b7883a87d11073f
+      internalID: -428795265
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_58
+      rect:
+        serializedVersion: 2
+        x: 339
+        y: 806
+        width: 31
+        height: 37
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 44617adbc9ae14d5fbe70c4463b17e3e
+      internalID: -1017940547
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_59
+      rect:
+        serializedVersion: 2
+        x: 375
+        y: 806
+        width: 29
+        height: 37
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6c06817d234404975945a8aa9c032dda
+      internalID: 430270860
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_60
+      rect:
+        serializedVersion: 2
+        x: 407
+        y: 806
+        width: 26
+        height: 37
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c15b2cde80bf64c47a48dc5047c8fae4
+      internalID: 691074019
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_61
+      rect:
+        serializedVersion: 2
+        x: 437
+        y: 806
+        width: 22
+        height: 38
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d295d7dfae6664a9db5011ebc5232a42
+      internalID: -1954792210
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_Walk_01
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 760
+        width: 28
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2b811634c4f774d43a1812a4e8009121
+      internalID: 915693383
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_Walk_02
+      rect:
+        serializedVersion: 2
+        x: 43
+        y: 759
+        width: 30
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b27b055a821a14e46b62cf0c40e0c552
+      internalID: -7434099
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_Walk_03
+      rect:
+        serializedVersion: 2
+        x: 84
+        y: 759
+        width: 36
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6c1ba645c9fe443dea8948965c422010
+      internalID: 228351025
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_Walk_04
+      rect:
+        serializedVersion: 2
+        x: 129
+        y: 760
+        width: 36
+        height: 40
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 727ddd792875e4b4c8bb9bb41140a274
+      internalID: -280428796
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_Walk_05
+      rect:
+        serializedVersion: 2
+        x: 170
+        y: 761
+        width: 28
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 391993382beeb4a16b2cc4eddd442ce0
+      internalID: 1003718166
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_Walk_06
+      rect:
+        serializedVersion: 2
+        x: 206
+        y: 760
+        width: 28
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b25016d15adde4f6a8735a5abc1b693b
+      internalID: -973817949
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_Walk_07
+      rect:
+        serializedVersion: 2
+        x: 240
+        y: 761
+        width: 38
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c67b06b861919455dbe02dac8853d213
+      internalID: -1978079397
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_Walk_08
+      rect:
+        serializedVersion: 2
+        x: 280
+        y: 761
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 23f79f58b03f848b0b31a811da1e1575
+      internalID: -1546067788
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_70
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 720
+        width: 37
+        height: 34
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9d77190836a9a4c5bbeb82135ebfb893
+      internalID: -842786700
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_71
+      rect:
+        serializedVersion: 2
+        x: 51
+        y: 718
+        width: 33
+        height: 36
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ea3c5896505e540f39fca7ecbaf96bcd
+      internalID: 1978987263
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_72
+      rect:
+        serializedVersion: 2
+        x: 94
+        y: 718
+        width: 27
+        height: 36
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f6b1f581da63d455cb29281b6ab8f0d3
+      internalID: -1186719068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_73
+      rect:
+        serializedVersion: 2
+        x: 130
+        y: 718
+        width: 29
+        height: 36
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ab8fe9eed807f49d6a0ab9bbb07943ca
+      internalID: -349809062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_74
+      rect:
+        serializedVersion: 2
+        x: 168
+        y: 720
+        width: 36
+        height: 34
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: baff5beb89ed64ed9a7681d71346e575
+      internalID: -2108996149
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_75
+      rect:
+        serializedVersion: 2
+        x: 213
+        y: 718
+        width: 34
+        height: 36
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f4a74e54c79f0481d8bfd3aaa64c1dc6
+      internalID: -586792820
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_76
+      rect:
+        serializedVersion: 2
+        x: 258
+        y: 718
+        width: 27
+        height: 36
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c9eb9ce9ef00f43938547efb1ba4f176
+      internalID: 340525924
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_77
+      rect:
+        serializedVersion: 2
+        x: 292
+        y: 718
+        width: 29
+        height: 36
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 77244085e931442b7b28043bd039caf4
+      internalID: 2086768355
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_78
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 676
+        width: 30
+        height: 35
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ed6437c9a67394cc7ac431b758479f7b
+      internalID: 1205194202
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_79
+      rect:
+        serializedVersion: 2
+        x: 45
+        y: 676
+        width: 31
+        height: 35
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 68384384d128941c1b4936ffeafe1d9d
+      internalID: -13046432
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_80
+      rect:
+        serializedVersion: 2
+        x: 83
+        y: 679
+        width: 38
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9b43fc9d7bd4c4000b33b9b61b211052
+      internalID: 190331235
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_81
+      rect:
+        serializedVersion: 2
+        x: 129
+        y: 677
+        width: 34
+        height: 35
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4d571176fac5140e79379e82ae2949ca
+      internalID: 381286898
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_82
+      rect:
+        serializedVersion: 2
+        x: 169
+        y: 676
+        width: 30
+        height: 35
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e9e9837c6730b4856984e82d24691e29
+      internalID: 1249965484
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_83
+      rect:
+        serializedVersion: 2
+        x: 209
+        y: 676
+        width: 32
+        height: 35
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f3ada80028fe44be8b8df93f88e9100a
+      internalID: -810708855
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_84
+      rect:
+        serializedVersion: 2
+        x: 243
+        y: 681
+        width: 38
+        height: 30
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4dc8869bc0e444403954517420da8425
+      internalID: 1686616061
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_85
+      rect:
+        serializedVersion: 2
+        x: 286
+        y: 676
+        width: 34
+        height: 35
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d1d3c1edf103f4791a98775f573dea13
+      internalID: 279220278
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_Run_01
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 630
+        width: 32
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 812a5ddaddd80448b9c18cbc75e955d7
+      internalID: 933225253
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_Run_02
+      rect:
+        serializedVersion: 2
+        x: 44
+        y: 630
+        width: 32
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 44b6ee1e789e24d39b71a92b09f9f270
+      internalID: 1724496646
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_Run_03
+      rect:
+        serializedVersion: 2
+        x: 79
+        y: 630
+        width: 32
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: eca4ff79b2bee466490b6fbeeacef5af
+      internalID: -25949465
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_Run_04
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 630
+        width: 32
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3c0e9b0fa97d549218ba50027bbeaf83
+      internalID: -1756047537
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_90
+      rect:
+        serializedVersion: 2
+        x: 165
+        y: 630
+        width: 34
+        height: 36
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 41d31a13c67264d629173a1fc9b3ba15
+      internalID: 2088265870
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_91
+      rect:
+        serializedVersion: 2
+        x: 200
+        y: 630
+        width: 33
+        height: 36
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6f28913c978c6434da2cc682895404e1
+      internalID: 219122790
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_92
+      rect:
+        serializedVersion: 2
+        x: 234
+        y: 630
+        width: 34
+        height: 36
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4dcf608101426447ea9d2a758c4d3722
+      internalID: -1198537302
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_93
+      rect:
+        serializedVersion: 2
+        x: 269
+        y: 630
+        width: 34
+        height: 36
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: da4d7bbef5a9b4c9fbfeca19aeaadf34
+      internalID: -1357209017
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_94
+      rect:
+        serializedVersion: 2
+        x: 318
+        y: 630
+        width: 41
+        height: 35
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 56da11ef823914e8eb6110529ecbd0ce
+      internalID: 400200230
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_95
+      rect:
+        serializedVersion: 2
+        x: 361
+        y: 631
+        width: 41
+        height: 36
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6da75a45909404b67895764dda592822
+      internalID: -1620156335
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_96
+      rect:
+        serializedVersion: 2
+        x: 404
+        y: 630
+        width: 41
+        height: 35
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2fc62db71290f446e98dd4081a9705f7
+      internalID: 1428032412
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_97
+      rect:
+        serializedVersion: 2
+        x: 447
+        y: 631
+        width: 41
+        height: 36
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9fd0f3867b7dd4865b581f4a0ec3cdf9
+      internalID: 1312666675
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_98
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 584
+        width: 29
+        height: 37
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: acc6507cb46054e0cbb05af56ee6cc6c
+      internalID: 1589623507
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_99
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 584
+        width: 29
+        height: 34
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ccd725d59edb24c7899c17e1fab0a0d5
+      internalID: 610410298
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_100
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 584
+        width: 29
+        height: 26
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4d1e9e24d3c2940a587166cf114230bf
+      internalID: -401986511
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_101
+      rect:
+        serializedVersion: 2
+        x: 119
+        y: 583
+        width: 28
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 483de36375e4843989a766dbd455a987
+      internalID: -1685268258
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_102
+      rect:
+        serializedVersion: 2
+        x: 157
+        y: 584
+        width: 30
+        height: 29
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a465d734eb40343c7a78930f5529063c
+      internalID: 1571127610
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_103
+      rect:
+        serializedVersion: 2
+        x: 194
+        y: 585
+        width: 30
+        height: 35
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4debbf8c086ce43089cfe4b4f26a5b9f
+      internalID: -1863208749
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_104
+      rect:
+        serializedVersion: 2
+        x: 232
+        y: 584
+        width: 32
+        height: 36
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0b74fac3c9c114d94bd643a70ac6618e
+      internalID: 186230152
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_105
+      rect:
+        serializedVersion: 2
+        x: 272
+        y: 584
+        width: 27
+        height: 36
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 516242b2612884a4097874c89a957b6e
+      internalID: 1938539878
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_106
+      rect:
+        serializedVersion: 2
+        x: 310
+        y: 584
+        width: 30
+        height: 33
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ab631616d71fe49ba80368b62f5319da
+      internalID: -143504313
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_107
+      rect:
+        serializedVersion: 2
+        x: 348
+        y: 584
+        width: 28
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 44ced51900a0b44c8aa0e9cb42f82592
+      internalID: 943795960
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_108
+      rect:
+        serializedVersion: 2
+        x: 381
+        y: 584
+        width: 28
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3963be94066694657aee30b8fc26f796
+      internalID: 1328917203
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_109
+      rect:
+        serializedVersion: 2
+        x: 415
+        y: 583
+        width: 30
+        height: 35
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9a0bf542b122d44afb5c65acb3bbb20e
+      internalID: -711867698
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_110
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 531
+        width: 35
+        height: 35
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cc9d6b66e905341d6af328f3be2692a7
+      internalID: 533273767
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_111
+      rect:
+        serializedVersion: 2
+        x: 43
+        y: 531
+        width: 32
+        height: 35
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 70e79b4cf7a744de69941f251095b825
+      internalID: -2061846309
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_112
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 531
+        width: 36
+        height: 38
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 785bdf51c0c704565aff16f3c31f664c
+      internalID: 1261674186
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_113
+      rect:
+        serializedVersion: 2
+        x: 123
+        y: 531
+        width: 34
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 62075bdcc305d49168f0eff5779163b3
+      internalID: -495090357
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_114
+      rect:
+        serializedVersion: 2
+        x: 159
+        y: 531
+        width: 32
+        height: 38
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1518183a37bf34cafb4780b22a1f7289
+      internalID: -725161545
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_115
+      rect:
+        serializedVersion: 2
+        x: 204
+        y: 532
+        width: 25
+        height: 37
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: be5193abc990a41c0a4bddc802c2750a
+      internalID: 1886596267
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_116
+      rect:
+        serializedVersion: 2
+        x: 234
+        y: 533
+        width: 29
+        height: 36
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7a86e213b7a66479abfdbbea3b347c35
+      internalID: 576814401
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_117
+      rect:
+        serializedVersion: 2
+        x: 264
+        y: 532
+        width: 33
+        height: 36
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c7742770bbf4943c4900bb875e7a4daa
+      internalID: -280216970
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SpringJump_01
+      rect:
+        serializedVersion: 2
+        x: 313
+        y: 531
+        width: 29
+        height: 43
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 70ce8e2f575c54785abd2a08603ab799
+      internalID: 983545425
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_119
+      rect:
+        serializedVersion: 2
+        x: 351
+        y: 531
+        width: 26
+        height: 43
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 19edaaac4b5ef4b30bd3779e4a863e3e
+      internalID: 667297797
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_120
+      rect:
+        serializedVersion: 2
+        x: 380
+        y: 531
+        width: 33
+        height: 43
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 19d3f1e5f2083452882921d04b7cd9a3
+      internalID: 1830626670
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_121
+      rect:
+        serializedVersion: 2
+        x: 416
+        y: 531
+        width: 26
+        height: 43
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5755d343d8fcc443a8e07b9d5081a5b4
+      internalID: -1523907189
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_122
+      rect:
+        serializedVersion: 2
+        x: 444
+        y: 531
+        width: 26
+        height: 43
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2676681bd92874359a875acd007ac6eb
+      internalID: -1442012694
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_123
+      rect:
+        serializedVersion: 2
+        x: 477
+        y: 531
+        width: 26
+        height: 43
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7d8c83d1633034b06a1ccd9267ed18af
+      internalID: 1568647141
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_124
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 473
+        width: 36
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c1c3b2b6c0a1b46ab8586f722434db5c
+      internalID: -104341843
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_125
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 473
+        width: 32
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cf96c6aa68ca94ae3a11d921abb439e2
+      internalID: 953047511
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_126
+      rect:
+        serializedVersion: 2
+        x: 93
+        y: 472
+        width: 33
+        height: 38
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0630de6c678a84cdd8e867ce75c80d61
+      internalID: 2145465888
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_127
+      rect:
+        serializedVersion: 2
+        x: 129
+        y: 472
+        width: 35
+        height: 38
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: be2c58f31968a43d1887d2de48f946e6
+      internalID: -2053307585
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_128
+      rect:
+        serializedVersion: 2
+        x: 167
+        y: 472
+        width: 34
+        height: 38
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 341525853c5f249d689277dcf5994b92
+      internalID: 1547936117
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_129
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 473
+        width: 30
+        height: 37
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d2dedf138010748d4b6048c59839c6d3
+      internalID: -803202644
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_130
+      rect:
+        serializedVersion: 2
+        x: 250
+        y: 473
+        width: 33
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d187aba4678c64b6fa030a8df699bd26
+      internalID: -1605581549
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_131
+      rect:
+        serializedVersion: 2
+        x: 287
+        y: 473
+        width: 32
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bb22f955b0a13420799ca13820f87930
+      internalID: 139698645
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_132
+      rect:
+        serializedVersion: 2
+        x: 336
+        y: 473
+        width: 31
+        height: 35
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 82c6fdb3c3ed24623a817cc6ada57fda
+      internalID: 672336897
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_133
+      rect:
+        serializedVersion: 2
+        x: 369
+        y: 473
+        width: 29
+        height: 35
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f15bbb16555f8494283f274f66d9a008
+      internalID: 2093065466
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_134
+      rect:
+        serializedVersion: 2
+        x: 401
+        y: 473
+        width: 29
+        height: 35
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cf9c87096e4864659be92c501a394103
+      internalID: -1545846274
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_135
+      rect:
+        serializedVersion: 2
+        x: 432
+        y: 473
+        width: 29
+        height: 35
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d0c7d6e0947bd45df86d88cbb8315558
+      internalID: -706719064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_136
+      rect:
+        serializedVersion: 2
+        x: 462
+        y: 496
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: da36fdf70c71240f3bac52b5603b18c3
+      internalID: 1895382536
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_137
+      rect:
+        serializedVersion: 2
+        x: 11
+        y: 421
+        width: 35
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a4047b684fbbf45b4954f7622c22bfff
+      internalID: -156022560
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_138
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 421
+        width: 38
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 524310b92ae9446a595f9fdc7c203b09
+      internalID: -688597619
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_139
+      rect:
+        serializedVersion: 2
+        x: 87
+        y: 421
+        width: 36
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e2677312ab78048cb99398e96181c0a7
+      internalID: 1885150637
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_140
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 421
+        width: 35
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b51aa1a14622e4d6fa1219c5db703bd1
+      internalID: -175078291
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_141
+      rect:
+        serializedVersion: 2
+        x: 174
+        y: 421
+        width: 33
+        height: 41
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fc1ccada319964e118bb66917be5613d
+      internalID: 106679082
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_142
+      rect:
+        serializedVersion: 2
+        x: 213
+        y: 421
+        width: 32
+        height: 41
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0d15cb9bde856405b9e6ecc2ea2eda06
+      internalID: -532884748
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_143
+      rect:
+        serializedVersion: 2
+        x: 283
+        y: 418
+        width: 31
+        height: 47
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0b4f2452609bc42c790b4e3e24c82176
+      internalID: -364917993
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_144
+      rect:
+        serializedVersion: 2
+        x: 318
+        y: 418
+        width: 23
+        height: 47
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b3390f119bb3941199c1c6f23346fdd8
+      internalID: -2025616872
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_145
+      rect:
+        serializedVersion: 2
+        x: 358
+        y: 418
+        width: 32
+        height: 47
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 776f77ce3a4b348c3a6abc1e6b9a7868
+      internalID: -1165769063
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_146
+      rect:
+        serializedVersion: 2
+        x: 393
+        y: 423
+        width: 35
+        height: 42
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6ac188d58787d4d15b721eddc17aba7e
+      internalID: -982439373
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_147
+      rect:
+        serializedVersion: 2
+        x: 430
+        y: 429
+        width: 37
+        height: 36
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8f00a378f64e14d08a658a6644d8d022
+      internalID: -1947864957
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_148
+      rect:
+        serializedVersion: 2
+        x: 470
+        y: 434
+        width: 29
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8f146ed4f2e79444fa07cc978af530f7
+      internalID: -1520129348
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_149
+      rect:
+        serializedVersion: 2
+        x: 9
+        y: 366
+        width: 28
+        height: 46
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 974cd09bf5979474fbba7d3abf752d0a
+      internalID: 715719122
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_150
+      rect:
+        serializedVersion: 2
+        x: 41
+        y: 369
+        width: 32
+        height: 43
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e800c466726f6424cbe3145454f63ed1
+      internalID: -640869976
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_151
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 364
+        width: 29
+        height: 48
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 546c17abb896947d0b9a26339cae4940
+      internalID: 1494269379
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_152
+      rect:
+        serializedVersion: 2
+        x: 115
+        y: 364
+        width: 29
+        height: 48
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e6f3a2bd7cff248ad8b36138ae70349b
+      internalID: 984560442
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_153
+      rect:
+        serializedVersion: 2
+        x: 150
+        y: 367
+        width: 32
+        height: 44
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7b3c4e2f457ee43cda2a9a9bd17124f0
+      internalID: -2101901765
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_154
+      rect:
+        serializedVersion: 2
+        x: 187
+        y: 366
+        width: 28
+        height: 45
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9ce1bb2c362a74ceab81ceea48bc274d
+      internalID: -264379760
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_155
+      rect:
+        serializedVersion: 2
+        x: 237
+        y: 366
+        width: 28
+        height: 47
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dece204e16c5648c4a9a6a9aed6698ad
+      internalID: -116072286
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_156
+      rect:
+        serializedVersion: 2
+        x: 268
+        y: 366
+        width: 31
+        height: 47
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5e27aa53abd364a95934351a36a745b3
+      internalID: -309847519
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_157
+      rect:
+        serializedVersion: 2
+        x: 303
+        y: 366
+        width: 28
+        height: 47
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a6650f3c06e3d4c4a9e646bfcc66de2a
+      internalID: 1925338444
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_158
+      rect:
+        serializedVersion: 2
+        x: 336
+        y: 366
+        width: 24
+        height: 46
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 253f6178918494df9b64295526b70302
+      internalID: -1482457164
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_159
+      rect:
+        serializedVersion: 2
+        x: 364
+        y: 366
+        width: 25
+        height: 46
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: eff363cdc3d27496d9d75c10d3193b7b
+      internalID: -1815013634
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_160
+      rect:
+        serializedVersion: 2
+        x: 394
+        y: 366
+        width: 26
+        height: 47
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: db74b513ba06f4dd4aea60d2abd572b2
+      internalID: 300483180
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_161
+      rect:
+        serializedVersion: 2
+        x: 424
+        y: 366
+        width: 33
+        height: 47
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: eb5bd285c886c42888cda7ae0cdc6d20
+      internalID: -9485726
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_162
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 318
+        width: 35
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4b9bb7530d0fa427a9b54e250c335c86
+      internalID: -519978714
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_163
+      rect:
+        serializedVersion: 2
+        x: 44
+        y: 320
+        width: 38
+        height: 37
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 81f0f4bdcc45247f0b9041973edb3ac4
+      internalID: -1617250777
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_Push_01
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 319
+        width: 31
+        height: 40
+      alignment: 9
+      pivot: {x: 0.48387095, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 94c54e98630cb46da84159934e0d46ac
+      internalID: -93222355
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_Push_02
+      rect:
+        serializedVersion: 2
+        x: 130
+        y: 319
+        width: 26
+        height: 40
+      alignment: 9
+      pivot: {x: 0.3846154, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 92d5eb9a9c264439ead2568d20f31a33
+      internalID: -1983261928
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_Push_03
+      rect:
+        serializedVersion: 2
+        x: 157
+        y: 319
+        width: 32
+        height: 40
+      alignment: 9
+      pivot: {x: 0.46875, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a679e5480ca0e4ba287e91da5b921eab
+      internalID: 1570723309
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_Push_04
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 319
+        width: 26
+        height: 40
+      alignment: 9
+      pivot: {x: 0.3846154, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 43b2739e1faf04f278124937a2b4427b
+      internalID: 1897557364
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_168
+      rect:
+        serializedVersion: 2
+        x: 234
+        y: 319
+        width: 52
+        height: 23
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0c1ff34c39cd14da79bebea34f389d6c
+      internalID: -2114194092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_169
+      rect:
+        serializedVersion: 2
+        x: 290
+        y: 319
+        width: 51
+        height: 23
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5028eacc7f7a04bcfae02ad6c3dee8fe
+      internalID: 1559990369
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_170
+      rect:
+        serializedVersion: 2
+        x: 354
+        y: 317
+        width: 46
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ef9cf8e7e4a3b41fca850bab6d70f223
+      internalID: -1533014014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_171
+      rect:
+        serializedVersion: 2
+        x: 401
+        y: 316
+        width: 45
+        height: 23
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ad93b6a4a934c425487a4bbd563650c7
+      internalID: -1731860711
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_172
+      rect:
+        serializedVersion: 2
+        x: 463
+        y: 310
+        width: 33
+        height: 38
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9c50220dec5ce44acbe51aa0231e8922
+      internalID: -880338795
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_Hit_01
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 269
+        width: 38
+        height: 28
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4cc0df6bac7fe4ef2bb8f8e013e4f992
+      internalID: -1115656523
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_Hit_02
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 271
+        width: 38
+        height: 26
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f01211df857f3435ca50b72bde34ca5f
+      internalID: 500265146
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_Die_01
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 267
+        width: 33
+        height: 41
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 25c19cf812d724fb5923073bcd55cc65
+      internalID: 550646286
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_Die_02
+      rect:
+        serializedVersion: 2
+        x: 131
+        y: 267
+        width: 33
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4b3e8b20c95fd4c7381d2076720e8633
+      internalID: 480275640
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_177
+      rect:
+        serializedVersion: 2
+        x: 171
+        y: 276
+        width: 40
+        height: 23
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9db1d40f13ed04f6a92b0b10e8542503
+      internalID: 502468904
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_178
+      rect:
+        serializedVersion: 2
+        x: 213
+        y: 277
+        width: 44
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 75cc943df58764d3f8af7718780f1822
+      internalID: -1274646360
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_179
+      rect:
+        serializedVersion: 2
+        x: 259
+        y: 276
+        width: 45
+        height: 23
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8f44ac7c6db344c07a37d00b157fd52d
+      internalID: -249752884
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_180
+      rect:
+        serializedVersion: 2
+        x: 309
+        y: 275
+        width: 29
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4ae684a238f254518a4e4980d4bf3726
+      internalID: 723864874
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_181
+      rect:
+        serializedVersion: 2
+        x: 344
+        y: 276
+        width: 34
+        height: 23
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 88d72ec0d3f024ea4af082a75fa2db15
+      internalID: 1257665028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_182
+      rect:
+        serializedVersion: 2
+        x: 385
+        y: 276
+        width: 41
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 057b4bec85db644b0912f7e5401b0537
+      internalID: 890890204
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_183
+      rect:
+        serializedVersion: 2
+        x: 432
+        y: 276
+        width: 37
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 087ba73ec09ca4b0da614f644a2943cf
+      internalID: -1617903655
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_184
+      rect:
+        serializedVersion: 2
+        x: 475
+        y: 276
+        width: 29
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 524b903847d5d4de1b170ff420c17ac8
+      internalID: -1213082974
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_185
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 220
+        width: 40
+        height: 23
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2ef63903d8ed949cab582e3ffa681479
+      internalID: 1253800914
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_186
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 221
+        width: 40
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 35bb8bb05e63145f59dc8ef258ddeff4
+      internalID: 1040847030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_187
+      rect:
+        serializedVersion: 2
+        x: 90
+        y: 222
+        width: 40
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 14c33027e8fa34b5fad2e8b57e83d85b
+      internalID: -1192353201
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_188
+      rect:
+        serializedVersion: 2
+        x: 152
+        y: 224
+        width: 24
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 53c2c7d08040a4178b29c6e4efff4229
+      internalID: -741375673
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_189
+      rect:
+        serializedVersion: 2
+        x: 182
+        y: 224
+        width: 27
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 303117bc2b4cd4ea0bda7c7cc281984c
+      internalID: -1291386623
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_190
+      rect:
+        serializedVersion: 2
+        x: 212
+        y: 224
+        width: 29
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8a7044b735a5f4145a54aef9b32c193f
+      internalID: -1929071415
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_191
+      rect:
+        serializedVersion: 2
+        x: 244
+        y: 224
+        width: 28
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9b37a504132794880a2868fc64f4f33c
+      internalID: -1100019886
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_192
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 224
+        width: 28
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ef0a76e350e2749f5b2e83fafc306ea5
+      internalID: 1385044677
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_193
+      rect:
+        serializedVersion: 2
+        x: 310
+        y: 224
+        width: 26
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 92810cdb0c59d41b08f8348bb643aeb6
+      internalID: 2138600438
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shinbs_SonicClassic_194
+      rect:
+        serializedVersion: 2
+        x: 344
+        y: 224
+        width: 24
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7e94a1119afad4b36985cbefafcb049a
+      internalID: -607424458
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      Shinbs_SonicClassic_3: 256821304
+      Shinbs_SonicClassic_56: 1712191727
+      Shinbs_SonicClassic_178: -1274646360
+      Shinbs_SonicClassic_70: -842786700
+      Shinbs_LookUp_02: 1991959628
+      Shinbs_Crouch_01: 1419708242
+      Shinbs_SonicClassic_170: -1533014014
+      Shinbs_SonicClassic_48: 929857143
+      Shinbs_Spin_01: 1155696710
+      Shinbs_Idle_01: -827601717
+      Shinbs_SonicClassic_21: 569638911
+      Shinbs_Push_02: -1983261928
+      Shinbs_SonicClassic_179: -249752884
+      Shinbs_SonicClassic_119: 667297797
+      Shinbs_SonicClassic_96: 1428032412
+      Shinbs_Hit_02: 500265146
+      Shinbs_Spin_04: 1696464243
+      Shinbs_SonicClassic_43: 1798130648
+      Shinbs_SonicClassic_9: 182680698
+      Shinbs_SonicClassic_71: 1978987263
+      Shinbs_SonicClassic_128: 1547936117
+      Shinbs_SonicClassic_78: 1205194202
+      Shinbs_SonicClassic_10: -1762743586
+      Shinbs_SonicClassic_4: -910379295
+      Shinbs_SonicClassic_74: -2108996149
+      Shinbs_SonicClassic_130: -1605581549
+      Shinbs_SonicClassic_15: 832778280
+      Shinbs_SonicClassic_105: 1938539878
+      Shinbs_Run_02: 1724496646
+      Shinbs_SonicClassic_83: -810708855
+      Shinbs_SonicClassic_141: 106679082
+      Shinbs_SonicClassic_182: 890890204
+      Shinbs_SonicClassic_25: 545055195
+      Shinbs_Spin_05: 1698816026
+      Shinbs_SonicClassic_77: 2086768355
+      Shinbs_SonicClassic_127: -2053307585
+      Shinbs_SonicClassic_76: 340525924
+      Shinbs_SonicClassic_108: 1328917203
+      Shinbs_SonicClassic_115: 1886596267
+      Shinbs_SpringJump_01: 983545425
+      Shinbs_SonicClassic_124: -104341843
+      Shinbs_SonicClassic_153: -2101901765
+      Shinbs_SonicClassic_17: 1052641552
+      Shinbs_SonicClassic_103: -1863208749
+      Shinbs_SonicClassic_147: -1947864957
+      Shinbs_SonicClassic_99: 610410298
+      Shinbs_SonicClassic_20: -1922188479
+      Shinbs_SonicClassic_7: 964877254
+      Shinbs_SonicClassic_125: 953047511
+      Shinbs_SonicClassic_33: -319004614
+      Shinbs_SonicClassic_80: 190331235
+      Shinbs_Push_03: 1570723309
+      Shinbs_SonicClassic_82: 1249965484
+      Shinbs_SonicClassic_194: -607424458
+      Shinbs_Walk_01: 915693383
+      Shinbs_SonicClassic_61: -1954792210
+      Shinbs_Push_04: 1897557364
+      Shinbs_SonicClassic_116: 576814401
+      Shinbs_SonicClassic_142: -532884748
+      Shinbs_SonicClassic_184: -1213082974
+      Shinbs_SonicClassic_163: -1617250777
+      Shinbs_SonicClassic_132: 672336897
+      Shinbs_SonicClassic_187: -1192353201
+      Shinbs_SonicClassic_58: -1017940547
+      Shinbs_SonicClassic_146: -982439373
+      Shinbs_SonicClassic_95: -1620156335
+      Shinbs_SonicClassic_5: 371986145
+      Shinbs_SonicClassic_122: -1442012694
+      Shinbs_SonicClassic_144: -2025616872
+      Shinbs_SonicClassic_72: -1186719068
+      Shinbs_Push_01: -93222355
+      Shinbs_SonicClassic_34: 1741659333
+      Shinbs_SonicClassic_156: -309847519
+      Shinbs_SonicClassic_145: -1165769063
+      Shinbs_SonicClassic_193: 2138600438
+      Shinbs_SonicClassic_168: -2114194092
+      Shinbs_SonicClassic_181: 1257665028
+      Shinbs_Walk_07: -1978079397
+      Shinbs_SonicClassic_113: -495090357
+      Shinbs_SonicClassic_54: -1101852300
+      Shinbs_SonicClassic_134: -1545846274
+      Shinbs_SonicClassic_186: 1040847030
+      Shinbs_SonicClassic_14: -742468465
+      Shinbs_SonicClassic_190: -1929071415
+      Shinbs_SonicClassic_177: 502468904
+      Shinbs_SonicClassic_55: 1853838206
+      Shinbs_SonicClassic_2: -1462354815
+      Shinbs_SonicClassic_32: -2060536935
+      Shinbs_SonicClassic_46: -1518862541
+      Shinbs_SonicClassic_22: -306808263
+      Shinbs_SonicClassic_13: 711417959
+      Shinbs_SonicClassic_19: -532798198
+      Shinbs_SonicClassic_137: -156022560
+      Shinbs_Run_03: -25949465
+      Shinbs_SonicClassic_24: 2023151259
+      Shinbs_SonicClassic_117: -280216970
+      Shinbs_SonicClassic_123: 1568647141
+      Shinbs_SonicClassic_185: 1253800914
+      Shinbs_SonicClassic_102: 1571127610
+      Shinbs_SonicClassic_85: 279220278
+      Shinbs_Walk_02: -7434099
+      Shinbs_SonicClassic_154: -264379760
+      Shinbs_SonicClassic_143: -364917993
+      Shinbs_Crouch_02: -1035962044
+      Shinbs_SonicClassic_151: 1494269379
+      Shinbs_SonicClassic_161: -9485726
+      Shinbs_Run_01: 933225253
+      Shinbs_SonicClassic_110: 533273767
+      Shinbs_SonicClassic_91: 219122790
+      Shinbs_SonicClassic_92: -1198537302
+      Shinbs_SonicClassic_107: 943795960
+      Shinbs_SonicClassic_97: 1312666675
+      Shinbs_SonicClassic_18: -440363857
+      Shinbs_SonicClassic_135: -706719064
+      Shinbs_Walk_06: -973817949
+      Shinbs_SonicClassic_191: -1100019886
+      Shinbs_SonicClassic_30: -839738753
+      Shinbs_SonicClassic_90: 2088265870
+      Shinbs_SonicClassic_45: -278989349
+      Shinbs_SonicClassic_101: -1685268258
+      Shinbs_SonicClassic_138: -688597619
+      Shinbs_Hit_01: -1115656523
+      Shinbs_SonicClassic_114: -725161545
+      Shinbs_SonicClassic_98: 1589623507
+      Shinbs_SonicClassic_155: -116072286
+      Shinbs_SonicClassic_158: -1482457164
+      Shinbs_SonicClassic_31: -1262360684
+      Shinbs_SonicClassic_8: -1704945893
+      Shinbs_SonicClassic_93: -1357209017
+      Shinbs_SonicClassic_60: 691074019
+      Shinbs_SonicClassic_159: -1815013634
+      Shinbs_SonicClassic_41: 954850061
+      Shinbs_SonicClassic_148: -1520129348
+      Shinbs_SonicClassic_120: 1830626670
+      Shinbs_SonicClassic_180: 723864874
+      Shinbs_SonicClassic_104: 186230152
+      Shinbs_Walk_05: 1003718166
+      Shinbs_SonicClassic_11: 1930748297
+      Shinbs_SonicClassic_150: -640869976
+      Shinbs_SonicClassic_42: -251585473
+      Shinbs_Run_04: -1756047537
+      Shinbs_SonicClassic_84: 1686616061
+      Shinbs_SonicClassic_157: 1925338444
+      Shinbs_SonicClassic_169: 1559990369
+      Shinbs_SonicClassic_149: 715719122
+      Shinbs_SonicClassic_172: -880338795
+      Shinbs_SonicClassic_16: -1137630946
+      Shinbs_SonicClassic_59: 430270860
+      Shinbs_SonicClassic_79: -13046432
+      Shinbs_SonicClassic_6: -657849620
+      Shinbs_SonicClassic_133: 2093065466
+      Shinbs_Walk_08: -1546067788
+      Shinbs_SonicClassic_160: 300483180
+      Shinbs_SonicClassic_139: 1885150637
+      Shinbs_SonicClassic_94: 400200230
+      Shinbs_SonicClassic_23: 1935614976
+      Shinbs_SonicClassic_136: 1895382536
+      Shinbs_SonicClassic_44: 1473361752
+      Shinbs_Walk_03: 228351025
+      Shinbs_SonicClassic_50: 65574945
+      Shinbs_SonicClassic_73: -349809062
+      Shinbs_SonicClassic_81: 381286898
+      Shinbs_SonicClassic_111: -2061846309
+      Shinbs_SonicClassic_12: -1542350218
+      Shinbs_SonicClassic_152: 984560442
+      Shinbs_SonicClassic_52: -1250253323
+      Shinbs_Die_02: 480275640
+      Shinbs_SonicClassic_188: -741375673
+      Shinbs_Spin_02: -2024575963
+      Shinbs_SonicClassic_100: -401986511
+      Shinbs_Spin_03: -1243477855
+      Shinbs_SonicClassic_35: 879716702
+      Shinbs_SonicClassic_51: -1208601693
+      Shinbs_SonicClassic_129: -803202644
+      Shinbs_SonicClassic_162: -519978714
+      Shinbs_SonicClassic_171: -1731860711
+      Shinbs_SonicClassic_75: -586792820
+      Shinbs_Walk_04: -280428796
+      Shinbs_SonicClassic_106: -143504313
+      Shinbs_SonicClassic_1: 1829903070
+      Shinbs_SonicClassic_109: -711867698
+      Shinbs_SonicClassic_126: 2145465888
+      Shinbs_SonicClassic_112: 1261674186
+      Shinbs_SonicClassic_131: 139698645
+      Shinbs_SonicClassic_140: -175078291
+      Shinbs_SonicClassic_189: -1291386623
+      Shinbs_LookUp_01: -531496424
+      Shinbs_SonicClassic_47: -665811889
+      Shinbs_SonicClassic_49: 471783090
+      Shinbs_SonicClassic_183: -1617903655
+      Shinbs_SonicClassic_53: 262199687
+      Shinbs_SonicClassic_192: 1385044677
+      Shinbs_Die_01: 550646286
+      Shinbs_SonicClassic_57: -428795265
+      Shinbs_SonicClassic_121: -1523907189
+  spritePackingTag: 
+  pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

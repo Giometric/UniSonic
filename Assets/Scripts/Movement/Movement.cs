@@ -1,653 +1,1217 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.Tilemaps;
 
-public class Movement : MonoBehaviour
+namespace Giometric.UniSonic
 {
-    enum GroundMode
+    public class Movement : MonoBehaviour
     {
-        Floor,
-        RightWall,
-        Ceiling,
-        LeftWall,
-    }
-
-    public Animator animator;
-
-    public bool grounded { get; private set; }
-    public bool rolling { get; private set; }
-    public bool jumped { get; private set; }
-
-    // General
-    public float standingHeight = 40f;
-    public float ballHeight = 30f;
-    private float heightHalf
-    {
-        get
+        enum GroundMode
         {
-            if (rolling || jumped) { return ballHeight / 2f; }
-            else { return standingHeight / 2f; }
+            Floor = 0,
+            RightWall = 1,
+            Ceiling = 2,
+            LeftWall = 3,
         }
-    }
 
-    public float standWidthHalf = 9f;
-    public float spinWidthHalf = 7f;
-
-    // Ground Movement
-    public float groundAcceleration = 168.75f;
-    public float groundTopSpeed = 360f;
-    public float speedLimit = 960f;
-    public float rollingMinSpeed = 61.875f;
-    public float unrollThreshold = 30f;
-    public float friction = 168.75f;
-    public float rollingFriction = 84.375f;
-    public float deceleration = 1800f;
-    public float rollingDeceleration = 450f;
-    public float slopeFactor = 450f;
-    public float rollUphillSlope = 281.25f;
-    public float rollDownhillSlope = 1125f;
-    public float sideRaycastOffset = -4f;
-    public float sideRaycastDist = 11f;
-    public float groundRaycastDist = 36f;
-    public float fallVelocityThreshold = 150f;
-
-    private float groundVelocity;
-    private bool hControlLock;
-    private float hControlLockTime = 0.5f;
-    private GroundInfo currentGroundInfo;
-    private GroundMode groundMode = GroundMode.Floor;
-
-    // Air Movement
-    public float airAcceleration = 337.5f;
-    public float jumpVelocity = 390f;
-    public float jumpReleaseThreshold = 240f;
-    public float gravity = -787.5f;
-    public float terminalVelocity = 960f;
-    public float airDrag = 0.96875f;
-
-    // Underwater
-    public float uwAcceleration = 84.375f;
-    public float uwDeceleration = 900f;
-    public float uwFriction = 84.375f;
-    public float uwRollingFriction = 42.1875f;
-    public float uwGroundTopSpeed = 180f;
-    public float uwAirAcceleration = 168.75f;
-    public float uwGravity = -225f;
-    public float uwJumpVelocity = 210f;
-    public float uwJumpReleaseThreshold = 120f;
-
-    private Vector2 velocity;
-    private float characterAngle;
-    private bool lowCeiling;
-    private bool underwater;
-
-    private Vector2 standLeftRPos;
-    private Vector2 spinLeftRPos;
-    private Vector2 standRightRPos;
-    private Vector2 spinRightRPos;
-
-    private Transform waterLevel;
-
-    private Vector2 leftRaycastPos
-    {
-        get
+        public struct GroundInfo
         {
-            if (rolling || jumped) { return spinLeftRPos; }
-            else { return standLeftRPos; }
+            /// <Summary>
+            /// The world-space position of the ground point.
+            /// </Summary>
+            public Vector3 Point;
+            /// <Summary>
+            /// The normal vector of the ground point's surface.
+            /// </Summary>
+            public Vector2 Normal;
+            /// <Summary>
+            /// The angle (in radians) of the ground point's surface.
+            /// </Summary>
+            public float Angle;
+            /// <Summary>
+            /// Whether or not the GroundInfo contains valid data.
+            /// </Summary>
+            public bool IsValid;
+
+            public static GroundInfo Invalid
+            {
+                get { return new GroundInfo { IsValid = false }; }
+            }
         }
-    }
-    private Vector2 rightRaycastPos
-    {
-        get
+
+        [Header("Debug")]
+        public bool ShowDebug = false;
+        [SerializeField] private GUISkin debugGUISkin;
+
+        [Header("Animation")]
+        [SerializeField] private SpriteRenderer sprite;
+        [SerializeField] private Animator animator;
+        [Tooltip("When enabled, the character will rotate smoothly to match the ground angle they are standing on. When disabled, the character's rotation will snap to 45-degree increments.")]
+        [SerializeField] private bool smoothRotation = false;
+
+        [Header("General")]
+        [Tooltip("Half the character's height when standing.")]
+        [SerializeField] private float standingHeightHalf = 20f;
+        [Tooltip("Half the character's height when rolling or jumping.")]
+        [SerializeField] private float ballHeightHalf = 15f;
+
+        private float heightHalf
         {
-            if (rolling || jumped) { return spinRightRPos; }
-            else { return standRightRPos; }
+            get
+            {
+                if (Rolling || Jumped) { return ballHeightHalf; }
+                else { return standingHeightHalf; }
+            }
         }
-    }
-    
-    private int speedHash;
-    private int standHash;
-    private int spinHash;
-    private int pushHash;
-
-    void Awake()
-    {
-        waterLevel = GameObject.FindWithTag("WaterLevel").transform;
-
-        standLeftRPos = new Vector2(-standWidthHalf, 0f);
-        standRightRPos = new Vector2(standWidthHalf, 0f);
-        spinLeftRPos = new Vector2(-spinWidthHalf, 0f);
-        spinRightRPos = new Vector2(spinWidthHalf, 0f);
         
-        speedHash = Animator.StringToHash("Speed");
-        standHash = Animator.StringToHash("Stand");
-        spinHash = Animator.StringToHash("Spin");
-        pushHash = Animator.StringToHash("Push");
-    }
-
-    bool debug = false;
-
-    void OnGUI()
-    {
-        if (debug)
+        private float rollingPositionOffset
         {
-            GUILayout.BeginArea(new Rect(10, 10, 200, 160), "Stats", "Window");
-            GUILayout.Label("Underwater: " + (underwater ? "YES" : "NO"));
-            GUILayout.Label("Jumped: " + (jumped ? "YES" : "NO"));
-            GUILayout.Label("Rolling: " + (rolling ? "YES" : "NO"));
-            if (currentGroundInfo != null && currentGroundInfo.valid)
-            {
-                GUILayout.Label("Ground Speed: " + groundVelocity);
-                GUILayout.Label("Angle (Deg): " + (currentGroundInfo.angle * Mathf.Rad2Deg));
-            }
-            GUILayout.EndArea();
+            get { return (standingHeightHalf - ballHeightHalf); }
         }
-    }
+
+        [Tooltip("The distance used for ground raycast checks.")]
+        [SerializeField] private float groundRaycastDist = 36f;
+
+        [Tooltip("Half the width of this character's collision for ground / ceiling checks, when grounded and standing.")]
+        [SerializeField] private float standingWidthHalf = 10f;
+        [Tooltip("Half the width of this character's collision for ground / ceiling checks, when rolling or airborne.")]
+        [SerializeField] private float ballWidthHalf = 7f;
+        [Tooltip("When checking for a ground location, the maximum distance upward from the character's feet that can be considered valid ground to step up on.")]
+        [SerializeField] private float stepUpHeight = 15f;
+        [Tooltip("When checking for a ground location, the minimum distance downward from the character's feet that can be considered valid ground to step down to.")]
+        [SerializeField] private float stepDownHeightMin = 4f;
+        [Tooltip("When checking for a ground location, the maximum distance downward from the character's feet that can be considered valid ground to step down to.")]
+        [SerializeField] private float stepDownHeightMax = 15f;
+        [Tooltip("When checking for wall collisions, the distance away from a wall the character will try to maintain.")]
+        [SerializeField] private float wallCollisionWidthHalf = 11f;
+        [Tooltip("When grounded, wall collision raycasts are with this offset applied to the player's Y position.")]
+        [SerializeField] private float flatGroundSideRaycastOffset = -8f;
+
+        [SerializeField] private LayerMask collisionMaskA;
+        [SerializeField] private LayerMask collisionMaskB;
+        
+        [Header("Movement Settings")]
+        [SerializeField] private MovementSettings baseMovementSettings;
+        [SerializeField] private MovementSettings underwaterMovementSettings;
+
+        /// <Summary>
+        /// The current MovementSettings in use by the character. Will change if the
+        /// character goes underwater or enters a zone that modifies movement settings.
+        /// </Summary>
+        public MovementSettings CurrentMovementSettings { get { return underwater ? underwaterMovementSettings : baseMovementSettings; } }
+
+        [Header("Ground Movement")]
+        [Tooltip("The highest possible ground speed or vertical / horizontal velocity the character can have.")]
+        [SerializeField] private float globalSpeedLimit = 960f;
+        [Tooltip("The minimum ground speed the character must have to be able to start rolling.")]
+        [SerializeField] private float rollingMinSpeed = 61.875f;
+        [Tooltip("The minimum ground speed the character must maintain while rolling, or they will unroll.")]
+        [SerializeField] private float unrollThreshold = 30f;
+        [SerializeField] private float defaultSlopeFactor = 450f;
+        [SerializeField] private float rollUphillSlopeFactor = 281.25f;
+        [SerializeField] private float rollDownhillSlopeFactor = 1125f;
+        [Tooltip("The minimum ground speed the character must maintain while moving on walls or ceiling, or they will lose their footing.")]
+        [SerializeField] private float fallVelocityThreshold = 150f;
+        [Tooltip("The duration of the horizontal control lock applied to the character after they lose their footing from a wall or ceiling.")]
+        [SerializeField] private float horizontalControlLockTime = 0.5f;
+        [Tooltip("If a ceiling is found at this distance above the character's Y position or closer, they will be unable to jump.")]
+        [SerializeField] private float lowCeilingHeight = 25f;
+
+        [Header("Air Movement")]
+        [Tooltip("The maximum Y velocity the character can have after which air drag is no longer applied.")]
+        [SerializeField] private float airDragMaxYVelocity = 4f;
+        [Tooltip("The minimum absolute X velocity the character must have for air drag to be applied.")]
+        [SerializeField] private float airDragMinAbsoluteXVelocity = 7.5f;
+        [Tooltip("While in the air, the rate at which character will rotate to their upright angle (degrees per second).")]
+        [SerializeField]private float uprightRotationRate = 168.75f;
+
+        /// <Summary>
+        /// The transform used to define where the water level is for this scene, if any.
+        /// If the character's position is ever below this transform, underwater movement will activate.
+        /// </Summary>
+        [System.NonSerialized] public Transform WaterLevel;
+
+        /// <Summary>
+        /// The global speed limit for both ground speed and overall velocity.
+        /// </Summary>
+        public float GlobalSpeedLimit { get { return globalSpeedLimit; } }
+
+        /// <Summary>
+        /// The input movement the character will use the next time it runs a physics update.
+        /// The X and Y values are expected to be *exactly* 0.0f for no input, and (ideally)
+        /// exactly 1.0f or -1.0f when directional input is engaged.
+        /// </Summary>
+        [System.NonSerialized] public Vector2 InputMove;
+
+        /// <Summary>
+        /// The input jump state the character will use the next time it runs a physics update.
+        /// </Summary>
+        [System.NonSerialized] public bool InputJump;
+        private bool inputJumpLastFrame;
+
+        /// <Summary>
+        /// Returns whether the character is currently grounded.
+        /// </Summary>
+        public bool Grounded { get; private set; }
+
+        /// <Summary>
+        /// Returns whether the character is currently rolling.
+        /// </Summary>
+        public bool Rolling { get; private set; }
+
+        /// <Summary>
+        /// Returns whether the character is currently jumping due to a jump input (simply falling doesn't count).
+        /// </Summary>
+        public bool Jumped { get; private set; }
+
+        private float groundSpeed;
     
-    void FixedUpdate()
-    {
-        if (Input.GetKeyDown(KeyCode.Tab)) { debug = !debug; }
-
-        Vector2 input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-
-        float accelSpeedCap = underwater ? uwGroundTopSpeed : groundTopSpeed;
-
-        if (grounded)
+        /// <Summary>
+        /// Speed along the ground. Only valid if the character is grounded.
+        /// </Summary>
+        public float GroundSpeed
         {
-            if (!rolling && input.y < -0.005f && Mathf.Abs(groundVelocity) >= rollingMinSpeed)
+            get { return groundSpeed; }
+            set { groundSpeed = value; }
+        }
+
+        /// <Summary>
+        /// Facing direction, encoded as a float. Always either -1 for left, 1 for right.
+        /// </Summary>
+        public float FacingDirection { get; private set; }
+
+        private bool hControlLock;
+        private float hControlLockTimer = 0f;
+        private GroundInfo currentGroundInfo;
+        private GroundMode groundMode = GroundMode.Floor;
+
+        private Vector2 velocity;
+
+        /// <Summary>
+        /// Current velocity. Setting this while the character is not airborne has no effect.
+        /// </Summary>
+        public Vector2 Velocity
+        {
+            get { return velocity; }
+            set { velocity = value; }
+        }
+
+        private float characterAngle;
+        private bool lowCeiling;
+        private bool underwater;
+
+        private void GetGroundRaycastPositions(GroundMode groundMode, bool ceilingCheck, out Vector2 leftRaycastPosition, out Vector2 rightRaycastPosition)
+        {
+            // Add these small (TODO: Configurable?) offsets to avoid sampling exactly between tiles in some situations
+            float coord = (Rolling || Jumped ? ballWidthHalf : standingWidthHalf) + 0.005f;
+            switch (groundMode)
             {
-                rolling = true;
-                transform.position -= new Vector3(0f, 5f);
+                case GroundMode.Floor:
+                    leftRaycastPosition = new Vector2(-coord, 0f);
+                    rightRaycastPosition = new Vector2(coord, 0f);
+                    break;
+                case GroundMode.RightWall:
+                    leftRaycastPosition = new Vector2(0f, -coord);
+                    rightRaycastPosition = new Vector2(0f, coord);
+                    break;
+                case GroundMode.Ceiling:
+                    leftRaycastPosition = new Vector2(coord, 0f);
+                    rightRaycastPosition = new Vector2(-coord, 0f);
+                    break;
+                case GroundMode.LeftWall:
+                    leftRaycastPosition = new Vector2(0f, coord);
+                    rightRaycastPosition = new Vector2(0f, -coord);
+                    break;
+                default:
+                    leftRaycastPosition = Vector2.zero;
+                    rightRaycastPosition = Vector2.zero;
+                    break;
             }
 
-            float slope = 0f;
-            if (rolling)
+            if (ceilingCheck)
             {
-                float sin = Mathf.Sin(currentGroundInfo.angle);
-                bool uphill = (sin >= 0f && groundVelocity >= 0f) || (sin <= 0f && groundVelocity <= 0);
-                slope = uphill ? rollUphillSlope : rollDownhillSlope;
+                leftRaycastPosition = -leftRaycastPosition;
+                rightRaycastPosition = -rightRaycastPosition;
             }
-            else { slope = slopeFactor; }
-            groundVelocity += (slope * -Mathf.Sin(currentGroundInfo.angle)) * Time.fixedDeltaTime;
+        }
 
-            bool lostFooting = false;
-
-            if (groundMode != GroundMode.Floor && Mathf.Abs(groundVelocity) < fallVelocityThreshold)
+        private Vector2 GetGroundRaycastDirection(GroundMode groundMode, bool ceilingCheck)
+        {
+            Vector2 dir = Vector2.down;
+            if (Grounded)
             {
-                groundMode = GroundMode.Floor;
-                grounded = false;
-                hControlLock = true;
-                hControlLockTime = 0.5f;
-                lostFooting = true;
+                switch (groundMode)
+                {
+                    case GroundMode.Floor:
+                        dir = Vector2.down;
+                        break;
+                    case GroundMode.RightWall:
+                        dir = Vector2.right;
+                        break;
+                    case GroundMode.Ceiling:
+                        dir = Vector2.up;
+                        break;
+                    case GroundMode.LeftWall:
+                        dir = Vector2.left;
+                        break;
+                }
             }
-
-            if (Input.GetButtonDown("Jump") && !lowCeiling)
+            if (ceilingCheck)
             {
-                float jumpVel = underwater ? uwJumpVelocity : jumpVelocity;
-                velocity.x -= jumpVel * (Mathf.Sin(currentGroundInfo.angle));
-                velocity.y += jumpVel * (Mathf.Cos(currentGroundInfo.angle));
-                grounded = false;
-                jumped = true;
+                dir = -dir;
+            }
+            return dir;
+        }
+
+        private bool shouldApplyAirDrag
+        {
+            get { return velocity.y > 0f && velocity.y < airDragMaxYVelocity && Mathf.Abs(velocity.x) > airDragMinAbsoluteXVelocity; }
+        }
+
+        private LayerMask currentGroundMask;
+        private RaycastHit2D[] hitResultsCache = new RaycastHit2D[10];
+        
+        private int speedHash;
+        private int standHash;
+        private int spinHash;
+        private int pushHash;
+
+        /// <Summary>
+        /// Reset velocity and other movement state.
+        /// </Summary>
+        public void ResetMovement()
+        {
+            InputMove = Vector2.zero;
+            InputJump = false;
+            inputJumpLastFrame = false;
+            groundSpeed = 0f;
+            hControlLock = false;
+            hControlLockTimer = 0f;
+            currentGroundInfo = GroundInfo.Invalid;
+            Grounded = false;
+            Rolling = false;
+            Jumped = false;
+            groundMode = GroundMode.Floor;
+            velocity = Vector2.zero;
+            characterAngle = 0f;
+            lowCeiling = false;
+            underwater = false;
+            SetCollisionLayer(0);
+        }
+
+        public void SetCollisionLayer(int layer)
+        {
+            switch (layer)
+            {
+                case 0:
+                    currentGroundMask = collisionMaskA;
+                    break;
+                case 1:
+                    currentGroundMask = collisionMaskB;
+                    break;
+            }
+        }
+
+        private void Awake()
+        {
+            speedHash = Animator.StringToHash("Speed");
+            standHash = Animator.StringToHash("Stand");
+            spinHash = Animator.StringToHash("Spin");
+            pushHash = Animator.StringToHash("Push");
+
+            FacingDirection = 1f;
+            SetCollisionLayer(0);
+        }
+
+        private void OnGUI()
+        {
+            if (ShowDebug)
+            {
+                GUI.skin = debugGUISkin != null ? debugGUISkin : GUI.skin;
+                Rect areaRect = new Rect(5, 5, 180, 228);
+
+                // Background box
+                Color oldColor = GUI.color;
+                GUI.color = new Color32(0, 0, 0, 64);
+                GUI.DrawTexture(areaRect, Texture2D.whiteTexture);
+                GUI.color = oldColor;
+
+                GUILayout.BeginArea(areaRect);
+                GUILayout.Toggle(InputJump, "Input Jump");
+                GUILayout.Label($"Input Move: {InputMove}");
+                GUILayout.Toggle(underwater, "Underwater");
+                GUILayout.Toggle(Jumped, "Jumped");
+                GUILayout.Toggle(Rolling, "Rolling");
+                GUILayout.Toggle(hControlLock, $"Control Lock: {hControlLockTimer:F2}");
+                GUILayout.Toggle(Grounded, "Grounded");
+                GUILayout.Toggle(shouldApplyAirDrag, "Air Drag");
+                GUILayout.Label($"Mode: {groundMode}");
+                GUILayout.Label($"Ground Speed: {GroundSpeed:F1}");
+                GUILayout.Label($"Velocity: {Velocity} ({Velocity.magnitude:F1})");
+                if (currentGroundInfo.IsValid)
+                {
+                    GUILayout.Label($"Angle (Deg): {(currentGroundInfo.Angle * Mathf.Rad2Deg):F0}");
+                }
+                else
+                {
+                    GUILayout.Label("Angle (Deg): --");
+                }
+                GUILayout.Label($"Layer: {(currentGroundMask == collisionMaskA ? 'A' : 'B')}");
+                GUILayout.EndArea();
+            }
+        }
+
+        private void ApplyMovement(float deltaTime)
+        {
+            // Clamp velocity to global speed limit
+            velocity.x = Mathf.Clamp(velocity.x, -globalSpeedLimit, globalSpeedLimit);
+            velocity.y = Mathf.Clamp(velocity.y, -globalSpeedLimit, globalSpeedLimit);
+
+            // Apply movement
+            transform.position += new Vector3(velocity.x, velocity.y, 0f) * deltaTime;
+        }
+
+        private void DoWallCollisions(float deltaTime, bool grounded, GroundMode groundMode = GroundMode.Floor)
+        {
+            Vector2 startPosition = transform.position;
+            Vector2 leftCastDir = Vector2.left;
+            Vector2 rightCastDir = Vector2.right;
+            float castDistance = wallCollisionWidthHalf;
+
+            // If grounded, calculate wall collision check position based on current velocity (as if we had already moved)
+            // The collision response is also a little different - instead of setting the player's position,
+            // we simply set their X velocity to the remaining distance / deltaTime and set groundSpeed to 0
+            // TODO: This could probably be optimized if ground and air update loops can be consolidated
+            if (grounded)
+            {
+                startPosition += velocity * deltaTime;
+
+                // Adjust cast direction based on current ground mode
+                switch (groundMode)
+                {
+                    case GroundMode.Floor:
+                        leftCastDir = Vector2.left;
+                        rightCastDir = Vector2.right;
+                        break;
+                    case GroundMode.RightWall:
+                        leftCastDir = Vector2.down;
+                        rightCastDir = Vector2.up;
+                        break;
+                    case GroundMode.Ceiling:
+                        leftCastDir = Vector2.right;
+                        rightCastDir = Vector2.left;
+                        break;
+                    case GroundMode.LeftWall:
+                        leftCastDir = Vector2.up;
+                        rightCastDir = Vector2.down;
+                        break;
+                }
+
+                // When standing upright on totally flat ground, wall collisions are done from slightly lower
+                if (Mathf.Approximately(currentGroundInfo.Angle, 0f))
+                {
+                    startPosition.y += flatGroundSideRaycastOffset;
+
+                    // If rolling, our Y position is already a bit lower, raise the cast position back up a bit to match
+                    if (Rolling)
+                    {
+                        startPosition.y += rollingPositionOffset;
+                    }
+                }
             }
             else
             {
-                if (hControlLock)
+                // When not grounded, we can extend the raycast distance a bit if we're moving very fast,
+                // to help prevent going through walls
+                castDistance = Mathf.Max(wallCollisionWidthHalf, Mathf.Abs(velocity.x) * deltaTime);
+            }
+
+            ContactFilter2D filter = new ContactFilter2D();
+            filter.SetLayerMask(currentGroundMask);
+
+            if ((grounded && groundSpeed < 0f) || (!grounded && velocity.x < 0f))
+            {
+                int hitCount = Physics2D.Raycast(startPosition, leftCastDir, filter, hitResultsCache, castDistance);
+
+                for (int i = 0; i < hitCount; ++i)
                 {
-                    hControlLockTime -= Time.fixedDeltaTime;
-                    if (hControlLockTime <= 0f)
+                    var wallHit = hitResultsCache[i];
+                    var platform = wallHit.collider.GetComponent<OneWayPlatform>();
+                    if (platform != null)
                     {
-                        hControlLock = false;
+                        // Wall collisions don't hit one-way platforms
+                        continue;
                     }
-                }
 
-                if (rolling || Mathf.Abs(input.x) < 0.005f)
-                {
-                    // Mostly because I don't like chaining ternaries
-                    float fric = underwater ? uwFriction : friction;
-                    float rollFric = underwater ? uwRollingFriction : rollingFriction;
-
-                    float frc = rolling ? rollFric : fric;
-                    if (groundVelocity > 0f)
+                    var groundTile = GetGroundTile(wallHit, out var tileTransform);
+                    if (groundTile != null && groundTile.IsOneWayPlatform)
                     {
-                        groundVelocity -= frc * Time.fixedDeltaTime;
-                        if (groundVelocity < 0f) { groundVelocity = 0f; }
+                        // Wall collisions don't hit one-way platform tiles
+                        continue;
                     }
-                    else if (groundVelocity < 0f)
-                    {
-                        groundVelocity += frc * Time.fixedDeltaTime;
-                        if (groundVelocity > 0f) { groundVelocity = 0f; }
-                    }
-                }
 
-                if (!hControlLock && Mathf.Abs(input.x) >= 0.005f)
-                {
-                    float accel = underwater ? uwAcceleration : groundAcceleration;
-                    float decel = underwater ? uwDeceleration : deceleration;
-
-                    if (input.x < 0f)
+                    if (grounded)
                     {
-                        if (groundVelocity < 0f)
+                        switch (groundMode)
                         {
-                            // TODO: Set a direction variable instead
-                            Vector3 scale = Vector3.one;
-                            scale.x *= Mathf.Sign(groundVelocity);
-                            transform.localScale = scale;
+                            case GroundMode.Floor:
+                                velocity.x = (wallHit.point.x - (transform.position.x - castDistance)) / deltaTime;
+                                break;
+                            case GroundMode.RightWall:
+                                velocity.y = (wallHit.point.y - (transform.position.y - castDistance)) / deltaTime;
+                                break;
+                            case GroundMode.Ceiling:
+                                velocity.x = (wallHit.point.x - (transform.position.x + castDistance)) / deltaTime;
+                                break;
+                            case GroundMode.LeftWall:
+                                velocity.y = (wallHit.point.y - (transform.position.y + castDistance)) / deltaTime;
+                                break;
                         }
-                        float acceleration = 0f;
-                        if (rolling && groundVelocity > 0f) { acceleration = rollingDeceleration; }
-                        else if (!rolling && groundVelocity > 0f) { acceleration = decel; }
-                        else if (!rolling && groundVelocity <= 0f) { acceleration = accel; }
-
-                        if (groundVelocity > -accelSpeedCap)
-                        {
-                            groundVelocity = Mathf.Max(-accelSpeedCap, groundVelocity + (input.x * acceleration) * Time.deltaTime);
-                        }
+                        groundSpeed = 0f;
                     }
                     else
                     {
-                        if (groundVelocity > 0f)
-                        {
-                            Vector3 scale = Vector3.one;
-                            transform.localScale = scale;
-                        }
-                        float acceleration = 0f;
-                        if (rolling && groundVelocity < 0f) { acceleration = rollingDeceleration; }
-                        else if (!rolling && groundVelocity < 0f) { acceleration = decel; }
-                        else if (!rolling && groundVelocity >= 0f) { acceleration = accel; }
-                        if (groundVelocity < accelSpeedCap)
-                        {
-                            groundVelocity = Mathf.Min(accelSpeedCap, groundVelocity + (input.x * acceleration) * Time.deltaTime);
-                        }
+                        transform.position = new Vector2(wallHit.point.x + wallCollisionWidthHalf, transform.position.y);
+                        velocity.x = 0f;
                     }
+                    break;
                 }
 
-                if (groundVelocity > speedLimit) { groundVelocity = speedLimit; }
-                else if (groundVelocity < -speedLimit) { groundVelocity = -speedLimit; }
-
-                if (rolling && Mathf.Abs(groundVelocity) < unrollThreshold)
-                {
-                    rolling = false;
-                    transform.position += new Vector3(0f, 5f);
-                }
-                
-                Vector2 angledSpeed = new Vector2(groundVelocity * Mathf.Cos(currentGroundInfo.angle), groundVelocity * Mathf.Sin(currentGroundInfo.angle));
-                velocity = angledSpeed;
-                if (lostFooting)
-                {
-                    groundVelocity = 0f;
-                }
+                Debug.DrawLine(startPosition, startPosition + (leftCastDir * castDistance), new Color32(255, 240, 4, 255));
+                Debug.DrawLine(startPosition, startPosition + (rightCastDir * castDistance), new Color32(255, 240, 4, 160));
             }
-        }
-        else
-        {
-            float jumpRelThreshold = underwater ? uwJumpReleaseThreshold : jumpReleaseThreshold;
-            if (jumped && velocity.y > jumpRelThreshold && Input.GetButtonUp("Jump"))
+            else if ((grounded && groundSpeed > 0f) || (!grounded && velocity.x > 0f))
             {
-                velocity.y = jumpRelThreshold;
+                int hitCount = Physics2D.Raycast(startPosition, rightCastDir, filter, hitResultsCache, castDistance);
+
+                for (int i = 0; i < hitCount; ++i)
+                {
+                    var wallHit = hitResultsCache[i];
+                    var platform = wallHit.collider.GetComponent<OneWayPlatform>();
+                    if (platform != null)
+                    {
+                        // Wall collisions don't hit one-way platforms
+                        continue;
+                    }
+
+                    var groundTile = GetGroundTile(wallHit, out var tileTransform);
+                    if (groundTile != null && groundTile.IsOneWayPlatform)
+                    {
+                        // Wall collisions don't hit one-way platform tiles
+                        continue;
+                    }
+
+                    if (grounded)
+                    {
+                        switch (groundMode)
+                        {
+                            case GroundMode.Floor:
+                                velocity.x = (wallHit.point.x - (transform.position.x + castDistance)) / deltaTime;
+                                break;
+                            case GroundMode.RightWall:
+                                velocity.y = (wallHit.point.y - (transform.position.y + castDistance)) / deltaTime;
+                                break;
+                            case GroundMode.Ceiling:
+                                velocity.x = (wallHit.point.x - (transform.position.x - castDistance)) / deltaTime;
+                                break;
+                            case GroundMode.LeftWall:
+                                velocity.y = (wallHit.point.y - (transform.position.y - castDistance)) / deltaTime;
+                                break;
+                        }
+                        groundSpeed = 0f;
+                    }
+                    else
+                    {
+                        transform.position = new Vector2(wallHit.point.x - wallCollisionWidthHalf, transform.position.y);
+                        velocity.x = 0f;
+                    }
+                    break;
+                }
+
+                Debug.DrawLine(startPosition, startPosition + (rightCastDir * castDistance), new Color32(255, 240, 4, 255));
+                Debug.DrawLine(startPosition, startPosition + (leftCastDir * castDistance), new Color32(255, 240, 4, 160));
             }
             else
             {
-                // Air drag effect
-                if (velocity.y > 0f && velocity.y < 4f && Mathf.Abs(velocity.x) > 7.5f)
+                Debug.DrawLine(startPosition, startPosition + (rightCastDir * castDistance), new Color32(255, 240, 4, 160));
+                Debug.DrawLine(startPosition, startPosition + (leftCastDir * castDistance), new Color32(255, 240, 4, 160));
+            }
+        }
+
+        private void FixedUpdate()
+        {
+            float accelSpeedCap = CurrentMovementSettings.GroundTopSpeed;
+            float deltaTime = Time.fixedDeltaTime;
+
+            if (Grounded)
+            {
+                // TODO: Check for special animations disabling control, such as balancing on a ledge
+
+                float slopeFactor = 0f;
+                float sinGroundAngle = Mathf.Sin(currentGroundInfo.Angle);
+                float cosGroundAngle = Mathf.Cos(currentGroundInfo.Angle);
+
+                if (Rolling)
                 {
-                    velocity.x *= airDrag;
+                    // When rolling, slope factor is more intense going downhill and less intense going uphill
+                    bool isUphill = (sinGroundAngle >= 0f && groundSpeed >= 0f) || (sinGroundAngle <= 0f && groundSpeed <= 0);
+                    slopeFactor = isUphill ? rollUphillSlopeFactor : rollDownhillSlopeFactor;
+                }
+                else
+                {
+                    // Default slope factor is the same going both up and downhill
+                    slopeFactor = defaultSlopeFactor;
                 }
 
-                float grv = underwater ? uwGravity : gravity;
+                // Modify ground speed using the chosen slope factor and the angle of the ground we're currently on
+                groundSpeed += (slopeFactor * -sinGroundAngle) * deltaTime;
 
-                velocity.y = Mathf.Max(velocity.y + (grv * Time.fixedDeltaTime), -terminalVelocity);
-            }
-
-            if (!(rolling && jumped) && Mathf.Abs(input.x) >= 0.005f)
-            {
-                if ((input.x < 0f && velocity.x > -accelSpeedCap) || (input.x > 0f && velocity.x < accelSpeedCap))
+                // TODO: Keep track of when jump button was last pressed so we can do looser jump timing
+                if ((!Jumped && InputJump && !inputJumpLastFrame) && !lowCeiling)
                 {
-                    float airAcc = underwater ? uwAirAcceleration : airAcceleration;
-                    velocity.x = Mathf.Clamp(velocity.x + (input.x * airAcc * Time.fixedDeltaTime), -accelSpeedCap, accelSpeedCap);
+                    float jumpVel = CurrentMovementSettings.JumpVelocity;
+                    velocity.x -= jumpVel * sinGroundAngle;
+                    velocity.y += jumpVel * cosGroundAngle;
+                    Grounded = false;
+                    Jumped = true;
+
+                    // Jumping resets the horizontal control lock
+                    hControlLock = false;
+                    hControlLockTimer = 0f;
+
+                    // TODO: The real games exit the entire update loop here. Investigate?
+                    // Would be more accurate to do the same, but doesn't make a whole lot of sense
                 }
-            }
-        }
-
-        // Clamp velocity to global speed limit; going any faster could result in passing through things
-        velocity.x = Mathf.Clamp(velocity.x, -speedLimit, speedLimit);
-        velocity.y = Mathf.Clamp(velocity.y, -speedLimit, speedLimit);
-
-        // Apply movement
-        transform.position += new Vector3(velocity.x, velocity.y, 0f) * Time.fixedDeltaTime;
-
-        // Now do collision testing
-
-        RaycastHit2D leftHit;
-        RaycastHit2D rightHit;
-        WallCheck(sideRaycastDist, grounded ? sideRaycastOffset : 0f, out leftHit, out rightHit);
-
-        if (leftHit.collider != null && rightHit.collider != null)
-        {
-            // Got squashed
-            Debug.Log("GOT SQUASHED");
-        }
-        else if (leftHit.collider != null)
-        {
-            transform.position = new Vector2(leftHit.point.x + sideRaycastDist, transform.position.y);
-            if (velocity.x < 0f)
-            {
-                velocity.x = 0f;
-                groundVelocity = 0f;
-            }
-        }
-        else if (rightHit.collider != null)
-        {
-            transform.position = new Vector2(rightHit.point.x - sideRaycastDist, transform.position.y);
-            if (velocity.x > 0f)
-            {
-                velocity.x = 0f;
-                groundVelocity = 0f;
-            }
-        }
-
-        bool ceilingLeft = false;
-        bool ceilingRight = false;
-        int ceilDir = (int)groundMode + 2;
-        if (ceilDir > 3) { ceilDir -= 4; }
-        GroundInfo ceil = GroundedCheck(groundRaycastDist, (GroundMode)ceilDir, out ceilingLeft, out ceilingRight);
-
-        bool groundedLeft = false;
-        bool groundedRight = false;
-
-        if (grounded)
-        {
-            currentGroundInfo = GroundedCheck(groundRaycastDist, groundMode, out groundedLeft, out groundedRight);
-            grounded = groundedLeft || groundedRight;
-        }
-        else
-        {
-            if (ceil.valid && velocity.y > 0f)
-            {
-                bool hitCeiling = transform.position.y >= (ceil.point.y - heightHalf);
-                float angleDeg = ceil.angle * Mathf.Rad2Deg;
-
-                // Check for attaching to ceiling
-                if (hitCeiling && ((angleDeg >= 225f && angleDeg <= 270f) || (angleDeg >= 90f && angleDeg <= 135f)))
+                else
                 {
-                    grounded = true;
-                    jumped = false;
-                    rolling = false;
-                    currentGroundInfo = ceil;
-                    groundMode = GroundMode.Ceiling;
-
-                    groundVelocity = velocity.y * Mathf.Sign(Mathf.Sin(currentGroundInfo.angle));
-                    velocity.y = 0f;
-                }
-                else if (hitCeiling)
-                {
-                    if (transform.position.y > ceil.point.y - heightHalf)
+                    if (hControlLock)
                     {
-                        transform.position = new Vector2(transform.position.x, ceil.point.y - heightHalf);
+                        hControlLockTimer -= deltaTime;
+                        if (hControlLockTimer <= 0f)
+                        {
+                            hControlLock = false;
+                        }
+                    }
+
+                    // Decelerate if rolling or not applying directional input
+                    if (Rolling || Mathf.Approximately(InputMove.x, 0f))
+                    {
+                        float friction = Rolling ? CurrentMovementSettings.RollingFriction : CurrentMovementSettings.Friction;
+                        groundSpeed = Mathf.MoveTowards(groundSpeed, 0f, friction * deltaTime);
+                    }
+
+                    if (!hControlLock && !Mathf.Approximately(InputMove.x, 0f))
+                    {
+                        float acceleration = 0f;
+                        bool movingAgainstCurrentSpeed = !Mathf.Approximately(groundSpeed, 0f) && Mathf.Sign(InputMove.x) != Mathf.Sign(groundSpeed);
+
+                        if (Rolling && movingAgainstCurrentSpeed)
+                        {
+                            // Decelerating while rolling
+                            acceleration = CurrentMovementSettings.RollingDeceleration;
+                        }
+                        else if (!Rolling && movingAgainstCurrentSpeed)
+                        {
+                            // Decelerating while not running
+                            acceleration = CurrentMovementSettings.Deceleration;
+                        }
+                        else if (!Rolling && !movingAgainstCurrentSpeed)
+                        {
+                            // Accelerating or maintaining speed
+                            acceleration = CurrentMovementSettings.GroundAcceleration;
+                        }
+
+                        // Once the acceleration speed cap is reached in either direction, the character won't accelerate past it,
+                        // but will instead maintain that speed so long as the player keeps trying to move in that direction.
+                        // If the character is already moving faster than the cap, continuing to run will just maintain that speed.
+                        if (InputMove.x < 0f && groundSpeed > -accelSpeedCap)
+                        {
+                            groundSpeed = Mathf.Max(-accelSpeedCap, groundSpeed + (InputMove.x * acceleration) * deltaTime);
+                        }
+                        else if (InputMove.x > 0f && groundSpeed < accelSpeedCap)
+                        {
+                            groundSpeed = Mathf.Min(accelSpeedCap, groundSpeed + (InputMove.x * acceleration) * deltaTime);
+                        }
+
+                        // Turn to face ground speed direction if our input is the same direction
+                        if (Mathf.Sign(InputMove.x) == Mathf.Sign(groundSpeed))
+                        {
+                            FacingDirection = Mathf.Sign(InputMove.x);
+                        }
+                    }
+
+                    // Clamp ground speed to global speed limit
+                    groundSpeed = Mathf.Clamp(groundSpeed, -globalSpeedLimit, globalSpeedLimit);
+
+                    if (Rolling && Mathf.Abs(groundSpeed) < unrollThreshold)
+                    {
+                        Rolling = false;
+                        transform.position += new Vector3(0f, rollingPositionOffset);
+                    }
+                    
+                    Vector2 angledSpeed = new Vector2(groundSpeed * Mathf.Cos(currentGroundInfo.Angle), groundSpeed * Mathf.Sin(currentGroundInfo.Angle));
+                    velocity = angledSpeed;
+                }
+
+                DoWallCollisions(deltaTime, grounded: true, groundMode);
+
+                // Check if we should start rolling
+                if (!Rolling && InputMove.y < -0f && Mathf.Abs(groundSpeed) >= rollingMinSpeed)
+                {
+                    Rolling = true;
+                    // When rolling, offset position downwards
+                    transform.position -= new Vector3(0f, rollingPositionOffset);
+                }
+
+                ApplyMovement(deltaTime);
+            }
+            else
+            {
+                float jumpReleaseThreshold = CurrentMovementSettings.JumpReleaseThreshold;
+                if (Jumped && !InputJump && velocity.y > jumpReleaseThreshold)
+                {
+                    velocity.y = jumpReleaseThreshold;
+                }
+
+                // If jumping (but not rolling) and there's any directional input, allow air acceleration
+                if (!(Rolling && Jumped) && !Mathf.Approximately(InputMove.x, 0f))
+                {
+                    if ((InputMove.x < 0f && velocity.x > -accelSpeedCap) || (InputMove.x > 0f && velocity.x < accelSpeedCap))
+                    {
+                        float airAcc = CurrentMovementSettings.AirAcceleration;
+                        velocity.x = Mathf.Clamp(velocity.x + (InputMove.x * airAcc * deltaTime), -accelSpeedCap, accelSpeedCap);
+                    }
+
+                    // Turn to face the direction of input
+                    FacingDirection = Mathf.Sign(InputMove.x);
+                }
+                
+                // Apply air drag, if our X and Y velocities are within the thresholds
+                if (shouldApplyAirDrag)
+                {
+                    // TODO: Is this correct?
+                    // Guide says "X Speed -= ((X Speed div 0.125) / 256);"
+                    // Here extrapolated to velocity.x * 8 / 256 == velocity.x * 0.03125, using that as "AirDrag" value
+                    velocity.x -= velocity.x * CurrentMovementSettings.AirDrag;
+                }
+
+                ApplyMovement(deltaTime);
+
+                // Apply gravity
+                velocity.y = Mathf.Max(velocity.y + (CurrentMovementSettings.Gravity * deltaTime), -CurrentMovementSettings.TerminalVelocity);
+
+                // Rotate character towards being fully upright, if needed
+                if (characterAngle > 0f && characterAngle <= 180f)
+                {
+                    characterAngle -= deltaTime * uprightRotationRate;
+                    if (characterAngle < 0f) { characterAngle = 0f; }
+                }
+                else if (characterAngle < 360f && characterAngle > 180f)
+                {
+                    characterAngle += deltaTime * uprightRotationRate;
+                    if (characterAngle >= 360f) { characterAngle = 0f; }
+                }
+
+                DoWallCollisions(deltaTime, grounded: false);
+            }
+
+            bool ceilingLeft = false;
+            bool ceilingRight = false;
+            GroundInfo ceil = VerticalCollisionCheck(groundRaycastDist, groundMode, ceilingCheck: true, out ceilingLeft, out ceilingRight);
+
+            bool groundedLeft = false;
+            bool groundedRight = false;
+
+            if (Grounded)
+            {
+                currentGroundInfo = GroundCheck(deltaTime, out groundedLeft, out groundedRight);
+                Grounded = groundedLeft || groundedRight;
+            }
+            else
+            {
+                if (ceil.IsValid && velocity.y > 0f)
+                {
+                    bool hitCeiling = transform.position.y >= (ceil.Point.y - heightHalf);
+                    float angleDeg = ceil.Angle * Mathf.Rad2Deg;
+
+                    // Check for attaching to ceiling
+                    if (hitCeiling && ((angleDeg >= 225f && angleDeg < 270f) || (angleDeg > 90f && angleDeg <= 135f)))
+                    {
+                        // Hit a ceiling at an angle we can attach to
+                        Grounded = true;
+                        Jumped = false;
+                        Rolling = false;
+                        currentGroundInfo = ceil;
+                        groundMode = GroundMode.Ceiling;
+
+                        // Recalculate ground speed based on how fast we were moving up and the angle of the ceiling we hit
+                        groundSpeed = velocity.y * Mathf.Sign(Mathf.Sin(currentGroundInfo.Angle));
+                        velocity.y = 0f;
+                    }
+                    else if (hitCeiling)
+                    {
+                        // Hit the ceiling but didn't attach
+                        transform.position = new Vector2(transform.position.x, ceil.Point.y - heightHalf);
+                        velocity.y = 0f;
+                    }
+                }
+                else if (velocity.y < 0f)
+                {
+                    GroundInfo info = VerticalCollisionCheck(groundRaycastDist, GroundMode.Floor, ceilingCheck: false, out groundedLeft, out groundedRight);
+
+                    Grounded = (groundedLeft || groundedRight) && velocity.y <= 0f && transform.position.y <= (info.Point.y + heightHalf);
+
+                    // Re-calculate ground velocity based on previous air velocity
+                    if (Grounded)
+                    {
+                        // If in a roll jump, add offset to position upon landing
+                        if (Jumped && Rolling)
+                        {
+                            transform.position += new Vector3(0f, rollingPositionOffset);
+                        }
+
+                        Jumped = false;
+                        Rolling = false;
+
+                        currentGroundInfo = info;
+                        groundMode = GroundMode.Floor;
+                        float angleDeg = currentGroundInfo.Angle * Mathf.Rad2Deg;
+
+                        if (angleDeg <= 22.5f || (angleDeg >= 337.5 && angleDeg <= 360f))
+                        {
+                            // Angle is close to level with ground, just use X velocity as ground velocity
+                            groundSpeed = velocity.x;
+                        }
+                        else if ((angleDeg > 22.5f && angleDeg <= 45f) || (angleDeg >= 315f && angleDeg < 337.5f))
+                        {
+                            // Angle is slightly steep, ground speed will be the X velocity if it is greater than Y velocity,
+                            // otherwise it will use Y velocity * half the sin of the ground angle
+                            if (Mathf.Abs(velocity.x) > Mathf.Abs(velocity.y)) { groundSpeed = velocity.x; }
+                            else { groundSpeed = velocity.y * 0.5f * Mathf.Sign(Mathf.Sin(currentGroundInfo.Angle)); }
+                        }
+                        else if ((angleDeg > 45f && angleDeg <= 90f) || (angleDeg >= 270f && angleDeg < 315f))
+                        {
+                            // Angle is steep, again ground speed will be X velocity if it is greater than Y velocity,
+                            // otherwise use Y velocity * full sin of the ground angle
+                            if (Mathf.Abs(velocity.x) > Mathf.Abs(velocity.y)) { groundSpeed = velocity.x; }
+                            else { groundSpeed = velocity.y * Mathf.Sign(Mathf.Sin(currentGroundInfo.Angle)); }
+                        }
                         velocity.y = 0f;
                     }
                 }
             }
-            else
+
+            if (Grounded)
             {
-                GroundInfo info = GroundedCheck(groundRaycastDist, GroundMode.Floor, out groundedLeft, out groundedRight);
+                StickToGround(currentGroundInfo);
+                animator.SetFloat(speedHash, Mathf.Abs(groundSpeed));
 
-                grounded = (groundedLeft || groundedRight) && velocity.y <= 0f && transform.position.y <= (info.height + heightHalf);
+                // Check if we've got a low ceiling, prevents jumping
+                lowCeiling = ceil.IsValid && transform.position.y > ceil.Point.y - lowCeilingHeight;
 
-                // Re-calculate ground velocity based on previous air velocity
-                if (grounded)
+                // If on the walls or ceiling, the character must maintain a minimum ground speed or lose their footing
+                if (groundMode != GroundMode.Floor && Mathf.Abs(groundSpeed) < fallVelocityThreshold)
                 {
-                    // If in a roll jump, add 5 to position upon landing
-                    if (jumped)
-                    {
-                        transform.position += new Vector3(0f, 5f);
-                    }
+                    // Losing your footing starts the horizontal control lock timer
+                    hControlLock = true;
+                    hControlLockTimer = horizontalControlLockTime;
 
-                    jumped = false;
-                    rolling = false;
-
-                    currentGroundInfo = info;
-                    groundMode = GroundMode.Floor;
-                    float angleDeg = currentGroundInfo.angle * Mathf.Rad2Deg;
-
-                    // If angle is close to level with ground, just use x velocity as ground velocity
-                    if (angleDeg < 22.5f || (angleDeg > 337.5 && angleDeg <= 360f))
+                    // Round to int here to avoid problems like the angle of vertical walls having values like 89.99999
+                    int angleDeg = Mathf.RoundToInt(currentGroundInfo.Angle * Mathf.Rad2Deg);
+                    // If the character is far enough away from upright, they will also no longer be grounded
+                    if (angleDeg >= 90 && angleDeg <= 270)
                     {
-                        groundVelocity = velocity.x;
+                        Grounded = false;
                     }
-                    else if ((angleDeg >= 22.5f && angleDeg < 45f) || (angleDeg >= 315f && angleDeg < 337.5f))
-                    {
-                        if (Mathf.Abs(velocity.x) > Mathf.Abs(velocity.y)) { groundVelocity = velocity.x; }
-                        else { groundVelocity = velocity.y * 0.5f * Mathf.Sign(Mathf.Sin(currentGroundInfo.angle)); }
-                    }
-                    else if ((angleDeg >= 45f && angleDeg < 90f) || (angleDeg >= 270f && angleDeg < 315f))
-                    {
-                        if (Mathf.Abs(velocity.x) > Mathf.Abs(velocity.y)) { groundVelocity = velocity.x; }
-                        else { groundVelocity = velocity.y * Mathf.Sign(Mathf.Sin(currentGroundInfo.angle)); }
-                    }
-
-                    velocity.y = 0f;
                 }
             }
-        }
 
-        if (grounded)
-        {
-            StickToGround(currentGroundInfo);
-            animator.SetFloat(speedHash, Mathf.Abs(groundVelocity));
-
-            lowCeiling = ceil.valid && transform.position.y > ceil.point.y - 25f;
-        }
-        else
-        {
-            currentGroundInfo = null;
-            groundMode = GroundMode.Floor;
-            lowCeiling = false;
-
-            if (Mathf.Abs(input.x) > 0.005f && !(rolling && jumped))
+            if (!Grounded)
             {
-                Vector3 scale = Vector3.one;
-                scale.x *= Mathf.Sign(input.x);
-                transform.localScale = scale;
+                groundSpeed = 0f;
+                currentGroundInfo = GroundInfo.Invalid;
+                groundMode = GroundMode.Floor;
+                lowCeiling = false;
             }
 
-            if (characterAngle > 0f && characterAngle <= 180f)
+            if (WaterLevel != null)
             {
-                characterAngle -= Time.deltaTime * 180f;
-                if (characterAngle < 0f) { characterAngle = 0f; }
+                if (!underwater && transform.position.y <= WaterLevel.position.y)
+                {
+                    EnterWater();
+                }
+                else if (underwater && transform.position.y > WaterLevel.position.y)
+                {
+                    ExitWater();
+                }
             }
-            else if (characterAngle < 360f && characterAngle > 180f)
+            else if (underwater)
             {
-                characterAngle += Time.deltaTime * 180f;
-                if (characterAngle >= 360f) { characterAngle = 0f; }
+                ExitWater();
+            }
+
+            if (sprite != null)
+            {
+                sprite.flipX = FacingDirection < 0f;
+            }
+            transform.localRotation = Quaternion.Euler(0f, 0f, smoothRotation ? characterAngle : SnapAngle(characterAngle));
+            animator.SetBool(spinHash, Rolling || Jumped);
+
+            inputJumpLastFrame = InputJump;
+
+            if (velocity.sqrMagnitude > 0.0001f)
+            {
+                Vector3 arrowDir = Vector3.Normalize(new Vector3(velocity.x, velocity.y));
+                Vector3 endPoint = transform.position + (arrowDir * 14f);
+                DebugUtils.DrawArrow(transform.position, endPoint, 3f, Color.white);
             }
         }
-        animator.SetBool(spinHash, rolling || jumped);
 
-        if (!underwater && transform.position.y <= waterLevel.position.y)
+        private void EnterWater()
         {
-            EnterWater();
-        }
-        else if (underwater && transform.position.y > waterLevel.position.y)
-        {
-            ExitWater();
+            underwater = true;
+            groundSpeed *= 0.5f;
+            velocity.x *= 0.5f;
+            velocity.y *= 0.25f;
         }
 
-        transform.localRotation = Quaternion.Euler(0f, 0f, SnapAngle(characterAngle));
-    }
-
-    void EnterWater()
-    {
-        underwater = true;
-        groundVelocity *= 0.5f;
-        velocity.x *= 0.5f;
-        velocity.y *= 0.25f;
-    }
-
-    void ExitWater()
-    {
-        underwater = false;
-        velocity.y *= 2f;
-    }
-
-    void WallCheck(float distance, float heightOffset, out RaycastHit2D hitLeft, out RaycastHit2D hitRight)
-    {
-        Vector2 pos = new Vector2(transform.position.x, transform.position.y + heightOffset);
-
-        hitLeft = Physics2D.Raycast(pos, Vector2.left, distance);
-        hitRight = Physics2D.Raycast(pos, Vector2.right, distance);
-
-        Debug.DrawLine(pos, pos + (Vector2.left * distance), Color.yellow);
-        Debug.DrawLine(pos, pos + (Vector2.right * distance), Color.yellow);
-    }
-
-    GroundInfo GroundedCheck(float distance, GroundMode groundMode, out bool groundedLeft, out bool groundedRight)
-    {
-        Quaternion rot = Quaternion.Euler(0f, 0f, (90f * (int)groundMode));
-        Vector2 dir = rot * Vector2.down;
-        Vector2 leftCastPos = rot * leftRaycastPos;
-        Vector2 rightCastPos = rot * rightRaycastPos;
-
-        Vector2 pos = new Vector2(transform.position.x, transform.position.y);
-        RaycastHit2D leftHit = Physics2D.Raycast(pos + leftCastPos, dir, distance);
-        groundedLeft = leftHit.collider != null;
-
-        RaycastHit2D rightHit = Physics2D.Raycast(pos + rightCastPos, dir, distance);
-        groundedRight = rightHit.collider != null;
-
-        Debug.DrawLine(pos + leftCastPos, pos + leftCastPos + (dir * distance), Color.magenta);
-        Debug.DrawLine(pos + rightCastPos, pos + rightCastPos + (dir * distance), Color.red);
-
-        GroundInfo found = null;
-
-        if (groundedLeft && groundedRight)
+        private void ExitWater()
         {
-            float leftCompare = 0f;
-            float rightCompare = 0f;
+            underwater = false;
+            velocity.y *= 2f;
+        }
+
+        private bool GroundRaycast(Vector2 castStart, Vector2 dir, float distance, ContactFilter2D filter,
+            float minValidDistance, float maxValidDistance, bool ceilingCheck, out RaycastHit2D resultHit)
+        {
+            resultHit = new RaycastHit2D();
+            int hitCount = Physics2D.Raycast(castStart, dir, filter, hitResultsCache, distance);
+
+            // Physics2D.Raycast results should be sorted by distance, so find the first valid result
+            for (int i = 0; i < hitCount; ++i)
+            {
+                var hit = hitResultsCache[i];
+
+                if (hit.distance < minValidDistance || hit.distance > maxValidDistance)
+                {
+                    // The hit is not within the valid distance range - it's outside of our step-up / step-down limits
+                    continue;
+                }
+
+                if (ceilingCheck || groundMode != GroundMode.Floor)
+                {
+                    var platform = hit.collider.GetComponent<OneWayPlatform>();
+                    Vector2 oneWayPlatformCheckDirection = Grounded ? -currentGroundInfo.Normal : Vector2.down;
+                    if (platform != null && (ceilingCheck || !platform.CanCollideInDirection(oneWayPlatformCheckDirection))) // TODO: Revisit this, it might cause trouble
+                    {
+                        continue;
+                    }
+
+                    var groundTile = GetGroundTile(hit, out var tileTransform);
+                    if (groundTile != null && groundTile.IsOneWayPlatform) // TODO: Also check angle
+                    {
+                        continue;
+                    }
+                }
+
+                resultHit = hit;
+                return true;
+            }
+            return false;
+        }
+
+        private GroundInfo GroundCheck(float deltaTime, out bool groundedLeft, out bool groundedRight)
+        {
+            Vector2 leftLocalCastPos;
+            Vector2 rightLocalCastPos;
+            GetGroundRaycastPositions(groundMode, false, out leftLocalCastPos, out rightLocalCastPos);
+            float stepDownHeight = Mathf.Min(stepDownHeightMin + Mathf.Abs(groundSpeed * deltaTime), stepDownHeightMax);
+            float minValidDistance = Mathf.Max(0.001f, heightHalf - stepUpHeight);
+            float maxValidDistance = heightHalf + stepDownHeight;
+
+            Vector2 dir = GetGroundRaycastDirection(groundMode, false);
+            Vector2 pos = new Vector2(transform.position.x, transform.position.y);
+
+            // TODO: transform.TransformPoint() instead? Would cover scale as well
+            Vector2 leftCastStart = pos + leftLocalCastPos;
+            Vector2 rightCastStart = pos + rightLocalCastPos;
+
+            DebugUtils.DrawDiagonalCross(leftCastStart + dir * minValidDistance, 3f, Color.white);
+            DebugUtils.DrawDiagonalCross(leftCastStart + dir * maxValidDistance, 3f, Color.cyan);
+
+            DebugUtils.DrawDiagonalCross(rightCastStart + dir * minValidDistance, 3f, Color.white);
+            DebugUtils.DrawDiagonalCross(rightCastStart + dir * maxValidDistance, 3f, Color.cyan);
+
+            ContactFilter2D filter = new ContactFilter2D();
+            filter.SetLayerMask(currentGroundMask);
+
+            groundedLeft = false;
+            groundedRight = false;
+
+            RaycastHit2D leftHit = new RaycastHit2D();
+            groundedLeft = GroundRaycast(leftCastStart, dir, groundRaycastDist, filter, minValidDistance, maxValidDistance, false, out leftHit);
+
+            RaycastHit2D rightHit = new RaycastHit2D();
+            groundedRight = GroundRaycast(rightCastStart, dir, groundRaycastDist, filter, minValidDistance, maxValidDistance, false, out rightHit);
+
+            Debug.DrawLine(leftCastStart, leftCastStart + (dir * groundRaycastDist), Color.magenta);
+            Debug.DrawLine(rightCastStart, rightCastStart + (dir * groundRaycastDist), Color.red);
+
+            if (groundedLeft) { DebugUtils.DrawCross(leftHit.point, 4f, Color.yellow); }
+            if (groundedRight) { DebugUtils.DrawCross(rightHit.point, 4f, Color.yellow); }
+
+            GroundInfo found = GroundInfo.Invalid;
+
+            if (groundedLeft && groundedRight)
+            {
+                float leftCompare = 0f;
+                float rightCompare = 0f;
+
+                switch (groundMode)
+                {
+                    case GroundMode.Floor:
+                        leftCompare = leftHit.point.y;
+                        rightCompare = rightHit.point.y;
+                        break;
+                    case GroundMode.RightWall:
+                        leftCompare = -leftHit.point.x;
+                        rightCompare = -rightHit.point.x;
+                        break;
+                    case GroundMode.Ceiling:
+                        leftCompare = -leftHit.point.y;
+                        rightCompare = -rightHit.point.y;
+                        break;
+                    case GroundMode.LeftWall:
+                        leftCompare = leftHit.point.x;
+                        rightCompare = rightHit.point.x;
+                        break;
+                    default:
+                        break;
+                }
+
+                if (leftCompare >= rightCompare) { found = GetGroundInfo(leftHit, groundMode); }
+                else { found = GetGroundInfo(rightHit, groundMode); }
+            }
+            else if (groundedLeft) { found = GetGroundInfo(leftHit, groundMode); }
+            else if (groundedRight) { found = GetGroundInfo(rightHit, groundMode); }
+            else { found = GroundInfo.Invalid; }
+
+            return found;
+        }
+
+        private GroundInfo VerticalCollisionCheck(float distance, GroundMode groundMode, bool ceilingCheck,
+            out bool hitLeft, out bool hitRight)
+        {
+            Vector2 leftLocalCastPos;
+            Vector2 rightLocalCastPos;
+            GetGroundRaycastPositions(groundMode, ceilingCheck, out leftLocalCastPos, out rightLocalCastPos);
+
+            Vector2 dir = GetGroundRaycastDirection(groundMode, ceilingCheck);
+            Vector2 pos = new Vector2(transform.position.x, transform.position.y);
+            Vector2 leftCastStart = pos + leftLocalCastPos;
+            Vector2 rightCastStart = pos + rightLocalCastPos;
+
+            ContactFilter2D filter = new ContactFilter2D();
+            filter.SetLayerMask(currentGroundMask);
+
+            hitLeft = false;
+            hitRight = false;
+
+            RaycastHit2D leftHit = new RaycastHit2D();
+            hitLeft = GroundRaycast(leftCastStart, dir, distance, filter, 0.001f, heightHalf, ceilingCheck, out leftHit);
+
+            RaycastHit2D rightHit = new RaycastHit2D();
+            hitRight = GroundRaycast(rightCastStart, dir, distance, filter, 0.001f, heightHalf, ceilingCheck, out rightHit);
+
+            Debug.DrawLine(leftCastStart, leftCastStart + (dir * distance), Color.magenta);
+            Debug.DrawLine(rightCastStart, rightCastStart + (dir * distance), Color.red);
+
+            if (hitLeft) { DebugUtils.DrawCross(leftHit.point, 4f, Color.green); }
+            if (hitRight) { DebugUtils.DrawCross(rightHit.point, 4f, Color.green); }
+
+            GroundInfo found = GroundInfo.Invalid;
+
+            if (hitLeft && hitRight)
+            {
+                float leftCompare = 0f;
+                float rightCompare = 0f;
+
+                switch (groundMode)
+                {
+                    case GroundMode.Floor:
+                        leftCompare = leftHit.point.y;
+                        rightCompare = rightHit.point.y;
+                        break;
+                    case GroundMode.RightWall:
+                        leftCompare = -leftHit.point.x;
+                        rightCompare = -rightHit.point.x;
+                        break;
+                    case GroundMode.Ceiling:
+                        leftCompare = -leftHit.point.y;
+                        rightCompare = -rightHit.point.y;
+                        break;
+                    case GroundMode.LeftWall:
+                        leftCompare = leftHit.point.x;
+                        rightCompare = rightHit.point.x;
+                        break;
+                    default:
+                        break;
+                }
+
+                if (ceilingCheck)
+                {
+                    leftCompare = -leftCompare;
+                    rightCompare = -rightCompare;
+                }
+
+                if (leftCompare >= rightCompare) { found = GetGroundInfo(leftHit, groundMode); }
+                else { found = GetGroundInfo(rightHit, groundMode); }
+            }
+            else if (hitLeft) { found = GetGroundInfo(leftHit, groundMode); }
+            else if (hitRight) { found = GetGroundInfo(rightHit, groundMode); }
+            else { found = GroundInfo.Invalid; }
+
+            return found;
+        }
+
+        private GroundInfo GetGroundInfo(RaycastHit2D hit)
+        {
+            return GetGroundInfo(hit, GroundMode.Floor);
+        }
+
+        private GroundInfo GetGroundInfo(RaycastHit2D hit, GroundMode groundOrientation)
+        {
+            GroundInfo info = new GroundInfo();
+            if (hit.collider != null)
+            {
+                GroundTile groundTile = GetGroundTile(hit, out Matrix4x4 tileTransform);
+                if (groundTile != null && groundTile.UseFixedGroundAngle)
+                {
+                    info.Point = hit.point;
+                    Vector2 tileNormalVector = Vector2.up;
+                    if (groundTile.IsAngled)
+                    {
+                        tileNormalVector = tileTransform * (Quaternion.Euler(0f, 0f, groundTile.Angle) * Vector2.up);
+                    }
+                    else
+                    {
+                        switch (groundOrientation)
+                        {
+                            case GroundMode.Floor:
+                                tileNormalVector = Vector2.up;
+                                break;
+                            case GroundMode.RightWall:
+                                tileNormalVector = Vector2.left;
+                                break;
+                            case GroundMode.Ceiling:
+                                tileNormalVector = Vector2.down;
+                                break;
+                            case GroundMode.LeftWall:
+                                tileNormalVector = Vector2.right;
+                                break;
+                        }
+                    }
+                    info.Normal = tileNormalVector;
+                    info.Angle = Vector2ToAngle(tileNormalVector);
+                }
+                else
+                {
+                    info.Point = hit.point;
+                    info.Normal = hit.normal;
+                    info.Angle = Vector2ToAngle(hit.normal);
+                }
+                info.IsValid = true;
+            }
+
+            return info;
+        }
+
+        private GroundTile GetGroundTile(RaycastHit2D hit, out Matrix4x4 tileTransform)
+        {
+            GroundTile groundTile = null;
+            var tilemap = hit.collider.GetComponent<Tilemap>();
+            if (tilemap != null)
+            {
+                // Use a world position that is dug into the collision just a bit, to avoid sampling from the edges of tiles
+                Vector3 checkWorldPos = hit.point + (hit.normal * (tilemap.cellSize * -0.1f));
+                groundTile = GetGroundTile(tilemap, checkWorldPos, out tileTransform);
+                return groundTile;
+            }
+            else
+            {
+                tileTransform = Matrix4x4.identity;
+            }
+            return groundTile;
+        }
+
+        // Note: The tile anchor setting on the Tilemap must be the default value of (0.5, 0.5, 0) or this method will find the wrong tile!
+        // Also, it is best to use a worldPosition that is not right on the edge of tiles, or sometimes the wrong cell is selected
+        private GroundTile GetGroundTile(Tilemap tilemap, Vector3 worldPosition, out Matrix4x4 tileTransform)
+        {
+            Vector3Int tilePos = tilemap.WorldToCell(worldPosition);
+            var groundTile = tilemap.GetTile<GroundTile>(tilePos);
+            if (ShowDebug)
+            {
+                var worldTileCenter = tilemap.GetCellCenterWorld(tilePos);
+                Debug.DrawLine(worldPosition, worldTileCenter, Color.green, 0f, false);
+            }
+            tileTransform = tilemap.GetTransformMatrix(tilePos);
+            return groundTile;
+        }
+
+        private void StickToGround(GroundInfo info)
+        {
+            float angle = info.Angle * Mathf.Rad2Deg;
+            characterAngle = angle;
+            Vector3 pos = transform.position;
 
             switch (groundMode)
             {
                 case GroundMode.Floor:
-                    leftCompare = leftHit.point.y;
-                    rightCompare = rightHit.point.y;
+                    if (angle < 315f && angle > 225f) { groundMode = GroundMode.LeftWall; }
+                    else if (angle > 45f && angle < 180f) { groundMode = GroundMode.RightWall; }
+                    pos.y = info.Point.y + heightHalf;
                     break;
                 case GroundMode.RightWall:
-                    leftCompare = -leftHit.point.x;
-                    rightCompare = -rightHit.point.x;
+                    if (angle < 45f && angle > 0f) { groundMode = GroundMode.Floor; }
+                    else if (angle > 135f && angle < 270f) { groundMode = GroundMode.Ceiling; }
+                    pos.x = info.Point.x - heightHalf;
                     break;
                 case GroundMode.Ceiling:
-                    leftCompare = -leftHit.point.y;
-                    rightCompare = -rightHit.point.y;
+                    if (angle < 135f && angle > 45f) { groundMode = GroundMode.RightWall; }
+                    else if (angle > 225f && angle < 360f) { groundMode = GroundMode.LeftWall; }
+                    pos.y = info.Point.y - heightHalf;
                     break;
                 case GroundMode.LeftWall:
-                    leftCompare = leftHit.point.x;
-                    rightCompare = rightHit.point.x;
+                    if (angle < 225f && angle > 45f) { groundMode = GroundMode.Ceiling; }
+                    else if (angle > 315f) { groundMode = GroundMode.Floor; }
+                    pos.x = info.Point.x + heightHalf;
                     break;
                 default:
                     break;
             }
 
-            if (leftCompare >= rightCompare) { found = GetGroundInfo(leftHit); }
-            else { found = GetGroundInfo(rightHit); }
+            transform.position = pos;
         }
-        else if (groundedLeft) { found = GetGroundInfo(leftHit); }
-        else if (groundedRight) { found = GetGroundInfo(rightHit); }
-        else { found = new GroundInfo(); }
 
-        return found;
-    }
-
-    GroundInfo GetGroundInfo(Vector3 center)
-    {
-        GroundInfo info = new GroundInfo();
-        RaycastHit2D groundHit = Physics2D.Raycast(center, Vector2.down, groundRaycastDist);
-        if (groundHit.collider != null)
+        /// <summary>
+        /// Returns angle snapped to the closest 45-degree increment
+        /// </summary>
+        private float SnapAngle(float angle)
         {
-            info.height = groundHit.point.y;
-            info.point = groundHit.point;
-            info.normal = groundHit.normal;
-            info.angle = Vector2ToAngle(groundHit.normal);
-            info.valid = true;
+            int mult = (int)(angle + 22.5f);
+            mult /= 45;
+            return mult * 45f;
         }
 
-        return info;
-    }
-
-    GroundInfo GetGroundInfo(RaycastHit2D hit)
-    {
-        GroundInfo info = new GroundInfo();
-        if (hit.collider != null)
+        /// <summary>
+        /// Converts vector to 0-360 degree (counter-clockwise) angle, with a vector pointing straight up as zero.
+        /// </summary>
+        private float Vector2ToAngle(Vector2 vector)
         {
-            info.height = hit.point.y;
-            info.point = hit.point;
-            info.normal = hit.normal;
-            info.angle = Vector2ToAngle(hit.normal);
-            info.valid = true;
+            float angle = Mathf.Atan2(vector.y, vector.x) - (Mathf.PI / 2f);
+            if (angle < 0f) { angle += Mathf.PI * 2f; }
+            return angle;
         }
-
-        return info;
-    }
-
-    void StickToGround(GroundInfo info)
-    {
-        float angle = info.angle * Mathf.Rad2Deg;
-        characterAngle = angle;
-        Vector3 pos = transform.position;
-
-        switch (groundMode)
-        {
-            case GroundMode.Floor:
-                if (angle < 315f && angle > 225f) { groundMode = GroundMode.LeftWall; }
-                else if (angle > 45f && angle < 180f) { groundMode = GroundMode.RightWall; }
-                pos.y = info.point.y + heightHalf;
-                break;
-            case GroundMode.RightWall:
-                if (angle < 45f && angle > 0f) { groundMode = GroundMode.Floor; }
-                else if (angle > 135f && angle < 270f) { groundMode = GroundMode.Ceiling; }
-                pos.x = info.point.x - heightHalf;
-                break;
-            case GroundMode.Ceiling:
-                if (angle < 135f && angle > 45f) { groundMode = GroundMode.RightWall; }
-                else if (angle > 225f && angle < 360f) { groundMode = GroundMode.LeftWall; }
-                pos.y = info.point.y - heightHalf;
-                break;
-            case GroundMode.LeftWall:
-                if (angle < 225f && angle > 45f) { groundMode = GroundMode.Ceiling; }
-                else if (angle > 315f) { groundMode = GroundMode.Floor; }
-                pos.x = info.point.x + heightHalf;
-                break;
-            default:
-                break;
-        }
-
-        transform.position = pos;
-    }
-
-    /// <summary>
-    /// Returns angle snapped to the closest 45-degree increment
-    /// </summary>
-    float SnapAngle(float angle)
-    {
-        int mult = (int)(angle + 22.5f);
-        mult /= 45;
-        return mult * 45f;
-    }
-
-    /// <summary>
-    /// Converts vector to 0-360 degree (counter-clockwise) angle, with a vector pointing straight up as zero.
-    /// </summary>
-    float Vector2ToAngle(Vector2 vector)
-    {
-        float angle = Mathf.Atan2(vector.y, vector.x) - (Mathf.PI / 2f);
-        if (angle < 0f) { angle += Mathf.PI * 2f; }
-        return angle;
-    }
-
-    public class GroundInfo
-    {
-        public float height;
-        public Vector3 point;
-        public float distance;
-        public Vector3 normal;
-        public float angle;
-        public bool valid = false;
     }
 }
