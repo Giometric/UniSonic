@@ -18,6 +18,7 @@ All input is done via Unity's old InputManager, and the mappings can be edited f
 ### Implemented
 - General ground and air movement
 - Jumping
+- Camera
 - Underwater ground/air movement
 - Slopes, running up and attaching to walls/ceilings
 - Rolling
@@ -26,12 +27,11 @@ All input is done via Unity's old InputManager, and the mappings can be edited f
 - Loops and collision layer switching
   -  This has some minor issues, mostly requiring some care when placing the switch triggers
 - Smooth rotation for Sonic, like what the Sonic Advance games do, is supported and can be enabled via a checkbox on the Sonic prefab; turned off by default
+- Looking up and down
 
 ### Missing Features
 - Damage, enemies
 - Other interactable things like springs
-- Looking up
-- Crouching
 - Spin-dashing
 - Pushing
 - 'About-to-fall' animation when standing near ledges
@@ -41,7 +41,7 @@ All input is done via Unity's old InputManager, and the mappings can be edited f
 - Sonic Sprites by Shinbs, with some additional credits; obtained from spriters-resource.com: https://www.spriters-resource.com/custom_edited/sonicthehedgehogcustoms/sheet/111542/. Previously was using ripped Sonic 3 sprites, but these look great and won't get anyone in trouble for copyright :)
   - New sprites should be relatively easy to put in if desired, but Unity animates sprite swaps via direct references to the assets. To fully swap out all the animations, all the animation clips would need to be updated (or new ones created).
 - Pixels-per-unit setting of 1 was used to make it easier to map values from the guide to Unity units. Newly-added sprites should have the same setting, so pixels are consistently the same size.
-- Project uses Unity 2021.2.18. Update to 2021.3.4 (the 2021 LTS) coming soon if there are no issues.
+- Project uses Unity 2021.3.4 (the 2021 LTS).
 - SpriteShape and Tilemap are used in the test level, but aren't necessary for this implementation to work. Collisions work off of Raycast2D so any type of collision will work.
   - If mixing rigidbody-simulated objects in, note that they will likely behave strangely due to the funky scale.
 - As this is based on the original implementation of Sonic's physics from the Sega Genesis games, it does also include some of the same bugs. For instance, it is impossible to stand on the center of very thin platforms.
