@@ -124,6 +124,10 @@ namespace Giometric.UniSonic
         [SerializeField] private float airDragMinAbsoluteXVelocity = 7.5f;
         [Tooltip("While in the air, the rate at which character will rotate to their upright angle (degrees per second).")]
         [SerializeField]private float uprightRotationRate = 168.75f;
+        [Tooltip("The animator state with this tag will have its duration checked to see if the braking animation should be stopped.")]
+        [SerializeField]private string brakeTagName = "brake";
+        [Tooltip("If input movement is opposite ground speed direction and the character is moving at least this fast, play the brake animation.")]
+        [SerializeField]private float brakeGroundSpeedThreshold = 240f;
 
         /// <Summary>
         /// The transform used to define where the water level is for this scene, if any.
@@ -179,6 +183,18 @@ namespace Giometric.UniSonic
         /// Facing direction, encoded as a float. Always either -1 for left, 1 for right.
         /// </Summary>
         public float FacingDirection { get; private set; }
+
+        private bool isBraking = false;
+
+        /// <Summary>
+        /// True if Sonic is currently looking up.
+        /// </Summary>
+        public bool LookingUp { get; private set; }
+
+        /// <Summary>
+        /// True if Sonic is currently looking down.
+        /// </Summary>
+        public bool LookingDown { get; private set; }
 
         private bool hControlLock;
         private float hControlLockTimer = 0f;
@@ -275,6 +291,10 @@ namespace Giometric.UniSonic
         private int standHash;
         private int spinHash;
         private int pushHash;
+        private int lookUpHash;
+        private int lookDownHash;
+        private int brakeHash;
+        private int brakeTagHash;
 
         /// <Summary>
         /// Reset velocity and other movement state.
@@ -318,6 +338,10 @@ namespace Giometric.UniSonic
             standHash = Animator.StringToHash("Stand");
             spinHash = Animator.StringToHash("Spin");
             pushHash = Animator.StringToHash("Push");
+            lookUpHash = Animator.StringToHash("LookUp");
+            lookDownHash = Animator.StringToHash("LookDown");
+            brakeHash = Animator.StringToHash("Brake");
+            brakeTagHash = Animator.StringToHash(brakeTagName);
 
             FacingDirection = 1f;
             SetCollisionLayer(0);
@@ -572,6 +596,7 @@ namespace Giometric.UniSonic
                     float jumpVel = CurrentMovementSettings.JumpVelocity;
                     velocity.x -= jumpVel * sinGroundAngle;
                     velocity.y += jumpVel * cosGroundAngle;
+                    isBraking = false;
                     Grounded = false;
                     Jumped = true;
 
@@ -593,6 +618,8 @@ namespace Giometric.UniSonic
                         }
                     }
 
+                    float prevGroundSpeedSign = Mathf.Sign(groundSpeed);
+
                     // Decelerate if rolling or not applying directional input
                     if (Rolling || Mathf.Approximately(InputMove.x, 0f))
                     {
@@ -612,8 +639,13 @@ namespace Giometric.UniSonic
                         }
                         else if (!Rolling && movingAgainstCurrentSpeed)
                         {
-                            // Decelerating while not running
+                            // Decelerating while running
                             acceleration = CurrentMovementSettings.Deceleration;
+                            if (!isBraking && groundMode == GroundMode.Floor && Mathf.Abs(groundSpeed) >= brakeGroundSpeedThreshold)
+                            {
+                                // We were moving fast enough, start braking if we weren't already
+                                isBraking = true;
+                            }
                         }
                         else if (!Rolling && !movingAgainstCurrentSpeed)
                         {
@@ -643,6 +675,12 @@ namespace Giometric.UniSonic
                     // Clamp ground speed to global speed limit
                     groundSpeed = Mathf.Clamp(groundSpeed, -globalSpeedLimit, globalSpeedLimit);
 
+                    // We're now moving the other direction, stop braking early if needed
+                    if (isBraking && Mathf.Sign(groundSpeed) != prevGroundSpeedSign)
+                    {
+                        isBraking = false;
+                    }
+
                     if (Rolling && Mathf.Abs(groundSpeed) < unrollThreshold)
                     {
                         Rolling = false;
@@ -655,12 +693,50 @@ namespace Giometric.UniSonic
 
                 DoWallCollisions(deltaTime, grounded: true, groundMode);
 
-                // Check if we should start rolling
-                if (!Rolling && InputMove.y < -0f && Mathf.Abs(groundSpeed) >= rollingMinSpeed)
+                bool hasVerticalInput = !Mathf.Approximately(0f, InputMove.y);
+
+                // If we're not moving, check if we're looking up or down
+                if (Mathf.Approximately(0f, groundSpeed))
                 {
-                    Rolling = true;
-                    // When rolling, offset position downwards
-                    transform.position -= new Vector3(0f, rollingPositionOffset);
+                    // Also stop braking if needed
+                    isBraking = false;
+
+                    if (hasVerticalInput)
+                    {
+                        if (InputMove.y < 0f)
+                        {
+                            groundSpeed = 0f;
+                            LookingDown = true;
+                            LookingUp = false;
+                        }
+                        else if (InputMove.y > 0f)
+                        {
+                            groundSpeed = 0f;
+                            LookingDown = false;
+                            LookingUp = true;
+                        }
+                    }
+                    else
+                    {
+                        LookingDown = false;
+                        LookingUp = false;
+                    }
+                }
+                else
+                {
+                    LookingDown = false;
+                    LookingUp = false;
+
+                    if (!Rolling && hasVerticalInput)
+                    {
+                        if (InputMove.y < 0f && Mathf.Abs(groundSpeed) >= rollingMinSpeed)
+                        {
+                            Rolling = true;
+                            isBraking = false;
+                            // When rolling, offset position downwards
+                            transform.position -= new Vector3(0f, rollingPositionOffset);
+                        }
+                    }
                 }
 
                 ApplyMovement(deltaTime);
@@ -805,6 +881,8 @@ namespace Giometric.UniSonic
             {
                 StickToGround(currentGroundInfo);
                 animator.SetFloat(speedHash, Mathf.Abs(groundSpeed));
+                animator.SetBool(lookUpHash, LookingUp);
+                animator.SetBool(lookDownHash, LookingDown);
 
                 // Check if we've got a low ceiling, prevents jumping
                 lowCeiling = ceil.IsValid && transform.position.y > ceil.Point.y - lowCeilingHeight;
@@ -832,6 +910,11 @@ namespace Giometric.UniSonic
                 currentGroundInfo = GroundInfo.Invalid;
                 groundMode = GroundMode.Floor;
                 lowCeiling = false;
+                LookingUp = false;
+                LookingDown = false;
+                isBraking = false;
+                animator.SetBool(lookUpHash, false);
+                animator.SetBool(lookDownHash, false);
             }
 
             if (WaterLevel != null)
@@ -856,6 +939,25 @@ namespace Giometric.UniSonic
             }
             transform.localRotation = Quaternion.Euler(0f, 0f, smoothRotation ? characterAngle : SnapAngle(characterAngle));
             animator.SetBool(spinHash, Rolling || Jumped);
+
+            // If braking, check if the braking animation (identified by tag) is finished playing through,
+            // or if we're no longer in ground mode - if so, stop the animation
+            if (isBraking)
+            {
+                if (groundMode != GroundMode.Floor)
+                {
+                    isBraking = false;
+                }
+                else
+                {
+                    var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+                    if (stateInfo.tagHash == brakeTagHash && stateInfo.normalizedTime >= 1f)
+                    {
+                        isBraking = false;
+                    }
+                }
+            }
+            animator.SetBool(brakeHash, isBraking);
 
             inputJumpLastFrame = InputJump;
 
