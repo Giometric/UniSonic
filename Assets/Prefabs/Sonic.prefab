@@ -138,6 +138,9 @@ MonoBehaviour:
   sprite: {fileID: 682184913696059673}
   animator: {fileID: 682184914850520921}
   smoothRotation: 0
+  hitbox: {fileID: 682184914850520934}
+  standingHitboxSize: {x: 18, y: 34}
+  shortHitboxSize: {x: 18, y: 20}
   standingHeightHalf: 20
   ballHeightHalf: 15
   groundRaycastDist: 36
@@ -170,6 +173,8 @@ MonoBehaviour:
   airDragMaxYVelocity: 4
   airDragMinAbsoluteXVelocity: 7.5
   uprightRotationRate: 168.75
+  brakeTagName: brake
+  brakeGroundSpeedThreshold: 240
 --- !u!114 &682184914850520927
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -248,5 +253,5 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 20, y: 40}
+  m_Size: {x: 18, y: 34}
   m_EdgeRadius: 0

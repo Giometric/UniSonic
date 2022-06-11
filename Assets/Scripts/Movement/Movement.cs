@@ -49,6 +49,12 @@ namespace Giometric.UniSonic
         [Tooltip("When enabled, the character will rotate smoothly to match the ground angle they are standing on. When disabled, the character's rotation will snap to 45-degree increments.")]
         [SerializeField] private bool smoothRotation = false;
 
+        [Header("Hitbox")]
+        [Tooltip("The collider used as the character's hitbox for interacting with objects. Certain actions will cause it to be resized / repositioned.")]
+        [SerializeField] private BoxCollider2D hitbox;
+        [SerializeField] private Vector2 standingHitboxSize = new Vector2(18f, 34f);
+        [SerializeField] private Vector2 shortHitboxSize = new Vector2(18f, 20f);
+
         [Header("General")]
         [Tooltip("Half the character's height when standing.")]
         [SerializeField] private float standingHeightHalf = 20f;
@@ -286,7 +292,7 @@ namespace Giometric.UniSonic
 
         private LayerMask currentGroundMask;
         private RaycastHit2D[] hitResultsCache = new RaycastHit2D[10];
-        
+
         private int speedHash;
         private int standHash;
         private int spinHash;
@@ -902,6 +908,14 @@ namespace Giometric.UniSonic
                         Grounded = false;
                     }
                 }
+            }
+
+            if (hitbox != null)
+            {
+                bool isBall = Rolling || Jumped;
+                bool shortHitbox = LookingDown || isBall;
+                hitbox.size = shortHitbox ? shortHitboxSize : standingHitboxSize;
+                hitbox.offset = shortHitbox ? new Vector2(0f, ((shortHitboxSize.y - standingHitboxSize.y) / 2f) + (isBall ? rollingPositionOffset : 0f)) : Vector2.zero;
             }
 
             if (!Grounded)
