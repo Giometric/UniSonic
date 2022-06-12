@@ -28,10 +28,12 @@ All input is done via Unity's old InputManager, and the mappings can be edited f
   -  This has some minor issues, mostly requiring some care when placing the switch triggers
 - Smooth rotation for Sonic, like what the Sonic Advance games do, is supported and can be enabled via a checkbox on the Sonic prefab; turned off by default
 - Looking up and down
+- Interactable objects
+  - Springs
 
 ### Missing Features
 - Damage, enemies
-- Other interactable things like springs
+- Some other interactables
 - Spin-dashing
 - Pushing
 - 'About-to-fall' animation when standing near ledges
