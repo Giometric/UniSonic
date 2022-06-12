@@ -4,6 +4,13 @@ using UnityEngine.Tilemaps;
 
 namespace Giometric.UniSonic
 {
+    public enum SpringVelocityMode
+    {
+        Vertical = 0,
+        Horizontal = 1,
+        Diagonal = 2,
+    }
+
     public class Movement : MonoBehaviour
     {
         enum GroundMode
@@ -92,6 +99,8 @@ namespace Giometric.UniSonic
         [SerializeField] private float wallCollisionWidthHalf = 11f;
         [Tooltip("When grounded, wall collision raycasts are with this offset applied to the player's Y position.")]
         [SerializeField] private float flatGroundSideRaycastOffset = -8f;
+        [Tooltip("When launched by a spring while grounded, become airborne if the angle between the spring's launch direction and the current ground normal is less than this value (in degrees).")]
+        [SerializeField] private float springAirborneAngleThreshold = 45f;
 
         [SerializeField] private LayerMask collisionMaskA;
         [SerializeField] private LayerMask collisionMaskB;
@@ -134,6 +143,10 @@ namespace Giometric.UniSonic
         [SerializeField]private string brakeTagName = "brake";
         [Tooltip("If input movement is opposite ground speed direction and the character is moving at least this fast, play the brake animation.")]
         [SerializeField]private float brakeGroundSpeedThreshold = 240f;
+        [Tooltip("The animator state with this tag will have its duration checked to see if the jump spin animation should be stopped.")]
+        [SerializeField]private string jumpSpinTagName = "jumpSpin";
+        [Tooltip("When using the plain jump spin animation, the sprite will be held for this duration before returning to the walk animation.")]
+        [SerializeField]private float springJumpDuration = 0.8f;
 
         /// <Summary>
         /// The transform used to define where the water level is for this scene, if any.
@@ -162,7 +175,7 @@ namespace Giometric.UniSonic
         /// <Summary>
         /// Returns whether the character is currently grounded.
         /// </Summary>
-        public bool Grounded { get; private set; }
+        public bool Grounded { get; set; }
 
         /// <Summary>
         /// Returns whether the character is currently rolling.
@@ -191,6 +204,7 @@ namespace Giometric.UniSonic
         public float FacingDirection { get; private set; }
 
         private bool isBraking = false;
+        private bool isJumpSpinning = false;
 
         /// <Summary>
         /// True if Sonic is currently looking up.
@@ -204,6 +218,7 @@ namespace Giometric.UniSonic
 
         private bool hControlLock;
         private float hControlLockTimer = 0f;
+        public bool HorizontalControlLock { get { return hControlLock; } }
         private GroundInfo currentGroundInfo;
         private GroundMode groundMode = GroundMode.Floor;
 
@@ -301,6 +316,9 @@ namespace Giometric.UniSonic
         private int lookDownHash;
         private int brakeHash;
         private int brakeTagHash;
+        private int springJumpHash;
+        private int jumpSpinHash;
+        private int jumpSpinTagHash;
 
         /// <Summary>
         /// Reset velocity and other movement state.
@@ -322,6 +340,7 @@ namespace Giometric.UniSonic
             characterAngle = 0f;
             lowCeiling = false;
             underwater = false;
+            isBraking = false;
             SetCollisionLayer(0);
         }
 
@@ -338,6 +357,92 @@ namespace Giometric.UniSonic
             }
         }
 
+        public void SetSpringState(Vector2 launchVelocity, bool forceAirborne, SpringVelocityMode springVelocityMode, float horizontalControlLockTime = 0f)
+        {
+            if (launchVelocity.sqrMagnitude < 0.001f)
+            {
+                return;
+            }
+
+            // If currently grounded and this spring isn't forcing us airborne, check if the launch direction and the current
+            // ground normal vector are close enough enough to each other that we should become airborne anyway
+            if (Grounded)
+            {
+                if (forceAirborne)
+                {
+                    Grounded = false;
+                }
+                else
+                {
+                    Vector2 launchDirection = launchVelocity.normalized;
+                    if (Vector2.Angle(launchDirection, currentGroundInfo.Normal) < springAirborneAngleThreshold)
+                    {
+                        Grounded = false;
+                    }
+                }
+            }
+
+            // If still grounded after the previous block, we'll be setting our ground speed instead of velocity
+            if (Grounded)
+            {
+                float newSpeed = launchVelocity.magnitude;
+                // Adjust ground speed direction based on current ground mode
+                switch (groundMode)
+                {
+                    case GroundMode.Floor:
+                        groundSpeed = newSpeed * Mathf.Sign(launchVelocity.x);
+                        break;
+                    case GroundMode.RightWall:
+                        groundSpeed = newSpeed * Mathf.Sign(launchVelocity.y);
+                        break;
+                    case GroundMode.Ceiling:
+                        groundSpeed = newSpeed * -Mathf.Sign(launchVelocity.x);
+                        break;
+                    case GroundMode.LeftWall:
+                        groundSpeed = newSpeed * -Mathf.Sign(launchVelocity.y);
+                        break;
+                }
+                FacingDirection = Mathf.Sign(groundSpeed);
+            }
+            else
+            {
+                switch (springVelocityMode)
+                {
+                    case SpringVelocityMode.Vertical:
+                        velocity.y = launchVelocity.y;
+                        break;
+                    case SpringVelocityMode.Horizontal:
+                        velocity.x = launchVelocity.x;
+                        FacingDirection = Mathf.Sign(velocity.x);
+                        break;
+                    case SpringVelocityMode.Diagonal:
+                    default:
+                        velocity = launchVelocity;
+                        FacingDirection = Mathf.Sign(velocity.x);
+                        break;
+                }
+                Jumped = false;
+                Rolling = false;
+                groundSpeed = 0f;
+                animator.SetFloat(speedHash, 0.1f); // Set a slow-but-not-zero speed hash to get the walk animation at the lowest speed
+
+                // TODO: Option to use one-frame spring jump animation instead
+                isJumpSpinning = true;
+                animator.SetBool(jumpSpinHash, true);
+            }
+
+            if (horizontalControlLockTime > 0f)
+            {
+                SetHorizontalControlLock(horizontalControlLockTime);
+            }
+        }
+
+        public void SetHorizontalControlLock(float time, bool keepLongerTime = true)
+        {
+            hControlLock = true;
+            hControlLockTimer = keepLongerTime ? Mathf.Max(time, hControlLockTimer) : time;
+        }
+
         private void Awake()
         {
             speedHash = Animator.StringToHash("Speed");
@@ -348,6 +453,9 @@ namespace Giometric.UniSonic
             lookDownHash = Animator.StringToHash("LookDown");
             brakeHash = Animator.StringToHash("Brake");
             brakeTagHash = Animator.StringToHash(brakeTagName);
+            springJumpHash = Animator.StringToHash("Spring");
+            jumpSpinHash = Animator.StringToHash("JumpSpin");
+            jumpSpinTagHash = Animator.StringToHash(jumpSpinTagName);
 
             FacingDirection = 1f;
             SetCollisionLayer(0);
@@ -749,6 +857,8 @@ namespace Giometric.UniSonic
             }
             else
             {
+                // If we are moving up faster than the threshold and the jump button is released,
+                // clamp our upward velocity to the threshold to allow for some jump height control
                 float jumpReleaseThreshold = CurrentMovementSettings.JumpReleaseThreshold;
                 if (Jumped && !InputJump && velocity.y > jumpReleaseThreshold)
                 {
@@ -758,10 +868,15 @@ namespace Giometric.UniSonic
                 // If jumping (but not rolling) and there's any directional input, allow air acceleration
                 if (!(Rolling && Jumped) && !Mathf.Approximately(InputMove.x, 0f))
                 {
-                    if ((InputMove.x < 0f && velocity.x > -accelSpeedCap) || (InputMove.x > 0f && velocity.x < accelSpeedCap))
+                    // Similar to the 'accelerate up to cap unless already going faster' code from ground acceleration
+                    float airAcc = CurrentMovementSettings.AirAcceleration;
+                    if (InputMove.x < 0f && velocity.x > -accelSpeedCap)
                     {
-                        float airAcc = CurrentMovementSettings.AirAcceleration;
-                        velocity.x = Mathf.Clamp(velocity.x + (InputMove.x * airAcc * deltaTime), -accelSpeedCap, accelSpeedCap);
+                        velocity.x = Mathf.Max(-accelSpeedCap, velocity.x + (InputMove.x * airAcc * deltaTime));
+                    }
+                    else if (InputMove.x > 0f && velocity.x < accelSpeedCap)
+                    {
+                        velocity.x = Mathf.Min(accelSpeedCap, velocity.x + (InputMove.x * airAcc * deltaTime));
                     }
 
                     // Turn to face the direction of input
@@ -897,8 +1012,7 @@ namespace Giometric.UniSonic
                 if (groundMode != GroundMode.Floor && Mathf.Abs(groundSpeed) < fallVelocityThreshold)
                 {
                     // Losing your footing starts the horizontal control lock timer
-                    hControlLock = true;
-                    hControlLockTimer = horizontalControlLockTime;
+                    SetHorizontalControlLock(horizontalControlLockTime);
 
                     // Round to int here to avoid problems like the angle of vertical walls having values like 89.99999
                     int angleDeg = Mathf.RoundToInt(currentGroundInfo.Angle * Mathf.Rad2Deg);
@@ -926,7 +1040,6 @@ namespace Giometric.UniSonic
                 lowCeiling = false;
                 LookingUp = false;
                 LookingDown = false;
-                isBraking = false;
                 animator.SetBool(lookUpHash, false);
                 animator.SetBool(lookDownHash, false);
             }
@@ -972,6 +1085,25 @@ namespace Giometric.UniSonic
                 }
             }
             animator.SetBool(brakeHash, isBraking);
+
+            // If jump spinning, check if the animation (identified by tag) is finished playing through,
+            // or if we're no longer airborne - if so, stop the animation
+            if (isJumpSpinning)
+            {
+                if (Grounded)
+                {
+                    isJumpSpinning = false;
+                }
+                else
+                {
+                    var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+                    if (stateInfo.tagHash == jumpSpinTagHash && stateInfo.normalizedTime >= 1f)
+                    {
+                        isJumpSpinning = false;
+                    }
+                }
+            }
+            animator.SetBool(jumpSpinHash, isJumpSpinning);
 
             inputJumpLastFrame = InputJump;
 
@@ -1321,7 +1453,7 @@ namespace Giometric.UniSonic
         }
 
         /// <summary>
-        /// Converts vector to 0-360 degree (counter-clockwise) angle, with a vector pointing straight up as zero.
+        /// Converts vector to 0-2*PI degree (counter-clockwise) angle in radians, with a vector pointing straight up being zero.
         /// </summary>
         private float Vector2ToAngle(Vector2 vector)
         {

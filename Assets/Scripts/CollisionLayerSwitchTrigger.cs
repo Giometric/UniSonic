@@ -62,8 +62,7 @@ namespace Giometric.UniSonic
                 else if (collider2d is CircleCollider2D circleCollider2d)
                 {
                     Vector3 transformScale = transform.localScale;
-                    float largerScale = Mathf.Max(transformScale.x, transformScale.y);
-                    Gizmos.matrix = Matrix4x4.TRS(transform.position, transform.rotation, new Vector3(largerScale, largerScale, 0f));
+                    Gizmos.matrix = Matrix4x4.TRS(transform.position, transform.rotation, new Vector3(transformScale.x, transformScale.y, 0f));
                     Gizmos.DrawSphere(circleCollider2d.offset, circleCollider2d.radius);
                     Gizmos.DrawWireSphere(circleCollider2d.offset, circleCollider2d.radius);
                 }
