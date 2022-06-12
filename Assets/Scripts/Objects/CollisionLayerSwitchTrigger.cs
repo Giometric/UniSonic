@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-namespace Giometric.UniSonic
+namespace Giometric.UniSonic.Objects
 {
     public class CollisionLayerSwitchTrigger : MonoBehaviour
     {
