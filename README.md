@@ -10,8 +10,8 @@ One consequence of using plain 2d raycasts is that any kind of collider Unity su
 [![SonicGif](https://thumbs.gfycat.com/BonyGrandioseEquestrian-size_restricted.gif "A short GIF demonstrating some of the features.")](https://gfycat.com/bonygrandioseequestrian)
 
 ## Controls
-Movement is done with *WASD*, *Space* to jump. Pressing down while moving to roll is supported (and has the correct movement-altering behavior), but crouching and spin-dashing are not implemented yet.
-*Tab* opens and closes the debug UI on the top-left of the screen. *R* will reset Sonic to his start location, and holding *Left-Shift* will active a super-acceleration mode.
+Movement is done with *WASD*, *Space* to jump.
+*Tab* opens and closes the debug UI on the top-left of the screen. *R* will reset Sonic to his start location, and holding *Left-Shift* will activate a super-acceleration mode.
 
 All input is done via Unity's old InputManager, and the mappings can be edited from there (Project Settings > Input Manager).
 
@@ -32,7 +32,8 @@ All input is done via Unity's old InputManager, and the mappings can be edited f
   - Springs
 
 ### Missing Features
-- Damage, enemies
+- Collecting/losing rings
+- Enemies
 - Some other interactables
 - Spin-dashing
 - Pushing

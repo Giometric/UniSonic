@@ -101,6 +101,13 @@ namespace Giometric.UniSonic
         [SerializeField] private float flatGroundSideRaycastOffset = -8f;
         [Tooltip("When launched by a spring while grounded, become airborne if the angle between the spring's launch direction and the current ground normal is less than this value (in degrees).")]
         [SerializeField] private float springAirborneAngleThreshold = 45f;
+        [Tooltip("The velocity the character is launched with when they take damage.")]
+        [SerializeField] private Vector2 hitStateVelocity = new Vector2(2f, 4f);
+        [Tooltip("The gravity used by the character while in the hit state.")]
+        [SerializeField] private float hitStateGravity = -675f;
+        [Tooltip("The amount of time the character will be invulnerable after landing from a hit state.")]
+        [Min(0f)]
+        [SerializeField] private float postHitInvulnerabilityTime = 2f;
 
         [SerializeField] private LayerMask collisionMaskA;
         [SerializeField] private LayerMask collisionMaskB;
@@ -207,12 +214,23 @@ namespace Giometric.UniSonic
         private bool isJumpSpinning = false;
 
         /// <Summary>
-        /// True if Sonic is currently looking up.
+        /// True if the character is currently in the hit state.
+        /// </Summary>
+        public bool IsHit { get; private set; }
+        private float postHitInvulnerabilityTimer = 0f;
+
+        /// <Summary>
+        /// True if the character is currently in the hit state.
+        /// </Summary>
+        public bool IsInvulnerable { get { return IsHit || postHitInvulnerabilityTimer > 0f; } }
+
+        /// <Summary>
+        /// True if the character is currently looking up.
         /// </Summary>
         public bool LookingUp { get; private set; }
 
         /// <Summary>
-        /// True if Sonic is currently looking down.
+        /// True if the character is currently looking down.
         /// </Summary>
         public bool LookingDown { get; private set; }
 
@@ -319,6 +337,7 @@ namespace Giometric.UniSonic
         private int springJumpHash;
         private int jumpSpinHash;
         private int jumpSpinTagHash;
+        private int hitHash;
 
         /// <Summary>
         /// Reset velocity and other movement state.
@@ -443,6 +462,21 @@ namespace Giometric.UniSonic
             hControlLockTimer = keepLongerTime ? Mathf.Max(time, hControlLockTimer) : time;
         }
 
+        public void SetHitState(Vector2 source, bool damage = true)
+        {
+            // TODO: if damage == true, lose rings
+            IsHit = true;
+            Grounded = false;
+            float positionDif = transform.position.x - source.x;
+            float direction = -FacingDirection;
+            if (!Mathf.Approximately(0f, positionDif))
+            {
+                direction = Mathf.Sign(positionDif);
+            }
+            velocity = new Vector2(hitStateVelocity.x * direction, hitStateVelocity.y);
+            animator.SetBool(hitHash, true);
+        }
+
         private void Awake()
         {
             speedHash = Animator.StringToHash("Speed");
@@ -456,6 +490,7 @@ namespace Giometric.UniSonic
             springJumpHash = Animator.StringToHash("Spring");
             jumpSpinHash = Animator.StringToHash("JumpSpin");
             jumpSpinTagHash = Animator.StringToHash(jumpSpinTagName);
+            hitHash = Animator.StringToHash("Hit");
 
             FacingDirection = 1f;
             SetCollisionLayer(0);

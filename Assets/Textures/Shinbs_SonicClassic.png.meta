@@ -3723,8 +3723,8 @@ TextureImporter:
         y: 269
         width: 38
         height: 28
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 9
+      pivot: {x: 0.5263158, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -3744,8 +3744,8 @@ TextureImporter:
         y: 271
         width: 38
         height: 26
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 9
+      pivot: {x: 0.5263158, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -4244,9 +4244,9 @@ TextureImporter:
       Shinbs_SonicClassic_7: 964877254
       Shinbs_SonicClassic_125: 953047511
       Shinbs_SonicClassic_33: -319004614
-      Shinbs_Push_03: 1570723309
       Shinbs_SonicClassic_80: 190331235
       Shinbs_SonicClassic_82: 1249965484
+      Shinbs_Push_03: 1570723309
       Shinbs_SonicClassic_194: -607424458
       Shinbs_Walk_01: 915693383
       Shinbs_SonicClassic_61: -1954792210

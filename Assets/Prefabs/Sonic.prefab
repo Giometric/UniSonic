@@ -151,6 +151,7 @@ MonoBehaviour:
   stepDownHeightMax: 15
   wallCollisionWidthHalf: 11
   flatGroundSideRaycastOffset: -8
+  springAirborneAngleThreshold: 45
   collisionMaskA:
     serializedVersion: 2
     m_Bits: 1025
@@ -175,6 +176,8 @@ MonoBehaviour:
   uprightRotationRate: 168.75
   brakeTagName: brake
   brakeGroundSpeedThreshold: 240
+  jumpSpinTagName: jumpSpin
+  springJumpDuration: 0.8
 --- !u!114 &682184914850520927
 MonoBehaviour:
   m_ObjectHideFlags: 0
