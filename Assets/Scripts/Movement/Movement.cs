@@ -1126,7 +1126,9 @@ namespace Giometric.UniSonic
         private void ExitWater()
         {
             underwater = false;
-            velocity.y *= 2f;
+
+            // Double y velocity, up to a limit so that springs don't launch the character way up into the air
+            velocity.y = Mathf.Max(velocity.y, Mathf.Min(velocity.y * 2f, underwaterMovementSettings.JumpVelocity * 2f));
         }
 
         private bool GroundRaycast(Vector2 castStart, Vector2 dir, float distance, ContactFilter2D filter,
