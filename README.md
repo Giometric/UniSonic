@@ -30,11 +30,12 @@ All input is done via Unity's old InputManager, and the mappings can be edited f
 - Looking up and down
 - Interactable objects
   - Springs
+  - Simple damage trigger
 
 ### Missing Features
 - Collecting/losing rings
 - Enemies
-- Some other interactables
+- Other interactables
 - Spin-dashing
 - Pushing
 - 'About-to-fall' animation when standing near ledges
