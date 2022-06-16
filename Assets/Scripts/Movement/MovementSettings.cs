@@ -21,6 +21,12 @@ namespace Giometric.UniSonic
         [SerializeField] private float terminalVelocity = 960f;
         [SerializeField] private float airDrag = 0.03125f;
 
+        [Header("Other")]
+        [Tooltip("The velocity the character is launched with when they take damage.")]
+        [SerializeField] private Vector2 hitStateVelocity = new Vector2(120f, 240f);
+        [Tooltip("The gravity used by the character while in the hit state.")]
+        [SerializeField] private float hitStateGravity = -675f;
+
         public float GroundAcceleration { get { return groundAcceleration; } }
         public float GroundTopSpeed { get { return groundTopSpeed; } }
         public float Friction { get { return friction; } }
@@ -33,5 +39,7 @@ namespace Giometric.UniSonic
         public float Gravity { get { return gravity; } }
         public float TerminalVelocity { get { return terminalVelocity; } }
         public float AirDrag { get { return airDrag; } }
+        public Vector2 HitStateVelocity { get { return hitStateVelocity; } }
+        public float HitStateGravity { get { return hitStateGravity; } }
     }
 }

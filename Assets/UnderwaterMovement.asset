@@ -24,3 +24,5 @@ MonoBehaviour:
   gravity: -225
   terminalVelocity: 960
   airDrag: 0.03125
+  hitStateVelocity: {x: 60, y: 120}
+  hitStateGravity: -225

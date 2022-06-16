@@ -101,13 +101,9 @@ namespace Giometric.UniSonic
         [SerializeField] private float flatGroundSideRaycastOffset = -8f;
         [Tooltip("When launched by a spring while grounded, become airborne if the angle between the spring's launch direction and the current ground normal is less than this value (in degrees).")]
         [SerializeField] private float springAirborneAngleThreshold = 45f;
-        [Tooltip("The velocity the character is launched with when they take damage.")]
-        [SerializeField] private Vector2 hitStateVelocity = new Vector2(2f, 4f);
-        [Tooltip("The gravity used by the character while in the hit state.")]
-        [SerializeField] private float hitStateGravity = -675f;
-        [Tooltip("The amount of time the character will be invulnerable after landing from a hit state.")]
         [Min(0f)]
-        [SerializeField] private float postHitInvulnerabilityTime = 2f;
+        [Tooltip("The amount of time the character will be invulnerable after landing from a hit state.")]
+        [SerializeField] private float postHitInvulnerabilityDuration = 2f;
 
         [SerializeField] private LayerMask collisionMaskA;
         [SerializeField] private LayerMask collisionMaskB;
@@ -212,6 +208,8 @@ namespace Giometric.UniSonic
 
         private bool isBraking = false;
         private bool isJumpSpinning = false;
+        private bool isSpringJumping = false;
+        private float springJumpTimer = 0f;
 
         /// <Summary>
         /// True if the character is currently in the hit state.
@@ -220,7 +218,7 @@ namespace Giometric.UniSonic
         private float postHitInvulnerabilityTimer = 0f;
 
         /// <Summary>
-        /// True if the character is currently in the hit state.
+        /// True if the character is currently invulnerable due to being in the hit state or being in post-hit invulnerability time
         /// </Summary>
         public bool IsInvulnerable { get { return IsHit || postHitInvulnerabilityTimer > 0f; } }
 
@@ -338,6 +336,7 @@ namespace Giometric.UniSonic
         private int jumpSpinHash;
         private int jumpSpinTagHash;
         private int hitHash;
+        private int postHitHash;
 
         /// <Summary>
         /// Reset velocity and other movement state.
@@ -360,6 +359,9 @@ namespace Giometric.UniSonic
             lowCeiling = false;
             underwater = false;
             isBraking = false;
+            isSpringJumping = false;
+            springJumpTimer = 0f;
+            isJumpSpinning = false;
             SetCollisionLayer(0);
         }
 
@@ -376,7 +378,8 @@ namespace Giometric.UniSonic
             }
         }
 
-        public void SetSpringState(Vector2 launchVelocity, bool forceAirborne, SpringVelocityMode springVelocityMode, float horizontalControlLockTime = 0f)
+        public void SetSpringState(Vector2 launchVelocity, bool forceAirborne, SpringVelocityMode springVelocityMode,
+            float horizontalControlLockTime = 0f, bool useJumpSpinAnimation = true)
         {
             if (launchVelocity.sqrMagnitude < 0.001f)
             {
@@ -443,11 +446,27 @@ namespace Giometric.UniSonic
                 Jumped = false;
                 Rolling = false;
                 groundSpeed = 0f;
-                animator.SetFloat(speedHash, 0.1f); // Set a slow-but-not-zero speed hash to get the walk animation at the lowest speed
-
-                // TODO: Option to use one-frame spring jump animation instead
-                isJumpSpinning = true;
-                animator.SetBool(jumpSpinHash, true);
+                if (useJumpSpinAnimation)
+                {
+                    // Set a slow-but-not-zero speed hash to get the walk animation at the lowest speed
+                    // For some reason in the original games only springs that use the spin jump animation do this
+                    animator.SetFloat(speedHash, 0.1f);
+                    isJumpSpinning = true;
+                    isSpringJumping = false;
+                    springJumpTimer = 0f;
+                    animator.SetBool(springJumpHash, false);
+                    animator.SetBool(jumpSpinHash, true);
+                }
+                else
+                {
+                    animator.SetFloat(speedHash, Mathf.Max(Mathf.Abs(groundSpeed), 0.1f));
+                    isJumpSpinning = false;
+                    isSpringJumping = true;
+                    springJumpTimer = springJumpDuration;
+                    animator.SetBool(springJumpHash, true);
+                    animator.SetBool(jumpSpinHash, false);
+                }
+                EndHitState();
             }
 
             if (horizontalControlLockTime > 0f)
@@ -466,15 +485,31 @@ namespace Giometric.UniSonic
         {
             // TODO: if damage == true, lose rings
             IsHit = true;
+            postHitInvulnerabilityTimer = 0f;
+            isBraking = false;
+            isSpringJumping = false;
+            isJumpSpinning = false;
+            characterAngle = 0f;
             Grounded = false;
+            Jumped = false;
+
+            // Jumping resets the horizontal control lock
+            hControlLock = false;
+            hControlLockTimer = 0f;
+            Vector2 hitStateVelocity = CurrentMovementSettings.HitStateVelocity;
             float positionDif = transform.position.x - source.x;
-            float direction = -FacingDirection;
-            if (!Mathf.Approximately(0f, positionDif))
+            // If the damage source is nearly directly above or below us, default to getting knocked away from where we are facing at a lower speed
+            if (Mathf.Abs(positionDif) < 1f)
             {
-                direction = Mathf.Sign(positionDif);
+                velocity = new Vector2(hitStateVelocity.x * -FacingDirection, hitStateVelocity.y);
             }
-            velocity = new Vector2(hitStateVelocity.x * direction, hitStateVelocity.y);
+            else
+            {
+                velocity = new Vector2(hitStateVelocity.x * Mathf.Sign(positionDif), hitStateVelocity.y);
+            }
+            animator.SetBool(postHitHash, false);
             animator.SetBool(hitHash, true);
+            animator.SetFloat(speedHash, 0.1f);
         }
 
         private void Awake()
@@ -487,10 +522,11 @@ namespace Giometric.UniSonic
             lookDownHash = Animator.StringToHash("LookDown");
             brakeHash = Animator.StringToHash("Brake");
             brakeTagHash = Animator.StringToHash(brakeTagName);
-            springJumpHash = Animator.StringToHash("Spring");
+            springJumpHash = Animator.StringToHash("SpringJump");
             jumpSpinHash = Animator.StringToHash("JumpSpin");
             jumpSpinTagHash = Animator.StringToHash(jumpSpinTagName);
             hitHash = Animator.StringToHash("Hit");
+            postHitHash = Animator.StringToHash("PostHit");
 
             FacingDirection = 1f;
             SetCollisionLayer(0);
@@ -501,7 +537,7 @@ namespace Giometric.UniSonic
             if (ShowDebug)
             {
                 GUI.skin = debugGUISkin != null ? debugGUISkin : GUI.skin;
-                Rect areaRect = new Rect(5, 5, 180, 228);
+                Rect areaRect = new Rect(5, 5, 180, 252);
 
                 // Background box
                 Color oldColor = GUI.color;
@@ -530,6 +566,8 @@ namespace Giometric.UniSonic
                     GUILayout.Label("Angle (Deg): --");
                 }
                 GUILayout.Label($"Layer: {(currentGroundMask == collisionMaskA ? 'A' : 'B')}");
+                GUILayout.Toggle(IsHit, "Is Hit");
+                GUILayout.Toggle(IsInvulnerable, "Is Invulnerable");
                 GUILayout.EndArea();
             }
         }
@@ -716,6 +754,15 @@ namespace Giometric.UniSonic
             float accelSpeedCap = CurrentMovementSettings.GroundTopSpeed;
             float deltaTime = Time.fixedDeltaTime;
 
+            if (postHitInvulnerabilityTimer > 0f)
+            {
+                postHitInvulnerabilityTimer = Mathf.MoveTowards(postHitInvulnerabilityTimer, 0f, deltaTime);
+                if (postHitInvulnerabilityTimer <= 0f)
+                {
+                    animator.SetBool(postHitHash, false);
+                }
+            }
+
             if (Grounded)
             {
                 // TODO: Check for special animations disabling control, such as balancing on a ledge
@@ -892,57 +939,61 @@ namespace Giometric.UniSonic
             }
             else
             {
-                // If we are moving up faster than the threshold and the jump button is released,
-                // clamp our upward velocity to the threshold to allow for some jump height control
-                float jumpReleaseThreshold = CurrentMovementSettings.JumpReleaseThreshold;
-                if (Jumped && !InputJump && velocity.y > jumpReleaseThreshold)
+                if (!IsHit)
                 {
-                    velocity.y = jumpReleaseThreshold;
-                }
-
-                // If jumping (but not rolling) and there's any directional input, allow air acceleration
-                if (!(Rolling && Jumped) && !Mathf.Approximately(InputMove.x, 0f))
-                {
-                    // Similar to the 'accelerate up to cap unless already going faster' code from ground acceleration
-                    float airAcc = CurrentMovementSettings.AirAcceleration;
-                    if (InputMove.x < 0f && velocity.x > -accelSpeedCap)
+                    // If we are moving up faster than the threshold and the jump button is released,
+                    // clamp our upward velocity to the threshold to allow for some jump height control
+                    float jumpReleaseThreshold = CurrentMovementSettings.JumpReleaseThreshold;
+                    if (Jumped && !InputJump && velocity.y > jumpReleaseThreshold)
                     {
-                        velocity.x = Mathf.Max(-accelSpeedCap, velocity.x + (InputMove.x * airAcc * deltaTime));
-                    }
-                    else if (InputMove.x > 0f && velocity.x < accelSpeedCap)
-                    {
-                        velocity.x = Mathf.Min(accelSpeedCap, velocity.x + (InputMove.x * airAcc * deltaTime));
+                        velocity.y = jumpReleaseThreshold;
                     }
 
-                    // Turn to face the direction of input
-                    FacingDirection = Mathf.Sign(InputMove.x);
-                }
-                
-                // Apply air drag, if our X and Y velocities are within the thresholds
-                if (shouldApplyAirDrag)
-                {
-                    // TODO: Is this correct?
-                    // Guide says "X Speed -= ((X Speed div 0.125) / 256);"
-                    // Here extrapolated to velocity.x * 8 / 256 == velocity.x * 0.03125, using that as "AirDrag" value
-                    velocity.x -= velocity.x * CurrentMovementSettings.AirDrag;
+                    // If jumping (but not rolling) and there's any directional input, allow air acceleration
+                    if (!(Rolling && Jumped) && !Mathf.Approximately(InputMove.x, 0f))
+                    {
+                        // Similar to the 'accelerate up to cap unless already going faster' code from ground acceleration
+                        float airAcc = CurrentMovementSettings.AirAcceleration;
+                        if (InputMove.x < 0f && velocity.x > -accelSpeedCap)
+                        {
+                            velocity.x = Mathf.Max(-accelSpeedCap, velocity.x + (InputMove.x * airAcc * deltaTime));
+                        }
+                        else if (InputMove.x > 0f && velocity.x < accelSpeedCap)
+                        {
+                            velocity.x = Mathf.Min(accelSpeedCap, velocity.x + (InputMove.x * airAcc * deltaTime));
+                        }
+
+                        // Turn to face the direction of input
+                        FacingDirection = Mathf.Sign(InputMove.x);
+                    }
+                    
+                    // Apply air drag, if our X and Y velocities are within the thresholds
+                    if (shouldApplyAirDrag)
+                    {
+                        // TODO: Is this correct?
+                        // Guide says "X Speed -= ((X Speed div 0.125) / 256);"
+                        // Here extrapolated to velocity.x * 8 / 256 == velocity.x * 0.03125, using that as "AirDrag" value
+                        velocity.x -= velocity.x * CurrentMovementSettings.AirDrag;
+                    }
+
+                    // Rotate character towards being fully upright, if needed
+                    if (characterAngle > 0f && characterAngle <= 180f)
+                    {
+                        characterAngle -= deltaTime * uprightRotationRate;
+                        if (characterAngle < 0f) { characterAngle = 0f; }
+                    }
+                    else if (characterAngle < 360f && characterAngle > 180f)
+                    {
+                        characterAngle += deltaTime * uprightRotationRate;
+                        if (characterAngle >= 360f) { characterAngle = 0f; }
+                    }
                 }
 
                 ApplyMovement(deltaTime);
 
                 // Apply gravity
-                velocity.y = Mathf.Max(velocity.y + (CurrentMovementSettings.Gravity * deltaTime), -CurrentMovementSettings.TerminalVelocity);
-
-                // Rotate character towards being fully upright, if needed
-                if (characterAngle > 0f && characterAngle <= 180f)
-                {
-                    characterAngle -= deltaTime * uprightRotationRate;
-                    if (characterAngle < 0f) { characterAngle = 0f; }
-                }
-                else if (characterAngle < 360f && characterAngle > 180f)
-                {
-                    characterAngle += deltaTime * uprightRotationRate;
-                    if (characterAngle >= 360f) { characterAngle = 0f; }
-                }
+                float gravity = IsHit ? CurrentMovementSettings.HitStateGravity : CurrentMovementSettings.Gravity;
+                velocity.y = Mathf.Max(velocity.y + (gravity * deltaTime), -CurrentMovementSettings.TerminalVelocity);
 
                 DoWallCollisions(deltaTime, grounded: false);
             }
@@ -1040,6 +1091,8 @@ namespace Giometric.UniSonic
                 animator.SetBool(lookUpHash, LookingUp);
                 animator.SetBool(lookDownHash, LookingDown);
 
+                EndHitState();
+
                 // Check if we've got a low ceiling, prevents jumping
                 lowCeiling = ceil.IsValid && transform.position.y > ceil.Point.y - lowCeilingHeight;
 
@@ -1121,6 +1174,16 @@ namespace Giometric.UniSonic
             }
             animator.SetBool(brakeHash, isBraking);
 
+            if (isSpringJumping)
+            {
+                springJumpTimer -= deltaTime;
+                if (springJumpTimer <= 0f)
+                {
+                    isSpringJumping = false;
+                    animator.SetBool(springJumpHash, false);
+                }
+            }
+
             // If jump spinning, check if the animation (identified by tag) is finished playing through,
             // or if we're no longer airborne - if so, stop the animation
             if (isJumpSpinning)
@@ -1164,6 +1227,17 @@ namespace Giometric.UniSonic
 
             // Double y velocity, up to a limit so that springs don't launch the character way up into the air
             velocity.y = Mathf.Max(velocity.y, Mathf.Min(velocity.y * 2f, underwaterMovementSettings.JumpVelocity * 2f));
+        }
+
+        private void EndHitState(bool startPostHitInvulnerability = true)
+        {
+            if (IsHit)
+            {
+                animator.SetBool(hitHash, false);
+                IsHit = false;
+                postHitInvulnerabilityTimer = startPostHitInvulnerability ? postHitInvulnerabilityDuration : 0f;
+                animator.SetBool(postHitHash, startPostHitInvulnerability);
+            }
         }
 
         private bool GroundRaycast(Vector2 castStart, Vector2 dir, float distance, ContactFilter2D filter,

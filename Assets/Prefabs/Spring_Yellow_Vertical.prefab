@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: 1906232175077911911}
   - component: {fileID: 4582667154472077337}
   - component: {fileID: 145337298594732530}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: SpringZone
   m_TagString: Untagged
   m_Icon: {fileID: 0}

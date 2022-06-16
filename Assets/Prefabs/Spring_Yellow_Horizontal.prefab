@@ -45,7 +45,7 @@ GameObject:
   - component: {fileID: 6625381005931068583}
   - component: {fileID: 6625381005931068582}
   - component: {fileID: 6625381005931068581}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: SpringZone
   m_TagString: Untagged
   m_Icon: {fileID: 0}

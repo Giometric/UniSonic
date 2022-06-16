@@ -17,6 +17,9 @@ namespace Giometric.UniSonic.Objects
         [SerializeField]
         [Tooltip("How long to set the horizontal control lock for the player.")]
         private float horizontalControlLockTime = 0.26666667f;
+        [SerializeField]
+        [Tooltip("If true, player should use the spinning spring jump animation when launched by this spring.")]
+        private bool useJumpSpinAnimation = true;
 
         [Header("Animation")]
         [SerializeField]
@@ -76,7 +79,7 @@ namespace Giometric.UniSonic.Objects
             if (player != null)
             {
                 Vector2 localUp = transform.up;
-                player.SetSpringState(localUp * launchVelocity, forcePlayerAirborne, velocityMode, horizontalControlLockTime);
+                player.SetSpringState(localUp * launchVelocity, forcePlayerAirborne, velocityMode, horizontalControlLockTime, useJumpSpinAnimation);
 
                 if (animator != null)
                 {
