@@ -31,9 +31,10 @@ All input is done via Unity's old InputManager, and the mappings can be edited f
 - Interactable objects
   - Springs
   - Simple damage trigger
+  - Rings
 
 ### Missing Features
-- Collecting/losing rings
+- Losing rings when hit
 - Enemies
 - Other interactables
 - Spin-dashing
