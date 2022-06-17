@@ -217,6 +217,17 @@ namespace Giometric.UniSonic
         public bool IsHit { get; private set; }
         private float postHitInvulnerabilityTimer = 0f;
 
+        private int rings = 0;
+
+        /// <Summary>
+        /// The number of rings this character currently holds.
+        /// </Summary>
+        public int Rings
+        {
+            get { return rings; }
+            set { rings = value; }
+        }
+
         /// <Summary>
         /// True if the character is currently invulnerable due to being in the hit state or being in post-hit invulnerability time
         /// </Summary>
@@ -529,6 +540,7 @@ namespace Giometric.UniSonic
             postHitHash = Animator.StringToHash("PostHit");
 
             FacingDirection = 1f;
+            Rings = 0;
             SetCollisionLayer(0);
         }
 
@@ -537,7 +549,7 @@ namespace Giometric.UniSonic
             if (ShowDebug)
             {
                 GUI.skin = debugGUISkin != null ? debugGUISkin : GUI.skin;
-                Rect areaRect = new Rect(5, 5, 180, 252);
+                Rect areaRect = new Rect(5, 5, 180, 272);
 
                 // Background box
                 Color oldColor = GUI.color;
@@ -568,6 +580,7 @@ namespace Giometric.UniSonic
                 GUILayout.Label($"Layer: {(currentGroundMask == collisionMaskA ? 'A' : 'B')}");
                 GUILayout.Toggle(IsHit, "Is Hit");
                 GUILayout.Toggle(IsInvulnerable, "Is Invulnerable");
+                GUILayout.Label($"Rings: {Rings}");
                 GUILayout.EndArea();
             }
         }
@@ -1091,7 +1104,14 @@ namespace Giometric.UniSonic
                 animator.SetBool(lookUpHash, LookingUp);
                 animator.SetBool(lookDownHash, LookingDown);
 
-                EndHitState();
+                if (IsHit)
+                {
+                    EndHitState();
+
+                    // Landing after being hit also resets X velocity and ground speed
+                    velocity.x = 0f;
+                    groundSpeed = 0f;
+                }
 
                 // Check if we've got a low ceiling, prevents jumping
                 lowCeiling = ceil.IsValid && transform.position.y > ceil.Point.y - lowCeilingHeight;
