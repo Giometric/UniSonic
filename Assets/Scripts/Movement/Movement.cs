@@ -72,7 +72,7 @@ namespace Giometric.UniSonic
         {
             get
             {
-                if (Rolling || Jumped) { return ballHeightHalf; }
+                if (IsBall) { return ballHeightHalf; }
                 else { return standingHeightHalf; }
             }
         }
@@ -190,6 +190,11 @@ namespace Giometric.UniSonic
         /// </Summary>
         public bool Jumped { get; private set; }
 
+        /// <Summary>
+        /// Returns whether the character is currently in a ball state (either from rolling or jumping).
+        /// </Summary>
+        public bool IsBall { get { return Rolling || Jumped; } }
+
         private float groundSpeed;
     
         /// <Summary>
@@ -267,7 +272,7 @@ namespace Giometric.UniSonic
         private void GetGroundRaycastPositions(GroundMode groundMode, bool ceilingCheck, out Vector2 leftRaycastPosition, out Vector2 rightRaycastPosition)
         {
             // Add these small (TODO: Configurable?) offsets to avoid sampling exactly between tiles in some situations
-            float coord = (Rolling || Jumped ? ballWidthHalf : standingWidthHalf) + 0.005f;
+            float coord = (IsBall ? ballWidthHalf : standingWidthHalf) + 0.005f;
             switch (groundMode)
             {
                 case GroundMode.Floor:
@@ -1134,10 +1139,9 @@ namespace Giometric.UniSonic
 
             if (hitbox != null)
             {
-                bool isBall = Rolling || Jumped;
-                bool shortHitbox = LookingDown || isBall;
+                bool shortHitbox = LookingDown || IsBall;
                 hitbox.size = shortHitbox ? shortHitboxSize : standingHitboxSize;
-                hitbox.offset = shortHitbox ? new Vector2(0f, ((shortHitboxSize.y - standingHitboxSize.y) / 2f) + (isBall ? rollingPositionOffset : 0f)) : Vector2.zero;
+                hitbox.offset = shortHitbox ? new Vector2(0f, ((shortHitboxSize.y - standingHitboxSize.y) / 2f) + (IsBall ? rollingPositionOffset : 0f)) : Vector2.zero;
             }
 
             if (!Grounded)
@@ -1172,8 +1176,16 @@ namespace Giometric.UniSonic
             {
                 sprite.flipX = FacingDirection < 0f;
             }
-            transform.localRotation = Quaternion.Euler(0f, 0f, smoothRotation ? characterAngle : SnapAngle(characterAngle));
-            animator.SetBool(spinHash, Rolling || Jumped);
+
+            if (IsBall)
+            {
+                transform.localRotation = Quaternion.identity;
+            }
+            else
+            {
+                transform.localRotation = Quaternion.Euler(0f, 0f, smoothRotation ? characterAngle : SnapAngle(characterAngle));
+            }
+            animator.SetBool(spinHash, IsBall);
 
             // If braking, check if the braking animation (identified by tag) is finished playing through,
             // or if we're no longer in ground mode - if so, stop the animation
