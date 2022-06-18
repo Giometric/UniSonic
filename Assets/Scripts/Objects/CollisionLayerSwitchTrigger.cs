@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace Giometric.UniSonic.Objects
 {
-    public class CollisionLayerSwitchTrigger : MonoBehaviour
+    public class CollisionLayerSwitchTrigger : ObjectTriggerBase
     {
         private enum TriggerAction
         {
@@ -33,81 +33,40 @@ namespace Giometric.UniSonic.Objects
         [SerializeField]
         private TriggerAction fromBelow = TriggerAction.None;
 
-        private Collider2D collider2d;
+        protected override Color32 gizmoColor { get { return new Color32(255, 255, 0, 64); } }
 
-        private static readonly Color32 gizmoColor = new Color32(255, 255, 0, 64);
-
-        private void Awake()
+        protected override void OnPlayerEnterTrigger(Movement player)
         {
-            collider2d = GetComponent<Collider2D>();
-        }
+            base.OnPlayerEnterTrigger(player);
 
-        private void OnDrawGizmos()
-        {
-            if (collider2d == null)
+            if (mustBeGrounded && !player.Grounded)
             {
-                collider2d = GetComponent<Collider2D>();
+                return;
             }
 
-            if (collider2d != null)
-            {
-                Gizmos.color = gizmoColor;
+            var center = collider2d != null ? collider2d.bounds.center : transform.position;
+            var dif = player.transform.position - collider2d.bounds.center;
 
-                if (collider2d is BoxCollider2D boxCollider2d)
+            if (triggerDirection == TriggerDirectionMode.Horizontal)
+            {
+                if (dif.x >= 0f && fromRight != TriggerAction.None)
                 {
-                    Gizmos.matrix = transform.localToWorldMatrix;
-                    Gizmos.DrawCube(boxCollider2d.offset, boxCollider2d.size);
-                    Gizmos.DrawWireCube(boxCollider2d.offset, boxCollider2d.size);
+                    player.SetCollisionLayer((int)fromRight);
                 }
-                else if (collider2d is CircleCollider2D circleCollider2d)
+                else if (fromLeft != TriggerAction.None)
                 {
-                    Vector3 transformScale = transform.localScale;
-                    Gizmos.matrix = Matrix4x4.TRS(transform.position, transform.rotation, new Vector3(transformScale.x, transformScale.y, 0f));
-                    Gizmos.DrawSphere(circleCollider2d.offset, circleCollider2d.radius);
-                    Gizmos.DrawWireSphere(circleCollider2d.offset, circleCollider2d.radius);
-                }
-                else
-                {
-                    Bounds bounds = collider2d.bounds;
-                    Gizmos.DrawWireCube(bounds.center, bounds.size);
+                    player.SetCollisionLayer((int)fromLeft);
                 }
             }
-        }
-
-        private void OnTriggerEnter2D(Collider2D other)
-        {
-            var player = other.GetComponent<Movement>();
-            if (player != null)
+            else
             {
-                if (mustBeGrounded && !player.Grounded)
+                if (dif.y >= 0f && fromAbove != TriggerAction.None)
                 {
-                    return;
+                    player.SetCollisionLayer((int)fromAbove);
                 }
-
-                var center = collider2d != null ? collider2d.bounds.center : transform.position;
-                var dif = player.transform.position - collider2d.bounds.center;
-
-                if (triggerDirection == TriggerDirectionMode.Horizontal)
+                else if (fromBelow != TriggerAction.None)
                 {
-                    if (dif.x >= 0f && fromRight != TriggerAction.None)
-                    {
-                        player.SetCollisionLayer((int)fromRight);
-                    }
-                    else if (fromLeft != TriggerAction.None)
-                    {
-                        player.SetCollisionLayer((int)fromLeft);
-                    }
-                }
-                else
-                {
-                    if (dif.y >= 0f && fromAbove != TriggerAction.None)
-                    {
-                        player.SetCollisionLayer((int)fromAbove);
-                    }
-                    else if (fromBelow != TriggerAction.None)
-                    {
-                        player.SetCollisionLayer((int)fromBelow);
-                    }
+                    player.SetCollisionLayer((int)fromBelow);
                 }
             }
         }

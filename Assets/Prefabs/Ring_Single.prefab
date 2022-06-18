@@ -49,6 +49,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   addCount: 1
+  animator: {fileID: 4642556512380072180}
+  collectAnimTrigger: Collect
+  collectDestroyDelay: 1
 --- !u!61 &2971660416456365370
 BoxCollider2D:
   m_ObjectHideFlags: 0

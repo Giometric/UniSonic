@@ -499,7 +499,11 @@ namespace Giometric.UniSonic
 
         public void SetHitState(Vector2 source, bool damage = true)
         {
-            // TODO: if damage == true, lose rings
+            if (damage)
+            {
+                rings = 0;
+                // TODO: Spawn scattered rings
+            }
             IsHit = true;
             postHitInvulnerabilityTimer = 0f;
             isBraking = false;
