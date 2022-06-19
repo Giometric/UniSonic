@@ -402,6 +402,8 @@ namespace Giometric.UniSonic
                 return;
             }
 
+            characterAngle = 0f;
+
             // If currently grounded and this spring isn't forcing us airborne, check if the launch direction and the current
             // ground normal vector are close enough enough to each other that we should become airborne anyway
             if (Grounded)
