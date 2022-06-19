@@ -36,6 +36,10 @@ namespace Giometric.UniSonic
             /// </Summary>
             public float Angle;
             /// <Summary>
+            /// The RaycastHit2D info associated with this ground.
+            /// </Summary>
+            public RaycastHit2D Hit;
+            /// <Summary>
             /// Whether or not the GroundInfo contains valid data.
             /// </Summary>
             public bool IsValid;
@@ -247,6 +251,12 @@ namespace Giometric.UniSonic
         /// True if the character is currently looking down.
         /// </Summary>
         public bool LookingDown { get; private set; }
+
+        /// <Summary>
+        /// The incoming movement from any dynamic platforms this character is attached to.
+        /// Applied to the character during their movement and then cleared every frame.
+        /// </Summary>
+        [System.NonSerialized] public Vector2 PlatformMovement;
 
         private bool hControlLock;
         private float hControlLockTimer = 0f;
@@ -598,6 +608,10 @@ namespace Giometric.UniSonic
 
         private void ApplyMovement(float deltaTime)
         {
+            // Add platform movement to velocity, then clear it
+            velocity += PlatformMovement;
+            PlatformMovement = Vector2.zero;
+
             // Clamp velocity to global speed limit
             velocity.x = Mathf.Clamp(velocity.x, -globalSpeedLimit, globalSpeedLimit);
             velocity.y = Mathf.Clamp(velocity.y, -globalSpeedLimit, globalSpeedLimit);
@@ -1141,6 +1155,19 @@ namespace Giometric.UniSonic
                         Grounded = false;
                     }
                 }
+
+                // Check if we need to attach to a DynamicPlatform
+                if (Grounded && groundMode == GroundMode.Floor)
+                {
+                    if (currentGroundInfo.Hit.rigidbody != null)
+                    {
+                        var dynamicPlatform = currentGroundInfo.Hit.rigidbody.GetComponent<DynamicPlatform>();
+                        if (dynamicPlatform != null)
+                        {
+                            dynamicPlatform.PlayerGroundedOnPlatform(this);
+                        }
+                    }
+                }
             }
 
             if (hitbox != null)
@@ -1329,7 +1356,6 @@ namespace Giometric.UniSonic
             Vector2 dir = GetGroundRaycastDirection(groundMode, false);
             Vector2 pos = new Vector2(transform.position.x, transform.position.y);
 
-            // TODO: transform.TransformPoint() instead? Would cover scale as well
             Vector2 leftCastStart = pos + leftLocalCastPos;
             Vector2 rightCastStart = pos + rightLocalCastPos;
 
@@ -1479,6 +1505,7 @@ namespace Giometric.UniSonic
         private GroundInfo GetGroundInfo(RaycastHit2D hit, GroundMode groundOrientation)
         {
             GroundInfo info = new GroundInfo();
+            info.Hit = hit;
             if (hit.collider != null)
             {
                 GroundTile groundTile = GetGroundTile(hit, out Matrix4x4 tileTransform);
