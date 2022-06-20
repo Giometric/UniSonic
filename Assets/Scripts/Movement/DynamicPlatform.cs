@@ -40,11 +40,7 @@ namespace Giometric.UniSonic
             attachedPlayers.Clear();
         }
 
-        protected virtual void TickMovement(float deltaTime)
-        {
-            // TODO: Manually tick animator here? We need animation to happen before the player's next movement frame,
-            // otherwise player's platform movement is 1 frame late
-        }
+        protected virtual void TickMovement(float deltaTime) { }
 
         public void PlayerGroundedOnPlatform(Movement player)
         {
