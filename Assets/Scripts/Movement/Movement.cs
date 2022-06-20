@@ -570,7 +570,7 @@ namespace Giometric.UniSonic
             if (ShowDebug)
             {
                 GUI.skin = debugGUISkin != null ? debugGUISkin : GUI.skin;
-                Rect areaRect = new Rect(5, 5, 180, 272);
+                Rect areaRect = new Rect(5, 5, 180, 290);
 
                 // Background box
                 Color oldColor = GUI.color;
@@ -590,6 +590,7 @@ namespace Giometric.UniSonic
                 GUILayout.Label($"Mode: {groundMode}");
                 GUILayout.Label($"Ground Speed: {GroundSpeed:F1}");
                 GUILayout.Label($"Velocity: {Velocity} ({Velocity.magnitude:F1})");
+                GUILayout.Label($"Platform: {PlatformMovement}");
                 if (currentGroundInfo.IsValid)
                 {
                     GUILayout.Label($"Angle (Deg): {(currentGroundInfo.Angle * Mathf.Rad2Deg):F0}");
@@ -608,16 +609,16 @@ namespace Giometric.UniSonic
 
         private void ApplyMovement(float deltaTime)
         {
-            // Add platform movement to velocity, then clear it
-            velocity += PlatformMovement;
-            PlatformMovement = Vector2.zero;
-
             // Clamp velocity to global speed limit
             velocity.x = Mathf.Clamp(velocity.x, -globalSpeedLimit, globalSpeedLimit);
             velocity.y = Mathf.Clamp(velocity.y, -globalSpeedLimit, globalSpeedLimit);
 
             // Apply movement
             transform.position += new Vector3(velocity.x, velocity.y, 0f) * deltaTime;
+
+            // Apply incoming platform movement directly to position, then clear it
+            transform.position += new Vector3(PlatformMovement.x, PlatformMovement.y, 0f);
+            PlatformMovement = Vector2.zero;
         }
 
         private void DoWallCollisions(float deltaTime, bool grounded, GroundMode groundMode = GroundMode.Floor)

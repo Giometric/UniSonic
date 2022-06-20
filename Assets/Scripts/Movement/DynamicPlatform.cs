@@ -9,11 +9,13 @@ namespace Giometric.UniSonic
 
         protected virtual void OnDrawGizmos()
         {
+            var prevColor = Gizmos.color;
             foreach (var player in attachedPlayers)
             {
                 Gizmos.color = Color.yellow;
                 Gizmos.DrawLine(transform.position, player.transform.position);
             }
+            Gizmos.color = prevColor;
         }
 
         private void FixedUpdate()
