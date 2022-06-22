@@ -533,18 +533,26 @@ namespace Giometric.UniSonic
             int numCircles = Mathf.Max(1, Mathf.CeilToInt(numRings / (float)scatterRingsPerCircle));
             int remaining = numRings;
             float scatterSpeed = scatterRingBaseSpeed;
+            float angleSpacing = Mathf.PI * 2f / scatterRingsPerCircle;
+            float startAngle = (Mathf.PI * 0.5f) + (angleSpacing * 0.5f * FacingDirection);
             for (int circle = 0; circle < numCircles; ++circle)
             {
-                int numRingsInThisCircle = Mathf.Min(scatterRingsPerCircle, remaining);
-                for (int i = 0; i < numRingsInThisCircle && remaining > 0; ++i)
+                float currentAngle = 0f;
+                bool flip = false;
+                for (int i = 0; i < scatterRingsPerCircle && remaining > 0; ++i)
                 {
-                    float percent = numRingsInThisCircle > 1 ? i / (float)(numRingsInThisCircle - 1) : 0f;
-                    float angleRad = Mathf.PI * percent;
+                    float angleRad = startAngle + currentAngle;
                     Vector2 velocity = new Vector2(Mathf.Cos(angleRad) * scatterSpeed, Mathf.Sin(angleRad) * scatterSpeed);
 
+                    if (flip)
+                    {
+                        velocity.x = -velocity.x;
+                        currentAngle += angleSpacing;
+                    }
+
+                    flip = !flip;
                     // TODO: Pool these
                     var scatterRing = Instantiate(scatterRingPrefab, transform.position, Quaternion.identity);
-
                     scatterRing.Velocity = velocity;
                     --remaining;
                 }
