@@ -141,6 +141,11 @@ MonoBehaviour:
   hitbox: {fileID: 682184914850520934}
   standingHitboxSize: {x: 18, y: 34}
   shortHitboxSize: {x: 18, y: 20}
+  scatterRingPrefab: {fileID: 8212065975171165670, guid: 34718c3759367ba4eb95cc0bd52c650d,
+    type: 3}
+  scatterRingsCountLimit: 32
+  scatterRingsPerCircle: 16
+  scatterRingBaseSpeed: 240
   standingHeightHalf: 20
   ballHeightHalf: 15
   groundRaycastDist: 36
@@ -152,6 +157,7 @@ MonoBehaviour:
   wallCollisionWidthHalf: 11
   flatGroundSideRaycastOffset: -8
   springAirborneAngleThreshold: 45
+  postHitInvulnerabilityDuration: 2
   collisionMaskA:
     serializedVersion: 2
     m_Bits: 1025

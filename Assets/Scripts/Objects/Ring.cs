@@ -8,9 +8,8 @@ namespace Giometric.UniSonic.Objects
         [SerializeField]
         [Tooltip("How many rings the character will gain when collecting this ring object.")]
         private int addCount = 1;
-
         [SerializeField]
-        private Animator animator;
+        protected Animator animator;
         [SerializeField]
         private string collectAnimTrigger = "Collect";
         [SerializeField]
@@ -18,6 +17,8 @@ namespace Giometric.UniSonic.Objects
 
         public bool IsCollected { get; private set; }
         private int collectHash = -1;
+
+        protected virtual bool CanBeCollected { get { return !IsCollected; } }
 
         protected override Color32 gizmoColor { get { return new Color32(16, 255, 64, 64); } }
 
@@ -33,7 +34,7 @@ namespace Giometric.UniSonic.Objects
         protected override void OnPlayerEnterTrigger(Movement player)
         {
             base.OnPlayerEnterTrigger(player);
-            if (!player.IsHit && !IsCollected)
+            if (CanBeCollected && !player.IsHit)
             {
                 if (collider2d != null)
                 {

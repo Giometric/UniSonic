@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.Tilemaps;
+using Giometric.UniSonic.Objects;
 
 namespace Giometric.UniSonic
 {
@@ -65,6 +66,13 @@ namespace Giometric.UniSonic
         [SerializeField] private BoxCollider2D hitbox;
         [SerializeField] private Vector2 standingHitboxSize = new Vector2(18f, 34f);
         [SerializeField] private Vector2 shortHitboxSize = new Vector2(18f, 20f);
+
+        [Header("Damage")]
+        [SerializeField] private ScatterRing scatterRingPrefab;
+        [Tooltip("The maximum number of rings that will be spawned around the character when rings are lost.")]
+        [SerializeField] private int scatterRingsCountLimit = 32;
+        [SerializeField] private int scatterRingsPerCircle = 16;
+        [SerializeField] private float scatterRingBaseSpeed = 240f;
 
         [Header("General")]
         [Tooltip("Half the character's height when standing.")]
@@ -509,12 +517,47 @@ namespace Giometric.UniSonic
             hControlLockTimer = keepLongerTime ? Mathf.Max(time, hControlLockTimer) : time;
         }
 
+        public void ScatterRings(int numRings)
+        {
+            if (numRings == 0 || scatterRingsPerCircle == 0 || scatterRingsCountLimit == 0)
+            {
+                return;
+            }
+
+            if (scatterRingPrefab == null)
+            {
+                Debug.LogWarning("No scatter ring prefab defined!");
+                return;
+            }
+
+            int numCircles = Mathf.Max(1, Mathf.CeilToInt(numRings / (float)scatterRingsPerCircle));
+            int remaining = numRings;
+            float scatterSpeed = scatterRingBaseSpeed;
+            for (int circle = 0; circle < numCircles; ++circle)
+            {
+                int numRingsInThisCircle = Mathf.Min(scatterRingsPerCircle, remaining);
+                for (int i = 0; i < numRingsInThisCircle && remaining > 0; ++i)
+                {
+                    float percent = numRingsInThisCircle > 1 ? i / (float)(numRingsInThisCircle - 1) : 0f;
+                    float angleRad = Mathf.PI * percent;
+                    Vector2 velocity = new Vector2(Mathf.Cos(angleRad) * scatterSpeed, Mathf.Sin(angleRad) * scatterSpeed);
+
+                    // TODO: Pool these
+                    var scatterRing = Instantiate(scatterRingPrefab, transform.position, Quaternion.identity);
+
+                    scatterRing.Velocity = velocity;
+                    --remaining;
+                }
+                scatterSpeed *= 0.5f;
+            }
+        }
+
         public void SetHitState(Vector2 source, bool damage = true)
         {
             if (damage)
             {
+                ScatterRings(rings);
                 rings = 0;
-                // TODO: Spawn scattered rings
             }
             IsHit = true;
             postHitInvulnerabilityTimer = 0f;

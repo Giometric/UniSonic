@@ -9,6 +9,12 @@ namespace Giometric.UniSonic
 
         protected Collider2D collider2d;
 
+        /// <Summary>
+        /// Returns true if the platform allows collisions from objects moving in the direction specified by castDirection.
+        /// To qualify, castDirection must be within 90 degrees of the platform's angle (dot product < 0).
+        /// For instance, a platform facing upward will generally allow collisions if the incoming direction is mostly downward.
+        /// castDirection is expected to be normalized.
+        /// </Summary>
         public bool CanCollideInDirection(Vector2 castDirection)
         {
             Vector2 platformDirection = Quaternion.Euler(0f, 0f, angleOffset) * Vector2.up;
