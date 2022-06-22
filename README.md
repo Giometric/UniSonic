@@ -28,13 +28,13 @@ All input is done via Unity's old InputManager, and the mappings can be edited f
   -  This has some minor issues, mostly requiring some care when placing the switch triggers
 - Smooth rotation for Sonic, like what the Sonic Advance games do, is supported and can be enabled via a checkbox on the Sonic prefab; turned off by default
 - Looking up and down
+- Losing rings when hit
 - Interactable objects
   - Springs
   - Simple damage trigger
   - Rings
 
 ### Missing Features
-- Losing rings when hit
 - Enemies
 - Other interactables
 - Spin-dashing
