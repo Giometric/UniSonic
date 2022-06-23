@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using UnityEngine.Pool;
 using UnityEngine.Tilemaps;
 using Giometric.UniSonic.Objects;
 
@@ -287,6 +287,44 @@ namespace Giometric.UniSonic
         private bool lowCeiling;
         private bool underwater;
 
+        private IObjectPool<ScatterRing> scatterRingsPool;
+
+        private void OnScatterRingPostCollectFinished(ScatterRing scatterRing)
+        {
+            scatterRing.ResetRing();
+            scatterRingsPool.Release(scatterRing);
+        }
+
+        private ScatterRing CreatePooledScatterRing()
+        {
+            if (scatterRingPrefab == null)
+            {
+                return null;
+            }
+
+            var scatterRing = Instantiate(scatterRingPrefab, Vector3.zero, Quaternion.identity);
+            scatterRing.Pool = scatterRingsPool;
+            scatterRing.gameObject.SetActive(false);
+            return scatterRing;
+        }
+
+        private void OnScatterRingTakeFromPool(ScatterRing scatterRing)
+        {
+            scatterRing.gameObject.SetActive(true);
+            scatterRing.ResetRing();
+        }
+
+        private void OnScatterRingReturnToPool(ScatterRing scatterRing)
+        {
+            scatterRing.ResetRing();
+            scatterRing.gameObject.SetActive(false);
+        }
+
+        private void OnScatterRingDestroyPooledObject(ScatterRing scatterRing)
+        {
+            Destroy(scatterRing.gameObject);
+        }
+
         private void GetGroundRaycastPositions(GroundMode groundMode, bool ceilingCheck, out Vector2 leftRaycastPosition, out Vector2 rightRaycastPosition)
         {
             // Add these small (TODO: Configurable?) offsets to avoid sampling exactly between tiles in some situations
@@ -524,12 +562,6 @@ namespace Giometric.UniSonic
                 return;
             }
 
-            if (scatterRingPrefab == null)
-            {
-                Debug.LogWarning("No scatter ring prefab defined!");
-                return;
-            }
-
             int numCircles = Mathf.Max(1, Mathf.CeilToInt(numRings / (float)scatterRingsPerCircle));
             int remaining = numRings;
             float scatterSpeed = scatterRingBaseSpeed;
@@ -541,7 +573,7 @@ namespace Giometric.UniSonic
                 bool flip = false;
                 for (int i = 0; i < scatterRingsPerCircle && remaining > 0; ++i)
                 {
-                    float angleRad = startAngle + currentAngle;
+                    float angleRad = startAngle + (FacingDirection * currentAngle);
                     Vector2 velocity = new Vector2(Mathf.Cos(angleRad) * scatterSpeed, Mathf.Sin(angleRad) * scatterSpeed);
 
                     if (flip)
@@ -551,9 +583,12 @@ namespace Giometric.UniSonic
                     }
 
                     flip = !flip;
-                    // TODO: Pool these
-                    var scatterRing = Instantiate(scatterRingPrefab, transform.position, Quaternion.identity);
-                    scatterRing.Velocity = velocity;
+                    var scatterRing = scatterRingsPool.Get();
+                    if (scatterRing != null)
+                    {
+                        scatterRing.transform.position = transform.position;
+                        scatterRing.Velocity = velocity;
+                    }
                     --remaining;
                 }
                 scatterSpeed *= 0.5f;
@@ -614,6 +649,34 @@ namespace Giometric.UniSonic
             FacingDirection = 1f;
             Rings = 0;
             SetCollisionLayer(0);
+
+            scatterRingsPool = new ObjectPool<ScatterRing>(
+                CreatePooledScatterRing,
+                OnScatterRingTakeFromPool,
+                OnScatterRingReturnToPool,
+                OnScatterRingDestroyPooledObject,
+                true,
+                scatterRingsCountLimit
+            );
+
+
+            if (scatterRingPrefab != null)
+            {
+                // Unity's object pool provides no method for pre-creating the pooled items, so we do it ourselves
+                ScatterRing[] precreatedPool = new ScatterRing[scatterRingsCountLimit];
+                for (int i = 0; i < scatterRingsCountLimit; ++i)
+                {
+                    precreatedPool[i] = scatterRingsPool.Get();
+                }
+                for (int i = 0; i < scatterRingsCountLimit; ++i)
+                {
+                    scatterRingsPool.Release(precreatedPool[i]);
+                }
+            }
+            else
+            {
+                Debug.LogWarning("Scatter ring prefab not set!", gameObject);
+            }
         }
 
         private void OnGUI()
@@ -744,7 +807,7 @@ namespace Giometric.UniSonic
                         continue;
                     }
 
-                    var groundTile = GetGroundTile(wallHit, out var tileTransform);
+                    var groundTile = Utils.GetGroundTile(wallHit, out var tileTransform, ShowDebug);
                     if (groundTile != null && groundTile.IsOneWayPlatform)
                     {
                         // Wall collisions don't hit one-way platform tiles
@@ -795,7 +858,7 @@ namespace Giometric.UniSonic
                         continue;
                     }
 
-                    var groundTile = GetGroundTile(wallHit, out var tileTransform);
+                    var groundTile = Utils.GetGroundTile(wallHit, out var tileTransform, ShowDebug);
                     if (groundTile != null && groundTile.IsOneWayPlatform)
                     {
                         // Wall collisions don't hit one-way platform tiles
@@ -1383,7 +1446,7 @@ namespace Giometric.UniSonic
                         continue;
                     }
 
-                    var groundTile = GetGroundTile(hit, out var tileTransform);
+                    var groundTile = Utils.GetGroundTile(hit, out var tileTransform, ShowDebug);
                     if (groundTile != null && groundTile.IsOneWayPlatform) // TODO: Also check angle
                     {
                         continue;
@@ -1560,7 +1623,7 @@ namespace Giometric.UniSonic
             info.Hit = hit;
             if (hit.collider != null)
             {
-                GroundTile groundTile = GetGroundTile(hit, out Matrix4x4 tileTransform);
+                GroundTile groundTile = Utils.GetGroundTile(hit, out Matrix4x4 tileTransform, ShowDebug);
                 if (groundTile != null && groundTile.UseFixedGroundAngle)
                 {
                     info.Point = hit.point;
@@ -1600,39 +1663,6 @@ namespace Giometric.UniSonic
             }
 
             return info;
-        }
-
-        private GroundTile GetGroundTile(RaycastHit2D hit, out Matrix4x4 tileTransform)
-        {
-            GroundTile groundTile = null;
-            var tilemap = hit.collider.GetComponent<Tilemap>();
-            if (tilemap != null)
-            {
-                // Use a world position that is dug into the collision just a bit, to avoid sampling from the edges of tiles
-                Vector3 checkWorldPos = hit.point + (hit.normal * (tilemap.cellSize * -0.1f));
-                groundTile = GetGroundTile(tilemap, checkWorldPos, out tileTransform);
-                return groundTile;
-            }
-            else
-            {
-                tileTransform = Matrix4x4.identity;
-            }
-            return groundTile;
-        }
-
-        // Note: The tile anchor setting on the Tilemap must be the default value of (0.5, 0.5, 0) or this method will find the wrong tile!
-        // Also, it is best to use a worldPosition that is not right on the edge of tiles, or sometimes the wrong cell is selected
-        private GroundTile GetGroundTile(Tilemap tilemap, Vector3 worldPosition, out Matrix4x4 tileTransform)
-        {
-            Vector3Int tilePos = tilemap.WorldToCell(worldPosition);
-            var groundTile = tilemap.GetTile<GroundTile>(tilePos);
-            if (ShowDebug)
-            {
-                var worldTileCenter = tilemap.GetCellCenterWorld(tilePos);
-                Debug.DrawLine(worldPosition, worldTileCenter, Color.green, 0f, false);
-            }
-            tileTransform = tilemap.GetTransformMatrix(tilePos);
-            return groundTile;
         }
 
         private void StickToGround(GroundInfo info)

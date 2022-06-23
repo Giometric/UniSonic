@@ -15,8 +15,26 @@ namespace Giometric.UniSonic.Objects
         [SerializeField]
         private float collectDestroyDelay = 1f;
 
-        public bool IsCollected { get; private set; }
+        private bool isCollected = false;
+        public bool IsCollected
+        {
+            get { return isCollected; }
+            protected set
+            {
+                isCollected = value;
+                if (animator != null && collectHash != -1)
+                {
+                    animator.SetBool(collectHash, value);
+                }
+                if (collider2d != null)
+                {
+                    collider2d.enabled = !value;
+                }
+            }
+        }
+
         private int collectHash = -1;
+        private Coroutine collectCoroutine;
 
         protected virtual bool CanBeCollected { get { return !IsCollected; } }
 
@@ -25,7 +43,7 @@ namespace Giometric.UniSonic.Objects
         protected override void Awake()
         {
             base.Awake();
-            if (!string.IsNullOrEmpty(collectAnimTrigger))
+            if (collectHash == -1 && !string.IsNullOrEmpty(collectAnimTrigger))
             {
                 collectHash = Animator.StringToHash(collectAnimTrigger);
             }
@@ -36,18 +54,27 @@ namespace Giometric.UniSonic.Objects
             base.OnPlayerEnterTrigger(player);
             if (CanBeCollected && !player.IsHit)
             {
-                if (collider2d != null)
-                {
-                    collider2d.enabled = false;
-                }
                 player.Rings += addCount;
-                IsCollected = true;
-                if (animator != null && !string.IsNullOrEmpty(collectAnimTrigger))
-                {
-                    animator.SetTrigger(collectHash);
-                }
-                Destroy(gameObject, collectDestroyDelay);
+                OnCollected();
             }
+        }
+
+        protected virtual void OnCollected()
+        {
+            IsCollected = true;
+            // TODO: Spawn the collect FX separately so we don't need to do this
+            collectCoroutine = StartCoroutine(PostCollectSequence(collectDestroyDelay));
+        }
+
+        private IEnumerator PostCollectSequence(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            PostCollectSequenceFinished();
+        }
+
+        protected virtual void PostCollectSequenceFinished()
+        {
+            Destroy(gameObject);
         }
     }
 }

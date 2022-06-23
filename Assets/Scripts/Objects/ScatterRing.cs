@@ -1,5 +1,5 @@
 using UnityEngine;
-using System.Collections;
+using UnityEngine.Pool;
 
 namespace Giometric.UniSonic.Objects
 {
@@ -42,6 +42,11 @@ namespace Giometric.UniSonic.Objects
         [System.NonSerialized]
         public Vector2 Velocity;
 
+        /// <Summary>
+        /// The object pool this ring is placed in, if any.
+        /// </Summary>
+        public IObjectPool<ScatterRing> Pool;
+
         private static int speedHash = -1;
         private static int fadeoutHash = -1;
         private float elapsed = 0f;
@@ -76,8 +81,8 @@ namespace Giometric.UniSonic.Objects
             elapsed += deltaTime;
             if (elapsed >= lifetime)
             {
-                // If out of time, destroy
-                Destroy(gameObject);
+                // If out of time, invoke OnPostCollectFinished to disappear (and possibly get re-pooled)
+                PostCollectSequenceFinished();
                 return;
             }
             else
@@ -104,10 +109,6 @@ namespace Giometric.UniSonic.Objects
 
         private void DoCollisions(float deltaTime)
         {
-            ContactFilter2D filter = new ContactFilter2D();
-            filter.SetLayerMask(collisionMask);
-            filter.useTriggers = false;
-
             Vector2 position = transform.position;
             float velocityMag = Velocity.magnitude;
             Vector2 dir = velocityMag > 0f ? (Velocity / velocityMag) : Vector2.down;
@@ -129,6 +130,18 @@ namespace Giometric.UniSonic.Objects
                     continue;
                 }
 
+                // Ignore one-way platforms if we're moving up
+                // if (dir.y > 0f)
+                // {
+                //     GroundTile groundTile = Utils.GetGroundTile(hit, out Matrix4x4 tileTransform, true);
+                //     if (groundTile != null && groundTile.IsOneWayPlatform) // TODO: Also check angle
+                //     {
+                //         continue;
+                //     }
+                // }
+
+                // Debug.Log($"HIT {hit.collider.name}");
+                // DebugUtils.DrawDiagonalCross(hit.point, 2f, Color.red, 0f);
                 position = hit.point + (hit.normal * (collisionRadius + collisionSkinWidth));
                 Vector2 newVelocity = Vector2.Reflect(Velocity, hit.normal);
 
@@ -139,6 +152,28 @@ namespace Giometric.UniSonic.Objects
                 transform.position = position;
                 break;
             }
+        }
+
+        protected override void PostCollectSequenceFinished()
+        {
+            if (Pool != null)
+            {
+                Pool.Release(this);
+            }
+            else
+            {
+                // No pool, just destroy this object
+                Destroy(gameObject);
+            }
+        }
+
+        public void ResetRing()
+        {
+            IsCollected = false;
+            Velocity = Vector2.zero;
+            elapsed = 0f;
+            animator.SetBool(fadeoutHash, false);
+            animator.SetFloat(speedHash, 1f);
         }
     }
 }
