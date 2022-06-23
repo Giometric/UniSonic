@@ -14,7 +14,6 @@ namespace Giometric.UniSonic
                 // Use a world position that is dug into the collision just a bit, to avoid sampling from the edges of tiles
                 Vector3 checkWorldPos = hit.point + (hit.normal * (tilemap.cellSize * -0.1f));
                 groundTile = GetGroundTile(tilemap, checkWorldPos, out tileTransform, showDebug);
-                DebugUtils.DrawArrow(hit.point, hit.point + (hit.normal * 4f), 2f, Color.magenta);
                 return groundTile;
             }
             else

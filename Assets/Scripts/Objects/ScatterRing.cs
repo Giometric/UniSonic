@@ -130,18 +130,8 @@ namespace Giometric.UniSonic.Objects
                     continue;
                 }
 
-                // Ignore one-way platforms if we're moving up
-                // if (dir.y > 0f)
-                // {
-                //     GroundTile groundTile = Utils.GetGroundTile(hit, out Matrix4x4 tileTransform, true);
-                //     if (groundTile != null && groundTile.IsOneWayPlatform) // TODO: Also check angle
-                //     {
-                //         continue;
-                //     }
-                // }
+                // TODO: Properly deal with one-way collisions from Tilemaps
 
-                // Debug.Log($"HIT {hit.collider.name}");
-                // DebugUtils.DrawDiagonalCross(hit.point, 2f, Color.red, 0f);
                 position = hit.point + (hit.normal * (collisionRadius + collisionSkinWidth));
                 Vector2 newVelocity = Vector2.Reflect(Velocity, hit.normal);
 
