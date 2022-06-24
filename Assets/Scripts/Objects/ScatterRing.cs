@@ -82,7 +82,7 @@ namespace Giometric.UniSonic.Objects
             if (elapsed >= lifetime)
             {
                 // If out of time, invoke OnPostCollectFinished to disappear (and possibly get re-pooled)
-                PostCollectSequenceFinished();
+                OnCollected();
                 return;
             }
             else
@@ -144,7 +144,7 @@ namespace Giometric.UniSonic.Objects
             }
         }
 
-        protected override void PostCollectSequenceFinished()
+        protected override void OnCollected()
         {
             if (Pool != null)
             {

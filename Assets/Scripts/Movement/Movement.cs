@@ -288,6 +288,7 @@ namespace Giometric.UniSonic
         private bool underwater;
 
         private IObjectPool<ScatterRing> scatterRingsPool;
+        private Transform scatterRingPoolRoot;
 
         private void OnScatterRingPostCollectFinished(ScatterRing scatterRing)
         {
@@ -302,7 +303,7 @@ namespace Giometric.UniSonic
                 return null;
             }
 
-            var scatterRing = Instantiate(scatterRingPrefab, Vector3.zero, Quaternion.identity);
+            var scatterRing = Instantiate(scatterRingPrefab, scatterRingPoolRoot);
             scatterRing.Pool = scatterRingsPool;
             scatterRing.gameObject.SetActive(false);
             return scatterRing;
@@ -650,6 +651,8 @@ namespace Giometric.UniSonic
             Rings = 0;
             SetCollisionLayer(0);
 
+            var scatterRingPoolGameObject = new GameObject("ScatterRingPool");
+            scatterRingPoolRoot = scatterRingPoolGameObject.transform;
             scatterRingsPool = new ObjectPool<ScatterRing>(
                 CreatePooledScatterRing,
                 OnScatterRingTakeFromPool,
