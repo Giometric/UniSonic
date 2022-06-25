@@ -60,6 +60,9 @@ namespace Giometric.UniSonic
         [SerializeField] private Animator animator;
         [Tooltip("When enabled, the character will rotate smoothly to match the ground angle they are standing on. When disabled, the character's rotation will snap to 45-degree increments.")]
         [SerializeField] private bool smoothRotation = false;
+        [SerializeField] private ParticleSystem brakeDustCloudParticles;
+        [SerializeField] private float brakeDustCloudYPos = -16f;
+        [SerializeField] private float brakeDustCloudXPos = 10f;
 
         [Header("Hitbox")]
         [Tooltip("The collider used as the character's hitbox for interacting with objects. Certain actions will cause it to be resized / repositioned.")]
@@ -289,6 +292,8 @@ namespace Giometric.UniSonic
 
         private IObjectPool<ScatterRing> scatterRingsPool;
         private Transform scatterRingPoolRoot;
+        private int nextDustCloudRot = 0;
+        private static readonly float[] dustCloudRotations = { 0f, 90f, 180f, 270f };
 
         private void OnScatterRingPostCollectFinished(ScatterRing scatterRing)
         {
@@ -902,6 +907,22 @@ namespace Giometric.UniSonic
             {
                 Debug.DrawLine(startPosition, startPosition + (rightCastDir * castDistance), new Color32(255, 240, 4, 160));
                 Debug.DrawLine(startPosition, startPosition + (leftCastDir * castDistance), new Color32(255, 240, 4, 160));
+            }
+        }
+
+        // Animation event that the brake animation will call
+        public void EmitDustCloud()
+        {
+            if (brakeDustCloudParticles != null)
+            {
+                ParticleSystem.EmitParams emitParams = new ParticleSystem.EmitParams();
+                emitParams.position = transform.position + new Vector3(brakeDustCloudXPos * FacingDirection, brakeDustCloudYPos);
+                emitParams.rotation = dustCloudRotations[nextDustCloudRot++];
+                if (nextDustCloudRot >= dustCloudRotations.Length)
+                {
+                    nextDustCloudRot = 0;
+                }
+                brakeDustCloudParticles.Emit(emitParams, 1);
             }
         }
 
