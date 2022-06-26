@@ -63,6 +63,7 @@ namespace Giometric.UniSonic
         [SerializeField] private ParticleSystem brakeDustCloudParticles;
         [SerializeField] private float brakeDustCloudYPos = -16f;
         [SerializeField] private float brakeDustCloudXPos = 10f;
+        [SerializeField] private ParticleSystem waterSplashParticles;
 
         [Header("Hitbox")]
         [Tooltip("The collider used as the character's hitbox for interacting with objects. Certain actions will cause it to be resized / repositioned.")]
@@ -926,6 +927,21 @@ namespace Giometric.UniSonic
             }
         }
 
+        public void EmitWaterSplash()
+        {
+            if (waterSplashParticles != null)
+            {
+                ParticleSystem.EmitParams emitParams = new ParticleSystem.EmitParams();
+                Vector3 emitPos = transform.position;
+                if (WaterLevel != null)
+                {
+                    emitPos.y = WaterLevel.position.y;
+                }
+                emitParams.position = emitPos;
+                waterSplashParticles.Emit(emitParams, 1);
+            }
+        }
+
         private void FixedUpdate()
         {
             float accelSpeedCap = CurrentMovementSettings.GroundTopSpeed;
@@ -1419,18 +1435,26 @@ namespace Giometric.UniSonic
 
         private void EnterWater()
         {
-            underwater = true;
-            groundSpeed *= 0.5f;
-            velocity.x *= 0.5f;
-            velocity.y *= 0.25f;
+            if (!underwater)
+            {
+                underwater = true;
+                groundSpeed *= 0.5f;
+                velocity.x *= 0.5f;
+                velocity.y *= 0.25f;
+                EmitWaterSplash();
+            }
         }
 
         private void ExitWater()
         {
-            underwater = false;
+            if (underwater)
+            {
+                underwater = false;
+                // Double y velocity, up to a limit so that springs don't launch the character way up into the air
+                velocity.y = Mathf.Max(velocity.y, Mathf.Min(velocity.y * 2f, underwaterMovementSettings.JumpVelocity * 2f));
+                EmitWaterSplash();
+            }
 
-            // Double y velocity, up to a limit so that springs don't launch the character way up into the air
-            velocity.y = Mathf.Max(velocity.y, Mathf.Min(velocity.y * 2f, underwaterMovementSettings.JumpVelocity * 2f));
         }
 
         private void EndHitState(bool startPostHitInvulnerability = true)
