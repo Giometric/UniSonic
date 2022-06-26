@@ -44,7 +44,7 @@ namespace Giometric.UniSonic
         {
             if (debugQuickAccelerate)
             {
-                if (playerCharacter != null)
+                if (playerCharacter != null && !playerCharacter.IsSpinDashing)
                 {
                     if (playerCharacter.Grounded)
                     {

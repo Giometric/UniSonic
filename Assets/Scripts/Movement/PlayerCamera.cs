@@ -128,7 +128,7 @@ namespace Giometric.UniSonic
                 }
             }
 
-            if (player.LookingUp)
+            if (player.LookingUp && !player.IsSpinDashing)
             {
                 lookTimer += Time.fixedDeltaTime;
                 if (lookTimer >= lookDelay || lookOffset != 0f)
@@ -137,7 +137,7 @@ namespace Giometric.UniSonic
                     lookOffset = Mathf.MoveTowards(lookOffset, lookUpLimit, lookSpeed * Time.fixedDeltaTime);
                 }
             }
-            else if (player.LookingDown)
+            else if (player.LookingDown && !player.IsSpinDashing)
             {
                 lookTimer += Time.fixedDeltaTime;
                 if (lookTimer >= lookDelay || lookOffset != 0f)

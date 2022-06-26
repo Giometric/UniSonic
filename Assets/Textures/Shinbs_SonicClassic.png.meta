@@ -44,12 +44,12 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 2
   spriteExtrude: 1
-  spriteMeshType: 1
+  spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 1
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
-  spriteGenerateFallbackPhysicsShape: 1
+  spriteGenerateFallbackPhysicsShape: 0
   alphaUsage: 1
   alphaIsTransparency: 1
   spriteTessellationDetail: -1
@@ -713,13 +713,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Shinbs_SonicClassic_30
+      name: Shinbs_SpinDash_01
       rect:
         serializedVersion: 2
         x: 302
         y: 897
         width: 30
-        height: 27
+        height: 40
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -734,13 +734,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Shinbs_SonicClassic_31
+      name: Shinbs_SpinDash_02
       rect:
         serializedVersion: 2
         x: 335
         y: 897
-        width: 29
-        height: 27
+        width: 30
+        height: 40
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -755,13 +755,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Shinbs_SonicClassic_32
+      name: Shinbs_SpinDash_03
       rect:
         serializedVersion: 2
         x: 367
         y: 897
-        width: 29
-        height: 27
+        width: 30
+        height: 40
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -776,13 +776,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Shinbs_SonicClassic_33
+      name: Shinbs_SpinDash_04
       rect:
         serializedVersion: 2
         x: 398
         y: 897
-        width: 29
-        height: 27
+        width: 30
+        height: 40
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -797,13 +797,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Shinbs_SonicClassic_34
+      name: Shinbs_SpinDash_05
       rect:
         serializedVersion: 2
         x: 429
         y: 897
-        width: 29
-        height: 27
+        width: 30
+        height: 40
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -818,13 +818,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Shinbs_SonicClassic_35
+      name: Shinbs_SpinDash_06
       rect:
         serializedVersion: 2
         x: 460
         y: 897
-        width: 29
-        height: 27
+        width: 30
+        height: 40
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -4235,6 +4235,7 @@ TextureImporter:
       Shinbs_SpringJump_01: 983545425
       Shinbs_SonicClassic_124: -104341843
       Shinbs_SonicClassic_153: -2101901765
+      Shinbs_SpinDash_06: 879716702
       Shinbs_SonicClassic_17: 1052641552
       Shinbs_SonicClassic_147: -1947864957
       Shinbs_JumpSpin_07: 186230152
@@ -4242,11 +4243,11 @@ TextureImporter:
       Shinbs_SonicClassic_20: -1922188479
       Shinbs_JumpSpin_03: -401986511
       Shinbs_SonicClassic_7: 964877254
+      Shinbs_SpinDash_03: -2060536935
       Shinbs_SonicClassic_125: 953047511
-      Shinbs_SonicClassic_33: -319004614
-      Shinbs_SonicClassic_80: 190331235
-      Shinbs_SonicClassic_82: 1249965484
       Shinbs_Push_03: 1570723309
+      Shinbs_SonicClassic_82: 1249965484
+      Shinbs_SonicClassic_80: 190331235
       Shinbs_SonicClassic_194: -607424458
       Shinbs_Walk_01: 915693383
       Shinbs_SonicClassic_61: -1954792210
@@ -4262,12 +4263,11 @@ TextureImporter:
       Shinbs_SonicClassic_122: -1442012694
       Shinbs_SonicClassic_144: -2025616872
       Shinbs_SonicClassic_72: -1186719068
-      Shinbs_SonicClassic_34: 1741659333
-      Shinbs_SonicClassic_193: 2138600438
       Shinbs_SonicClassic_156: -309847519
+      Shinbs_SonicClassic_193: 2138600438
       Shinbs_SonicClassic_145: -1165769063
-      Shinbs_SonicClassic_168: -2114194092
       Shinbs_Push_01: -93222355
+      Shinbs_SonicClassic_168: -2114194092
       Shinbs_SonicClassic_181: 1257665028
       Shinbs_Walk_07: -1978079397
       Shinbs_Run2_01: 2088265870
@@ -4278,8 +4278,8 @@ TextureImporter:
       Shinbs_SonicClassic_190: -1929071415
       Shinbs_SonicClassic_177: 502468904
       Shinbs_SonicClassic_55: 1853838206
+      Shinbs_SpinDash_01: -839738753
       Shinbs_SonicClassic_2: -1462354815
-      Shinbs_SonicClassic_32: -2060536935
       Shinbs_SonicClassic_46: -1518862541
       Shinbs_SonicClassic_22: -306808263
       Shinbs_SonicClassic_13: 711417959
@@ -4305,19 +4305,17 @@ TextureImporter:
       Shinbs_SonicClassic_135: -706719064
       Shinbs_JumpSpin_04: -1685268258
       Shinbs_SonicClassic_191: -1100019886
-      Shinbs_SonicClassic_30: -839738753
       Shinbs_SonicClassic_45: -278989349
       Shinbs_SonicClassic_138: -688597619
       Shinbs_SonicClassic_155: -116072286
       Shinbs_Brake2_06: -280216970
-      Shinbs_SonicClassic_31: -1262360684
+      Shinbs_SonicClassic_158: -1482457164
       Shinbs_SonicClassic_8: -1704945893
       Shinbs_SonicClassic_120: 1830626670
       Shinbs_SonicClassic_60: 691074019
       Shinbs_SonicClassic_159: -1815013634
       Shinbs_SonicClassic_41: 954850061
       Shinbs_SonicClassic_148: -1520129348
-      Shinbs_SonicClassic_158: -1482457164
       Shinbs_SonicClassic_180: 723864874
       Shinbs_JumpSpin_08: 1938539878
       Shinbs_Walk_05: 1003718166
@@ -4326,6 +4324,7 @@ TextureImporter:
       Shinbs_SonicClassic_42: -251585473
       Shinbs_Run_04: -1756047537
       Shinbs_SonicClassic_84: 1686616061
+      Shinbs_SpinDash_02: -1262360684
       Shinbs_SonicClassic_157: 1925338444
       Shinbs_SonicClassic_169: 1559990369
       Shinbs_SonicClassic_149: 715719122
@@ -4334,6 +4333,7 @@ TextureImporter:
       Shinbs_SonicClassic_16: -1137630946
       Shinbs_SonicClassic_59: 430270860
       Shinbs_SonicClassic_79: -13046432
+      Shinbs_SpinDash_04: -319004614
       Shinbs_Run2_03: -1198537302
       Shinbs_SonicClassic_6: -657849620
       Shinbs_SonicClassic_133: 2093065466
@@ -4343,6 +4343,7 @@ TextureImporter:
       Shinbs_SonicClassic_160: 300483180
       Shinbs_Figure8_02: -1620156335
       Shinbs_SonicClassic_139: 1885150637
+      Shinbs_SpinDash_05: 1741659333
       Shinbs_SonicClassic_23: 1935614976
       Shinbs_Brake2_04: 1886596267
       Shinbs_SonicClassic_136: 1895382536
@@ -4359,7 +4360,6 @@ TextureImporter:
       Shinbs_SonicClassic_188: -741375673
       Shinbs_Spin_02: -2024575963
       Shinbs_Spin_03: -1243477855
-      Shinbs_SonicClassic_35: 879716702
       Shinbs_SonicClassic_51: -1208601693
       Shinbs_SonicClassic_129: -803202644
       Shinbs_JumpSpin_12: -711867698

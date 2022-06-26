@@ -78,6 +78,10 @@ namespace Giometric.UniSonic
         [SerializeField] private int scatterRingsPerCircle = 16;
         [SerializeField] private float scatterRingBaseSpeed = 240f;
 
+        [Header("Spin Dash")]
+        [SerializeField] private float spinDashRevAmount = 120f;
+        [SerializeField] private float spinDashBaseLaunchSpeed = 480f;
+
         [Header("General")]
         [Tooltip("Half the character's height when standing.")]
         [SerializeField] private float standingHeightHalf = 20f;
@@ -210,6 +214,13 @@ namespace Giometric.UniSonic
         /// Returns whether the character is currently in a ball state (either from rolling or jumping).
         /// </Summary>
         public bool IsBall { get { return Rolling || Jumped; } }
+
+        /// <Summary>
+        /// Returns whether the character is currently spin-dashing.
+        /// </Summary>
+        public bool IsSpinDashing { get; private set; }
+
+        private float spinDashRev = 0f;
 
         private float groundSpeed;
     
@@ -416,6 +427,8 @@ namespace Giometric.UniSonic
         private int jumpSpinTagHash;
         private int hitHash;
         private int postHitHash;
+        private int spinDashHash;
+        private int spinDashEndHash;
 
         /// <Summary>
         /// Reset velocity and other movement state.
@@ -441,6 +454,7 @@ namespace Giometric.UniSonic
             isSpringJumping = false;
             springJumpTimer = 0f;
             isJumpSpinning = false;
+            ReleaseSpinDash(launch: false);
             SetCollisionLayer(0);
         }
 
@@ -457,6 +471,42 @@ namespace Giometric.UniSonic
             }
         }
 
+        private void RevSpinDash()
+        {
+            LookingDown = true;
+            animator.SetTrigger(spinDashHash);
+            animator.ResetTrigger(spinDashEndHash);
+            if (IsSpinDashing)
+            {
+                spinDashRev += spinDashRevAmount;
+            }
+            else
+            {
+                spinDashRev = 0f;
+            }
+            IsSpinDashing = true;
+        }
+
+        private void ReleaseSpinDash(bool launch = true)
+        {
+            IsSpinDashing = false;
+            LookingDown = false;
+            LookingUp = false;
+            animator.ResetTrigger(spinDashHash);
+            animator.SetTrigger(spinDashEndHash);
+
+            if (launch)
+            {
+                Rolling = true;
+                // When rolling, offset position downwards
+                transform.position -= new Vector3(0f, rollingPositionOffset);
+
+                groundSpeed = Mathf.Clamp(FacingDirection * (spinDashBaseLaunchSpeed + (Mathf.Floor(spinDashRev) / 2f)), -globalSpeedLimit, globalSpeedLimit);
+            }
+
+            spinDashRev = 0;
+        }
+
         public void SetSpringState(Vector2 launchVelocity, bool forceAirborne, SpringVelocityMode springVelocityMode,
             float horizontalControlLockTime = 0f, bool useJumpSpinAnimation = true)
         {
@@ -466,6 +516,7 @@ namespace Giometric.UniSonic
             }
 
             characterAngle = 0f;
+            ReleaseSpinDash(launch: false);
 
             // If currently grounded and this spring isn't forcing us airborne, check if the launch direction and the current
             // ground normal vector are close enough enough to each other that we should become airborne anyway
@@ -617,6 +668,7 @@ namespace Giometric.UniSonic
             characterAngle = 0f;
             Grounded = false;
             Jumped = false;
+            ReleaseSpinDash(launch: false);
 
             // Jumping resets the horizontal control lock
             hControlLock = false;
@@ -652,6 +704,8 @@ namespace Giometric.UniSonic
             jumpSpinTagHash = Animator.StringToHash(jumpSpinTagName);
             hitHash = Animator.StringToHash("Hit");
             postHitHash = Animator.StringToHash("PostHit");
+            spinDashHash = Animator.StringToHash("SpinDash");
+            spinDashEndHash = Animator.StringToHash("SpinDashEnd");
 
             FacingDirection = 1f;
             Rings = 0;
@@ -693,7 +747,7 @@ namespace Giometric.UniSonic
             if (ShowDebug)
             {
                 GUI.skin = debugGUISkin != null ? debugGUISkin : GUI.skin;
-                Rect areaRect = new Rect(5, 5, 180, 290);
+                Rect areaRect = new Rect(5, 5, 180, 310);
 
                 // Background box
                 Color oldColor = GUI.color;
@@ -726,6 +780,7 @@ namespace Giometric.UniSonic
                 GUILayout.Toggle(IsHit, "Is Hit");
                 GUILayout.Toggle(IsInvulnerable, "Is Invulnerable");
                 GUILayout.Label($"Rings: {Rings}");
+                GUILayout.Label(IsSpinDashing ? $"Spin Dash: {spinDashRev}": "SpinDash: --");
                 GUILayout.EndArea();
             }
         }
@@ -958,176 +1013,213 @@ namespace Giometric.UniSonic
 
             if (Grounded)
             {
-                // TODO: Check for special animations disabling control, such as balancing on a ledge
-
-                float slopeFactor = 0f;
-                float sinGroundAngle = Mathf.Sin(currentGroundInfo.Angle);
-                float cosGroundAngle = Mathf.Cos(currentGroundInfo.Angle);
-
-                if (Rolling)
-                {
-                    // When rolling, slope factor is more intense going downhill and less intense going uphill
-                    bool isUphill = (sinGroundAngle >= 0f && groundSpeed >= 0f) || (sinGroundAngle <= 0f && groundSpeed <= 0);
-                    slopeFactor = isUphill ? rollUphillSlopeFactor : rollDownhillSlopeFactor;
-                }
-                else
-                {
-                    // Default slope factor is the same going both up and downhill
-                    slopeFactor = defaultSlopeFactor;
-                }
-
-                // Modify ground speed using the chosen slope factor and the angle of the ground we're currently on
-                groundSpeed += (slopeFactor * -sinGroundAngle) * deltaTime;
-
-                // TODO: Keep track of when jump button was last pressed so we can do looser jump timing
-                if ((!Jumped && InputJump && !inputJumpLastFrame) && !lowCeiling)
-                {
-                    float jumpVel = CurrentMovementSettings.JumpVelocity;
-                    velocity.x -= jumpVel * sinGroundAngle;
-                    velocity.y += jumpVel * cosGroundAngle;
-                    isBraking = false;
-                    Grounded = false;
-                    Jumped = true;
-
-                    // Jumping resets the horizontal control lock
-                    hControlLock = false;
-                    hControlLockTimer = 0f;
-
-                    // TODO: The real games exit the entire update loop here. Investigate?
-                    // Would be more accurate to do the same, but doesn't make a whole lot of sense
-                }
-                else
-                {
-                    if (hControlLock)
-                    {
-                        hControlLockTimer -= deltaTime;
-                        if (hControlLockTimer <= 0f)
-                        {
-                            hControlLock = false;
-                        }
-                    }
-
-                    float prevGroundSpeedSign = Mathf.Sign(groundSpeed);
-
-                    // Decelerate if rolling or not applying directional input
-                    if (Rolling || Mathf.Approximately(InputMove.x, 0f))
-                    {
-                        float friction = Rolling ? CurrentMovementSettings.RollingFriction : CurrentMovementSettings.Friction;
-                        groundSpeed = Mathf.MoveTowards(groundSpeed, 0f, friction * deltaTime);
-                    }
-
-                    if (!hControlLock && !Mathf.Approximately(InputMove.x, 0f))
-                    {
-                        float acceleration = 0f;
-                        bool movingAgainstCurrentSpeed = !Mathf.Approximately(groundSpeed, 0f) && Mathf.Sign(InputMove.x) != Mathf.Sign(groundSpeed);
-
-                        if (Rolling && movingAgainstCurrentSpeed)
-                        {
-                            // Decelerating while rolling
-                            acceleration = CurrentMovementSettings.RollingDeceleration;
-                        }
-                        else if (!Rolling && movingAgainstCurrentSpeed)
-                        {
-                            // Decelerating while running
-                            acceleration = CurrentMovementSettings.Deceleration;
-                            if (!isBraking && groundMode == GroundMode.Floor && Mathf.Abs(groundSpeed) >= brakeGroundSpeedThreshold)
-                            {
-                                // We were moving fast enough, start braking if we weren't already
-                                isBraking = true;
-                            }
-                        }
-                        else if (!Rolling && !movingAgainstCurrentSpeed)
-                        {
-                            // Accelerating or maintaining speed
-                            acceleration = CurrentMovementSettings.GroundAcceleration;
-                        }
-
-                        // Once the acceleration speed cap is reached in either direction, the character won't accelerate past it,
-                        // but will instead maintain that speed so long as the player keeps trying to move in that direction.
-                        // If the character is already moving faster than the cap, continuing to run will just maintain that speed.
-                        if (InputMove.x < 0f && groundSpeed > -accelSpeedCap)
-                        {
-                            groundSpeed = Mathf.Max(-accelSpeedCap, groundSpeed + (InputMove.x * acceleration) * deltaTime);
-                        }
-                        else if (InputMove.x > 0f && groundSpeed < accelSpeedCap)
-                        {
-                            groundSpeed = Mathf.Min(accelSpeedCap, groundSpeed + (InputMove.x * acceleration) * deltaTime);
-                        }
-
-                        // Turn to face ground speed direction if our input is the same direction
-                        if (Mathf.Sign(InputMove.x) == Mathf.Sign(groundSpeed))
-                        {
-                            FacingDirection = Mathf.Sign(InputMove.x);
-                        }
-                    }
-
-                    // Clamp ground speed to global speed limit
-                    groundSpeed = Mathf.Clamp(groundSpeed, -globalSpeedLimit, globalSpeedLimit);
-
-                    // We're now moving the other direction, stop braking early if needed
-                    if (isBraking && Mathf.Sign(groundSpeed) != prevGroundSpeedSign)
-                    {
-                        isBraking = false;
-                    }
-
-                    if (Rolling && Mathf.Abs(groundSpeed) < unrollThreshold)
-                    {
-                        Rolling = false;
-                        transform.position += new Vector3(0f, rollingPositionOffset);
-                    }
-                    
-                    Vector2 angledSpeed = new Vector2(groundSpeed * Mathf.Cos(currentGroundInfo.Angle), groundSpeed * Mathf.Sin(currentGroundInfo.Angle));
-                    velocity = angledSpeed;
-                }
-
-                DoWallCollisions(deltaTime, grounded: true, groundMode);
-
+                bool hasHorizontalInput = !Mathf.Approximately(0f, InputMove.x);
                 bool hasVerticalInput = !Mathf.Approximately(0f, InputMove.y);
 
-                // If we're not moving, check if we're looking up or down
-                if (Mathf.Approximately(0f, groundSpeed))
-                {
-                    // Also stop braking if needed
-                    isBraking = false;
+                // TODO: Check for special animations disabling control, such as balancing on a ledge
 
+                if (IsSpinDashing)
+                {
                     if (hasVerticalInput)
                     {
-                        if (InputMove.y < 0f)
+                        // Deplete spin dash rev if we're spin dashing
+                        spinDashRev = Mathf.Max(0f, spinDashRev - ((spinDashRev * 8f) / 256f));
+
+                        if (InputJump && !inputJumpLastFrame)
                         {
-                            groundSpeed = 0f;
-                            LookingDown = true;
-                            LookingUp = false;
+                            RevSpinDash();
                         }
-                        else if (InputMove.y > 0f)
+                    }
+                    else
+                    {
+                        ReleaseSpinDash();
+
+                        // Set this stuff now, in case we jump this same frame
+                        Vector2 angledSpeed = new Vector2(groundSpeed * Mathf.Cos(currentGroundInfo.Angle), groundSpeed * Mathf.Sin(currentGroundInfo.Angle));
+                        velocity = angledSpeed;
+                        animator.SetFloat(speedHash, Mathf.Abs(groundSpeed));
+                    }
+                }
+
+                // Checking !IsSpinDashing again instead of doing else off the above check,
+                // we want to be able to run this the same frame a spin dash is released
+                if (!IsSpinDashing)
+                {
+                    float slopeFactor = 0f;
+                    float sinGroundAngle = Mathf.Sin(currentGroundInfo.Angle);
+                    float cosGroundAngle = Mathf.Cos(currentGroundInfo.Angle);
+
+                    if (Rolling)
+                    {
+                        // When rolling, slope factor is more intense going downhill and less intense going uphill
+                        bool isUphill = (sinGroundAngle >= 0f && groundSpeed >= 0f) || (sinGroundAngle <= 0f && groundSpeed <= 0);
+                        slopeFactor = isUphill ? rollUphillSlopeFactor : rollDownhillSlopeFactor;
+                    }
+                    else
+                    {
+                        // Default slope factor is the same going both up and downhill
+                        slopeFactor = defaultSlopeFactor;
+                    }
+
+                    // Modify ground speed using the chosen slope factor and the angle of the ground we're currently on
+                    groundSpeed += (slopeFactor * -sinGroundAngle) * deltaTime;
+
+                    // TODO: Keep track of when jump button was last pressed so we can do looser jump timing
+                    if (!LookingDown && (!Jumped && InputJump && !inputJumpLastFrame) && !lowCeiling)
+                    {
+                        float jumpVel = CurrentMovementSettings.JumpVelocity;
+                        velocity.x -= jumpVel * sinGroundAngle;
+                        velocity.y += jumpVel * cosGroundAngle;
+                        isBraking = false;
+                        Grounded = false;
+                        Jumped = true;
+
+                        // Jumping resets the horizontal control lock
+                        hControlLock = false;
+                        hControlLockTimer = 0f;
+
+                        // TODO: The real games exit the entire update loop here. Investigate?
+                        // Would be more accurate to do the same, but doesn't make a whole lot of sense
+                    }
+                    else
+                    {
+                        if (hControlLock)
                         {
-                            groundSpeed = 0f;
+                            hControlLockTimer -= deltaTime;
+                            if (hControlLockTimer <= 0f)
+                            {
+                                hControlLock = false;
+                            }
+                        }
+
+                        float prevGroundSpeedSign = Mathf.Sign(groundSpeed);
+
+                        // Decelerate if rolling or not applying directional input
+                        if (Rolling || !hasHorizontalInput)
+                        {
+                            float friction = Rolling ? CurrentMovementSettings.RollingFriction : CurrentMovementSettings.Friction;
+                            groundSpeed = Mathf.MoveTowards(groundSpeed, 0f, friction * deltaTime);
+                        }
+
+                        if (!hControlLock && hasHorizontalInput)
+                        {
+                            float acceleration = 0f;
+                            bool movingAgainstCurrentSpeed = !Mathf.Approximately(groundSpeed, 0f) && Mathf.Sign(InputMove.x) != Mathf.Sign(groundSpeed);
+
+                            if (Rolling && movingAgainstCurrentSpeed)
+                            {
+                                // Decelerating while rolling
+                                acceleration = CurrentMovementSettings.RollingDeceleration;
+                            }
+                            else if (!Rolling && movingAgainstCurrentSpeed)
+                            {
+                                // Decelerating while running
+                                acceleration = CurrentMovementSettings.Deceleration;
+                                if (!isBraking && groundMode == GroundMode.Floor && Mathf.Abs(groundSpeed) >= brakeGroundSpeedThreshold)
+                                {
+                                    // We were moving fast enough, start braking if we weren't already
+                                    isBraking = true;
+                                }
+                            }
+                            else if (!Rolling && !movingAgainstCurrentSpeed)
+                            {
+                                // Accelerating or maintaining speed
+                                acceleration = CurrentMovementSettings.GroundAcceleration;
+                            }
+
+                            // Once the acceleration speed cap is reached in either direction, the character won't accelerate past it,
+                            // but will instead maintain that speed so long as the player keeps trying to move in that direction.
+                            // If the character is already moving faster than the cap, continuing to run will just maintain that speed.
+                            if (InputMove.x < 0f && groundSpeed > -accelSpeedCap)
+                            {
+                                groundSpeed = Mathf.Max(-accelSpeedCap, groundSpeed + (InputMove.x * acceleration) * deltaTime);
+                            }
+                            else if (InputMove.x > 0f && groundSpeed < accelSpeedCap)
+                            {
+                                groundSpeed = Mathf.Min(accelSpeedCap, groundSpeed + (InputMove.x * acceleration) * deltaTime);
+                            }
+
+                            // Turn to face ground speed direction if our input is the same direction
+                            if (Mathf.Sign(InputMove.x) == Mathf.Sign(groundSpeed))
+                            {
+                                FacingDirection = Mathf.Sign(InputMove.x);
+                            }
+                        }
+
+                        // Clamp ground speed to global speed limit
+                        groundSpeed = Mathf.Clamp(groundSpeed, -globalSpeedLimit, globalSpeedLimit);
+
+                        // We're now moving the other direction, stop braking early if needed
+                        if (isBraking && Mathf.Sign(groundSpeed) != prevGroundSpeedSign)
+                        {
+                            isBraking = false;
+                        }
+
+                        if (Rolling && Mathf.Abs(groundSpeed) < unrollThreshold)
+                        {
+                            Rolling = false;
+                            transform.position += new Vector3(0f, rollingPositionOffset);
+                        }
+                        
+                        Vector2 angledSpeed = new Vector2(groundSpeed * Mathf.Cos(currentGroundInfo.Angle), groundSpeed * Mathf.Sin(currentGroundInfo.Angle));
+                        velocity = angledSpeed;
+                    }
+
+                    // If we're not moving, check if we're looking up or down
+                    if (Mathf.Approximately(0f, groundSpeed))
+                    {
+                        // Also stop braking if needed
+                        isBraking = false;
+
+                        if (hasVerticalInput && !hasHorizontalInput)
+                        {
+                            if (InputMove.y < 0f)
+                            {
+                                groundSpeed = 0f;
+                                LookingDown = true;
+                                LookingUp = false;
+
+                                if (InputJump && !inputJumpLastFrame)
+                                {
+                                    RevSpinDash();
+                                }
+                            }
+                            else if (InputMove.y > 0f)
+                            {
+                                groundSpeed = 0f;
+                                LookingDown = false;
+                                LookingUp = true;
+                            }
+                        }
+                        else
+                        {
                             LookingDown = false;
-                            LookingUp = true;
+                            LookingUp = false;
+                            if (IsSpinDashing)
+                            {
+                                ReleaseSpinDash();
+                            }
                         }
                     }
                     else
                     {
                         LookingDown = false;
                         LookingUp = false;
-                    }
-                }
-                else
-                {
-                    LookingDown = false;
-                    LookingUp = false;
 
-                    if (!Rolling && hasVerticalInput)
-                    {
-                        if (InputMove.y < 0f && Mathf.Abs(groundSpeed) >= rollingMinSpeed)
+                        if (!Rolling && hasVerticalInput)
                         {
-                            Rolling = true;
-                            isBraking = false;
-                            // When rolling, offset position downwards
-                            transform.position -= new Vector3(0f, rollingPositionOffset);
+                            if (InputMove.y < 0f && Mathf.Abs(groundSpeed) >= rollingMinSpeed)
+                            {
+                                Rolling = true;
+                                isBraking = false;
+                                // When rolling, offset position downwards
+                                transform.position -= new Vector3(0f, rollingPositionOffset);
+                            }
                         }
                     }
                 }
 
+                DoWallCollisions(deltaTime, grounded: true, groundMode);
                 ApplyMovement(deltaTime);
             }
             else
