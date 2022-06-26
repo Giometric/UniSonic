@@ -156,16 +156,20 @@ namespace Giometric.UniSonic
         [SerializeField] private float lowCeilingHeight = 25f;
 
         [Header("Air Movement")]
-        [Tooltip("The maximum Y velocity the character can have after which air drag is no longer applied.")]
-        [SerializeField] private float airDragMaxYVelocity = 4f;
+        [Tooltip("The maximum upward velocity the character can have after which air drag is no longer applied.")]
+        [SerializeField] private float airDragMaxYVelocity = 240f;
         [Tooltip("The minimum absolute X velocity the character must have for air drag to be applied.")]
-        [SerializeField] private float airDragMinAbsoluteXVelocity = 7.5f;
+        [SerializeField] private float airDragXVelocityThreshold = 450f;
         [Tooltip("While in the air, the rate at which character will rotate to their upright angle (degrees per second).")]
         [SerializeField]private float uprightRotationRate = 168.75f;
         [Tooltip("The animator state with this tag will have its duration checked to see if the braking animation should be stopped.")]
+
+        [Header("Braking")]
         [SerializeField]private string brakeTagName = "brake";
         [Tooltip("If input movement is opposite ground speed direction and the character is moving at least this fast, play the brake animation.")]
         [SerializeField]private float brakeGroundSpeedThreshold = 240f;
+
+        [Header("Springs")]
         [Tooltip("The animator state with this tag will have its duration checked to see if the jump spin animation should be stopped.")]
         [SerializeField]private string jumpSpinTagName = "jumpSpin";
         [Tooltip("When using the plain jump spin animation, the sprite will be held for this duration before returning to the walk animation.")]
@@ -408,7 +412,7 @@ namespace Giometric.UniSonic
 
         private bool shouldApplyAirDrag
         {
-            get { return velocity.y > 0f && velocity.y < airDragMaxYVelocity && Mathf.Abs(velocity.x) > airDragMinAbsoluteXVelocity; }
+            get { return velocity.y > 0f && velocity.y < airDragMaxYVelocity && Mathf.Abs(velocity.x) > airDragXVelocityThreshold; }
         }
 
         private LayerMask currentGroundMask;
@@ -1222,7 +1226,7 @@ namespace Giometric.UniSonic
                 DoWallCollisions(deltaTime, grounded: true, groundMode);
                 ApplyMovement(deltaTime);
             }
-            else
+            else // !Grounded
             {
                 if (!IsHit)
                 {
@@ -1255,8 +1259,7 @@ namespace Giometric.UniSonic
                     // Apply air drag, if our X and Y velocities are within the thresholds
                     if (shouldApplyAirDrag)
                     {
-                        // TODO: Is this correct?
-                        // Guide says "X Speed -= ((X Speed div 0.125) / 256);"
+                        // Guide says "X Speed -= ((X Speed div 0.125) / 256)"
                         // Here extrapolated to velocity.x * 8 / 256 == velocity.x * 0.03125, using that as "AirDrag" value
                         velocity.x -= velocity.x * CurrentMovementSettings.AirDrag;
                     }
@@ -1542,8 +1545,11 @@ namespace Giometric.UniSonic
             if (underwater)
             {
                 underwater = false;
-                // Double y velocity, up to a limit so that springs don't launch the character way up into the air
-                velocity.y = Mathf.Max(velocity.y, Mathf.Min(velocity.y * 2f, underwaterMovementSettings.JumpVelocity * 2f));
+                if (!Grounded)
+                {
+                    // Double y velocity, up to a limit so that springs don't launch the character way up into the air
+                    velocity.y = Mathf.Max(velocity.y, Mathf.Min(velocity.y * 2f, underwaterMovementSettings.JumpVelocity * 2f));
+                }
                 EmitWaterSplash();
             }
 

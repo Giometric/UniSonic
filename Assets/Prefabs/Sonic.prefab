@@ -152,6 +152,8 @@ MonoBehaviour:
   scatterRingsCountLimit: 32
   scatterRingsPerCircle: 16
   scatterRingBaseSpeed: 240
+  spinDashRevAmount: 120
+  spinDashBaseLaunchSpeed: 480
   standingHeightHalf: 20
   ballHeightHalf: 15
   groundRaycastDist: 36
@@ -183,7 +185,7 @@ MonoBehaviour:
   fallVelocityThreshold: 150
   horizontalControlLockTime: 0.5
   lowCeilingHeight: 25
-  airDragMaxYVelocity: 4
+  airDragMaxYVelocity: 240
   airDragMinAbsoluteXVelocity: 7.5
   uprightRotationRate: 168.75
   brakeTagName: brake
