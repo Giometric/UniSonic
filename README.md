@@ -33,11 +33,11 @@ All input is done via Unity's old InputManager, and the mappings can be edited f
   - Springs
   - Simple damage trigger
   - Rings
+- Spin-dashing
 
 ### Missing Features
 - Enemies
 - Other interactables
-- Spin-dashing
 - Pushing
 - 'About-to-fall' animation when standing near ledges
 
