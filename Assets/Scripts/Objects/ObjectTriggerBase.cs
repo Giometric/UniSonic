@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 using System.Collections;
 
 namespace Giometric.UniSonic.Objects
@@ -12,6 +13,9 @@ namespace Giometric.UniSonic.Objects
             Top,
             Bottom,
         }
+
+        public UnityEvent<ObjectTriggerBase, Movement> PlayerEnteredTrigger;
+        public UnityEvent<ObjectTriggerBase, Movement> PlayerLeftTrigger;
 
         protected Collider2D collider2d;
 
@@ -76,6 +80,7 @@ namespace Giometric.UniSonic.Objects
                 }
 
                 OnPlayerEnterTrigger(player);
+                PlayerEnteredTrigger.Invoke(this, player);
             }
         }
 
@@ -85,10 +90,11 @@ namespace Giometric.UniSonic.Objects
             if (player != null)
             {
                 OnPlayerExitTrigger(player);
+                PlayerLeftTrigger.Invoke(this, player);
             }
         }
 
-        protected EnterTriggerSide GetRelativeSide(Vector2 position)
+        public EnterTriggerSide GetRelativeSide(Vector2 position)
         {
             Vector2 fromPos = transform.position;
             Vector2 dif = position - fromPos;
