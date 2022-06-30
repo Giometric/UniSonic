@@ -81,6 +81,8 @@ namespace Giometric.UniSonic
         [Header("Spin Dash")]
         [SerializeField] private float spinDashRevAmount = 120f;
         [SerializeField] private float spinDashBaseLaunchSpeed = 480f;
+        [Tooltip("If true, the character can crouch and spin dash when standing near a ledge and playing the balancing animation. True for S3&K behavior, false for S1/S2/CD behavior.")]
+        [SerializeField] private bool allowSpinDashNearLedges = true;
 
         [Header("General")]
         [Tooltip("Half the character's height when standing.")]
@@ -203,6 +205,13 @@ namespace Giometric.UniSonic
         /// Returns whether the character is currently grounded.
         /// </Summary>
         public bool Grounded { get; set; }
+
+        /// <Summary>
+        /// Possible values are -2, -1, 0, 1, 2, with 0 being not near a ledge.
+        /// 1 and 2 are off a ledge and far off a ledge to the right, respectively.
+        /// -1 and -2 are the same but for a ledge to the left.
+        /// </Summary>
+        private int ledgeValue = 0;
 
         /// <Summary>
         /// Returns whether the character is currently rolling.
@@ -433,6 +442,7 @@ namespace Giometric.UniSonic
         private int postHitHash;
         private int spinDashHash;
         private int spinDashEndHash;
+        private int ledgeHash;
 
         /// <Summary>
         /// Reset velocity and other movement state.
@@ -458,6 +468,7 @@ namespace Giometric.UniSonic
             isSpringJumping = false;
             springJumpTimer = 0f;
             isJumpSpinning = false;
+            ledgeValue = 0;
             ReleaseSpinDash(launch: false);
             SetCollisionLayer(0);
         }
@@ -710,6 +721,7 @@ namespace Giometric.UniSonic
             postHitHash = Animator.StringToHash("PostHit");
             spinDashHash = Animator.StringToHash("SpinDash");
             spinDashEndHash = Animator.StringToHash("SpinDashEnd");
+            ledgeHash = Animator.StringToHash("Ledge");
 
             FacingDirection = 1f;
             Rings = 0;
@@ -1020,8 +1032,6 @@ namespace Giometric.UniSonic
                 bool hasHorizontalInput = !Mathf.Approximately(0f, InputMove.x);
                 bool hasVerticalInput = !Mathf.Approximately(0f, InputMove.y);
 
-                // TODO: Check for special animations disabling control, such as balancing on a ledge
-
                 if (IsSpinDashing)
                 {
                     if (hasVerticalInput)
@@ -1169,8 +1179,10 @@ namespace Giometric.UniSonic
                         velocity = angledSpeed;
                     }
 
-                    // If we're not moving, check if we're looking up or down
-                    if (Mathf.Approximately(0f, groundSpeed))
+                    // If we're not moving or near a ledge, check if we're looking up or down
+                    // allowSpinDashNearLedges allows us to look down / spindash, but not up
+                    bool blockedByLedge = ledgeValue != 0 && (!allowSpinDashNearLedges || InputMove.y > 0f);
+                    if (!blockedByLedge && Mathf.Approximately(0f, groundSpeed))
                     {
                         // Also stop braking if needed
                         isBraking = false;
@@ -1292,10 +1304,11 @@ namespace Giometric.UniSonic
 
             bool groundedLeft = false;
             bool groundedRight = false;
+            ledgeValue = 0;
 
             if (Grounded)
             {
-                currentGroundInfo = GroundCheck(deltaTime, out groundedLeft, out groundedRight);
+                currentGroundInfo = GroundCheck(deltaTime, out groundedLeft, out groundedRight, out ledgeValue);
                 Grounded = groundedLeft || groundedRight;
             }
             else
@@ -1379,6 +1392,13 @@ namespace Giometric.UniSonic
                 animator.SetBool(lookUpHash, LookingUp);
                 animator.SetBool(lookDownHash, LookingDown);
 
+                if (LookingDown || IsSpinDashing || !Mathf.Approximately(groundSpeed, 0f))
+                {
+                    // Ledge animation not used if we're moving or crouched / spindashing
+                    ledgeValue = 0;
+                }
+                animator.SetInteger(ledgeHash, Mathf.Abs(ledgeValue));
+
                 if (IsHit)
                 {
                     EndHitState();
@@ -1437,6 +1457,8 @@ namespace Giometric.UniSonic
                 LookingDown = false;
                 animator.SetBool(lookUpHash, false);
                 animator.SetBool(lookDownHash, false);
+                animator.SetInteger(ledgeHash, 0);
+                ledgeValue = 0;
             }
 
             if (WaterLevel != null)
@@ -1457,7 +1479,21 @@ namespace Giometric.UniSonic
 
             if (sprite != null)
             {
-                sprite.flipX = FacingDirection < 0f;
+                // Being near a ledge forces our sprite to face certain directions
+                switch (ledgeValue)
+                {
+                    case -2:
+                    case 1:
+                        sprite.flipX = true;
+                        break;
+                    case -1:
+                    case 2:
+                        sprite.flipX = false;
+                        break;
+                    default:
+                        sprite.flipX = FacingDirection < 0f;
+                        break;
+                }
             }
 
             if (IsBall)
@@ -1605,7 +1641,12 @@ namespace Giometric.UniSonic
             return false;
         }
 
-        private GroundInfo GroundCheck(float deltaTime, out bool groundedLeft, out bool groundedRight)
+        /// <Summary>
+        /// Perform left and right grounded checks. When groundMode is Floor, also check the character's center for nearby ledges.
+        /// If near a ledge, an additional check will be performed to see if the character is far off the ledge.
+        /// ledgeValue will be 0 for not near a ledge, 1 and 2 for off and far off a ledge to the right, and -1 and -2 to the left.
+        /// </Summary>
+        private GroundInfo GroundCheck(float deltaTime, out bool groundedLeft, out bool groundedRight, out int ledgeValue)
         {
             Vector2 leftLocalCastPos;
             Vector2 rightLocalCastPos;
@@ -1619,6 +1660,7 @@ namespace Giometric.UniSonic
 
             Vector2 leftCastStart = pos + leftLocalCastPos;
             Vector2 rightCastStart = pos + rightLocalCastPos;
+            Vector2 centerCastStart = pos;
 
             DebugUtils.DrawDiagonalCross(leftCastStart + dir * minValidDistance, 3f, Color.white);
             DebugUtils.DrawDiagonalCross(leftCastStart + dir * maxValidDistance, 3f, Color.cyan);
@@ -1631,12 +1673,48 @@ namespace Giometric.UniSonic
 
             groundedLeft = false;
             groundedRight = false;
+            ledgeValue = 0;
 
             RaycastHit2D leftHit = new RaycastHit2D();
             groundedLeft = GroundRaycast(leftCastStart, dir, groundRaycastDist, filter, minValidDistance, maxValidDistance, false, out leftHit);
 
             RaycastHit2D rightHit = new RaycastHit2D();
             groundedRight = GroundRaycast(rightCastStart, dir, groundRaycastDist, filter, minValidDistance, maxValidDistance, false, out rightHit);
+
+            // Center ground checks are done only in floor mode
+            if (groundMode == GroundMode.Floor)
+            {
+                DebugUtils.DrawDiagonalCross(centerCastStart + dir * minValidDistance, 3f, Color.gray);
+                DebugUtils.DrawDiagonalCross(centerCastStart + dir * maxValidDistance, 3f, Color.blue);
+                // Center cast is used only for ledge checks, for now
+                // TODO: Position character using this as well to fix issues with standing on thin platforms?
+                RaycastHit2D centerHit = new RaycastHit2D();
+                bool groundedCenter = GroundRaycast(centerCastStart, dir, groundRaycastDist, filter, minValidDistance, maxValidDistance, false, out centerHit);
+                if (!groundedCenter && (groundedLeft || groundedRight))
+                {
+                    // If this check found no ground but one of the side ones did, we should check again for being very far off-ledge
+                    // This check will be halfway between center and left or right, whichever one did find ground
+                    Vector2 halfSideCastStart = Vector2.Lerp(centerCastStart, groundedLeft ? leftCastStart : rightCastStart, 0.5f);
+                    bool groundedHalfSide = GroundRaycast(halfSideCastStart, dir, groundRaycastDist, filter, minValidDistance, maxValidDistance, false, out var halfSideHit);
+                    if (groundedHalfSide)
+                    {
+                        ledgeValue = 1;
+                        DebugUtils.DrawCross(halfSideHit.point, 4f, Color.yellow);
+                    }
+                    else
+                    {
+                        ledgeValue = 2;
+                    }
+
+                    if (groundedRight)
+                    {
+                        ledgeValue = -ledgeValue;
+                    }
+                }
+
+                Debug.DrawLine(centerCastStart, centerCastStart + (dir * groundRaycastDist), Color.blue);
+                if (groundedCenter) { DebugUtils.DrawCross(centerHit.point, 4f, Color.yellow); }
+            }
 
             Debug.DrawLine(leftCastStart, leftCastStart + (dir * groundRaycastDist), Color.magenta);
             Debug.DrawLine(rightCastStart, rightCastStart + (dir * groundRaycastDist), Color.red);

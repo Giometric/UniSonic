@@ -34,12 +34,12 @@ All input is done via Unity's old InputManager, and the mappings can be edited f
   - Simple damage trigger
   - Rings
 - Spin-dashing
+- Balancing animation when standing near ledges
 
 ### Missing Features
-- Enemies
+- More enemies, moving enemies etc
 - Other interactables
 - Pushing
-- 'About-to-fall' animation when standing near ledges
 
 #### Notes
 - Sonic the Hedgehog belongs to Sega.
