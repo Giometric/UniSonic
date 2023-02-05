@@ -12,6 +12,7 @@ namespace Giometric.UniSonic
 
         private Vector3 playerStartLocation;
         private bool debugQuickAccelerate;
+        private float defaultFixedDeltaTime;
 
         private void Start()
         {
@@ -20,6 +21,7 @@ namespace Giometric.UniSonic
                 playerStartLocation = playerCharacter.transform.position;
                 playerCharacter.WaterLevel = waterLevel;
             }
+            defaultFixedDeltaTime = Time.fixedDeltaTime;
         }
 
         private void Update()
@@ -36,8 +38,29 @@ namespace Giometric.UniSonic
                 {
                     playerCharacter.ShowDebug = !playerCharacter.ShowDebug;
                 }
+
+                if (Input.GetButtonDown("Debug_TimescaleUp"))
+                {
+                    SetTimeScale(Mathf.Min(3f, Time.timeScale + 0.25f));
+                }
+                else if (Input.GetButtonDown("Debug_TimescaleDown"))
+                {
+                    SetTimeScale(Mathf.Max(0.25f, Time.timeScale - 0.25f));
+                }
+                else if (Input.GetButtonDown("Debug_TimescaleReset"))
+                {
+                    SetTimeScale(1f);
+                }
             }
             debugQuickAccelerate = Input.GetButton("Debug_QuickAccelerate");
+        }
+
+        private void SetTimeScale(float timeScale)
+        {
+            Time.timeScale = timeScale;
+            // If going below 1.0, also adjust fixed delta time so we continue updating smoothly
+            // At higher speeds we need to keep it the same so we update more times (avoid collision trouble)
+            Time.fixedDeltaTime = Mathf.Min(defaultFixedDeltaTime, defaultFixedDeltaTime * timeScale);
         }
 
         private void FixedUpdate()
