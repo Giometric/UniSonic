@@ -1,7 +1,5 @@
-﻿using UnityEngine;
-using UnityEngine.Pool;
-using UnityEngine.Tilemaps;
-using Giometric.UniSonic.Objects;
+﻿using Giometric.UniSonic.Objects;
+using UnityEngine;
 
 namespace Giometric.UniSonic
 {
@@ -41,13 +39,6 @@ namespace Giometric.UniSonic
         [SerializeField] private BoxCollider2D hitbox;
         [SerializeField] private Vector2 standingHitboxSize = new Vector2(18f, 34f);
         [SerializeField] private Vector2 shortHitboxSize = new Vector2(18f, 20f);
-
-        [Header("Damage")]
-        [SerializeField] private ScatterRing scatterRingPrefab;
-        [Tooltip("The maximum number of rings that will be spawned around the character when rings are lost.")]
-        [SerializeField] private int scatterRingsCountLimit = 32;
-        [SerializeField] private int scatterRingsPerCircle = 16;
-        [SerializeField] private float scatterRingBaseSpeed = 240f;
 
         [Header("Spin Dash")]
         [SerializeField] private float spinDashRevAmount = 120f;
@@ -290,47 +281,8 @@ namespace Giometric.UniSonic
         private float characterAngle;
         private bool lowCeiling;
         private bool underwater;
-
-        private IObjectPool<ScatterRing> scatterRingsPool;
-        private Transform scatterRingPoolRoot;
         private int nextDustCloudRot = 0;
         private static readonly float[] dustCloudRotations = { 0f, 90f, 180f, 270f };
-
-        private void OnScatterRingPostCollectFinished(ScatterRing scatterRing)
-        {
-            scatterRing.ResetRing();
-            scatterRingsPool.Release(scatterRing);
-        }
-
-        private ScatterRing CreatePooledScatterRing()
-        {
-            if (scatterRingPrefab == null)
-            {
-                return null;
-            }
-
-            var scatterRing = Instantiate(scatterRingPrefab, scatterRingPoolRoot);
-            scatterRing.Pool = scatterRingsPool;
-            scatterRing.gameObject.SetActive(false);
-            return scatterRing;
-        }
-
-        private void OnScatterRingTakeFromPool(ScatterRing scatterRing)
-        {
-            scatterRing.gameObject.SetActive(true);
-            scatterRing.ResetRing();
-        }
-
-        private void OnScatterRingReturnToPool(ScatterRing scatterRing)
-        {
-            scatterRing.ResetRing();
-            scatterRing.gameObject.SetActive(false);
-        }
-
-        private void OnScatterRingDestroyPooledObject(ScatterRing scatterRing)
-        {
-            Destroy(scatterRing.gameObject);
-        }
 
         private void GetGroundRaycastPositions(GroundMode groundMode, bool ceilingCheck, out Vector2 leftRaycastPosition, out Vector2 rightRaycastPosition)
         {
@@ -603,52 +555,11 @@ namespace Giometric.UniSonic
             hControlLockTimer = keepLongerTime ? Mathf.Max(time, hControlLockTimer) : time;
         }
 
-        public void ScatterRings(int numRings)
-        {
-            if (numRings == 0 || scatterRingsPerCircle == 0 || scatterRingsCountLimit == 0)
-            {
-                return;
-            }
-
-            int numCircles = Mathf.Max(1, Mathf.CeilToInt(numRings / (float)scatterRingsPerCircle));
-            int remaining = numRings;
-            float scatterSpeed = scatterRingBaseSpeed;
-            float angleSpacing = Mathf.PI * 2f / scatterRingsPerCircle;
-            float startAngle = (Mathf.PI * 0.5f) + (angleSpacing * 0.5f * FacingDirection);
-            for (int circle = 0; circle < numCircles; ++circle)
-            {
-                float currentAngle = 0f;
-                bool flip = false;
-                for (int i = 0; i < scatterRingsPerCircle && remaining > 0; ++i)
-                {
-                    float angleRad = startAngle + (FacingDirection * currentAngle);
-                    Vector2 velocity = new Vector2(Mathf.Cos(angleRad) * scatterSpeed, Mathf.Sin(angleRad) * scatterSpeed);
-
-                    if (flip)
-                    {
-                        velocity.x = -velocity.x;
-                        currentAngle += angleSpacing;
-                    }
-
-                    flip = !flip;
-                    var scatterRing = scatterRingsPool.Get();
-                    if (scatterRing != null)
-                    {
-                        scatterRing.transform.position = transform.position;
-                        scatterRing.Velocity = velocity;
-                        scatterRing.SetCollisionLayerMask(CurrentGroundMask);
-                    }
-                    --remaining;
-                }
-                scatterSpeed *= 0.5f;
-            }
-        }
-
         public void SetHitState(Vector2 source, bool damage = true)
         {
             if (damage)
             {
-                ScatterRings(rings);
+                ScatterRingController.Instance.ScatterRings(transform.position, FacingDirection, rings, CurrentGroundMask);
                 rings = 0;
             }
             IsHit = true;
@@ -705,35 +616,35 @@ namespace Giometric.UniSonic
             Rings = 0;
             SetCollisionLayer(0);
 
-            var scatterRingPoolGameObject = new GameObject("ScatterRingPool");
-            scatterRingPoolRoot = scatterRingPoolGameObject.transform;
-            scatterRingsPool = new ObjectPool<ScatterRing>(
-                CreatePooledScatterRing,
-                OnScatterRingTakeFromPool,
-                OnScatterRingReturnToPool,
-                OnScatterRingDestroyPooledObject,
-                true,
-                scatterRingsCountLimit
-            );
-
-
-            if (scatterRingPrefab != null)
-            {
-                // Unity's object pool provides no method for pre-creating the pooled items, so we do it ourselves
-                ScatterRing[] precreatedPool = new ScatterRing[scatterRingsCountLimit];
-                for (int i = 0; i < scatterRingsCountLimit; ++i)
-                {
-                    precreatedPool[i] = scatterRingsPool.Get();
-                }
-                for (int i = 0; i < scatterRingsCountLimit; ++i)
-                {
-                    scatterRingsPool.Release(precreatedPool[i]);
-                }
-            }
-            else
-            {
-                Debug.LogWarning("Scatter ring prefab not set!", gameObject);
-            }
+            // var scatterRingPoolGameObject = new GameObject("ScatterRingPool");
+            // scatterRingPoolRoot = scatterRingPoolGameObject.transform;
+            // scatterRingsPool = new ObjectPool<ScatterRing>(
+            //     CreatePooledScatterRing,
+            //     OnScatterRingTakeFromPool,
+            //     OnScatterRingReturnToPool,
+            //     OnScatterRingDestroyPooledObject,
+            //     true,
+            //     scatterRingsCountLimit
+            // );
+            //
+            //
+            // if (scatterRingPrefab != null)
+            // {
+            //     // Unity's object pool provides no method for pre-creating the pooled items, so we do it ourselves
+            //     ScatterRing[] precreatedPool = new ScatterRing[scatterRingsCountLimit];
+            //     for (int i = 0; i < scatterRingsCountLimit; ++i)
+            //     {
+            //         precreatedPool[i] = scatterRingsPool.Get();
+            //     }
+            //     for (int i = 0; i < scatterRingsCountLimit; ++i)
+            //     {
+            //         scatterRingsPool.Release(precreatedPool[i]);
+            //     }
+            // }
+            // else
+            // {
+            //     Debug.LogWarning("Scatter ring prefab not set!", gameObject);
+            // }
         }
 
         private void OnGUI()
