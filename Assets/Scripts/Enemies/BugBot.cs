@@ -5,6 +5,7 @@ using Giometric.UniSonic.Objects;
 
 namespace Giometric.UniSonic.Enemies
 {
+    [RequireComponent(typeof(ObjectTriggerBase))]
     public class BugBot : MonoBehaviour
     {
         private enum FacingDirection
