@@ -281,6 +281,11 @@ namespace Giometric.UniSonic
             get { return velocity; }
             set { velocity = value; }
         }
+        
+        /// <summary>
+        /// The current collision layer mask used for ground collisions.
+        /// </summary>
+        public LayerMask CurrentGroundMask { get; private set; }
 
         private float characterAngle;
         private bool lowCeiling;
@@ -395,7 +400,6 @@ namespace Giometric.UniSonic
             get { return velocity.y > 0f && velocity.y < airDragMaxYVelocity && Mathf.Abs(velocity.x) > airDragXVelocityThreshold; }
         }
 
-        private LayerMask currentGroundMask;
         private RaycastHit2D[] hitResultsCache = new RaycastHit2D[10];
 
         private int speedHash;
@@ -449,10 +453,10 @@ namespace Giometric.UniSonic
             switch (layer)
             {
                 case 0:
-                    currentGroundMask = collisionMaskA;
+                    CurrentGroundMask = collisionMaskA;
                     break;
                 case 1:
-                    currentGroundMask = collisionMaskB;
+                    CurrentGroundMask = collisionMaskB;
                     break;
             }
         }
@@ -632,6 +636,7 @@ namespace Giometric.UniSonic
                     {
                         scatterRing.transform.position = transform.position;
                         scatterRing.Velocity = velocity;
+                        scatterRing.SetCollisionLayerMask(CurrentGroundMask);
                     }
                     --remaining;
                 }
@@ -670,6 +675,8 @@ namespace Giometric.UniSonic
             {
                 velocity = new Vector2(hitStateVelocity.x * Mathf.Sign(positionDif), hitStateVelocity.y);
             }
+            animator.SetBool(springJumpHash, false);
+            animator.SetBool(brakeHash, false);
             animator.SetBool(postHitHash, false);
             animator.SetBool(hitHash, true);
             animator.SetFloat(speedHash, 0.1f);
@@ -763,7 +770,7 @@ namespace Giometric.UniSonic
                 {
                     GUILayout.Label("Angle (Deg): --");
                 }
-                GUILayout.Label($"Layer: {(currentGroundMask == collisionMaskA ? 'A' : 'B')}");
+                GUILayout.Label($"Layer: {(CurrentGroundMask == collisionMaskA ? 'A' : 'B')}");
                 GUILayout.Toggle(IsHit, "Is Hit");
                 GUILayout.Toggle(IsInvulnerable, "Is Invulnerable");
                 GUILayout.Label($"Rings: {Rings}");
@@ -843,7 +850,7 @@ namespace Giometric.UniSonic
             }
 
             ContactFilter2D filter = new ContactFilter2D();
-            filter.SetLayerMask(currentGroundMask);
+            filter.SetLayerMask(CurrentGroundMask);
 
             if ((grounded && groundSpeed < 0f) || (!grounded && velocity.x < 0f))
             {
@@ -1641,7 +1648,7 @@ namespace Giometric.UniSonic
             DebugUtils.DrawDiagonalCross(rightCastStart + dir * maxValidDistance, 3f, Color.cyan);
 
             ContactFilter2D filter = new ContactFilter2D();
-            filter.SetLayerMask(currentGroundMask);
+            filter.SetLayerMask(CurrentGroundMask);
 
             groundedLeft = false;
             groundedRight = false;
@@ -1746,7 +1753,7 @@ namespace Giometric.UniSonic
             Vector2 rightCastStart = pos + rightLocalCastPos;
 
             ContactFilter2D filter = new ContactFilter2D();
-            filter.SetLayerMask(currentGroundMask);
+            filter.SetLayerMask(CurrentGroundMask);
 
             hitLeft = false;
             hitRight = false;

@@ -157,6 +157,11 @@ namespace Giometric.UniSonic.Objects
             }
         }
 
+        public void SetCollisionLayerMask(LayerMask newLayerMask)
+        {
+            collisionMask = newLayerMask;
+        }
+
         public void ResetRing()
         {
             IsCollected = false;
