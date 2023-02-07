@@ -21,6 +21,21 @@ namespace Giometric.UniSonic.Enemies
         private FacingDirection facingDirection = FacingDirection.Right;
 
         [SerializeField]
+        private float moveSpeed = 60f;
+
+        [SerializeField]
+        private float turnAroundWaitTime = 1f;
+
+        [SerializeField]
+        private float groundRaycastDistance = 17f;
+
+        [SerializeField]
+        private float halfHeight = 16f;
+
+        [SerializeField]
+        private LayerMask collisionMask;
+
+        [SerializeField]
         private SpriteRenderer sprite;
 
         [SerializeField]
@@ -33,12 +48,50 @@ namespace Giometric.UniSonic.Enemies
         private GameObject dieFxPrefab;
 
         private float smokeEmitterXOffset;
+        private float waitTimer = 0f;
 
         private void Awake()
         {
             if (hitbox != null)
             {
                 hitbox.PlayerEnteredTrigger.AddListener(OnPlayerEnteredTrigger);
+            }
+        }
+
+        private void FixedUpdate()
+        {
+            float deltaTime = Time.fixedDeltaTime;
+            Vector3 newPos = transform.position;
+
+            ContactFilter2D filter = new ContactFilter2D();
+            filter.SetLayerMask(collisionMask);
+
+            if (waitTimer > 0f)
+            {
+                waitTimer -= deltaTime;
+                if (waitTimer <= 0f)
+                {
+                    // Turn around after the wait timer is over
+                    facingDirection = facingDirection == FacingDirection.Right ? FacingDirection.Left : FacingDirection.Right;
+                }
+            }
+
+            if (waitTimer <= 0f)
+            {
+                // If moving, do horizontal movement first, then grounded check to see if where we're going we would still be grounded
+                // If it isn't, cancel the horizontal movement and change direction
+                newPos.x += (float)facingDirection * moveSpeed * deltaTime;
+            }
+
+            if (Utils.GroundRaycast(newPos, Vector2.down, groundRaycastDistance, filter, 1f, false, out var groundHit, true))
+            {
+                newPos.y = groundHit.point.y + halfHeight;
+                transform.position = newPos;
+            }
+            else if (waitTimer <= 0f)
+            {
+                // If we were attempting to move horizontally, start the wait timer before turning around
+                waitTimer = turnAroundWaitTime;
             }
 
             if (smokeEmitter != null)

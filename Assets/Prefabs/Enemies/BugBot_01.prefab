@@ -4864,6 +4864,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 1
   facingDirection: 1
+  moveSpeed: 60
+  groundRaycastDistance: 17
+  halfHeight: 16
+  collisionMask:
+    serializedVersion: 2
+    m_Bits: 3072
   sprite: {fileID: 3859597390753479531}
   smokeEmitter: {fileID: 9209255014134561411}
   hitbox: {fileID: 3255676281507929697}

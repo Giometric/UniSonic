@@ -37,5 +37,45 @@ namespace Giometric.UniSonic
             tileTransform = tilemap.GetTransformMatrix(tilePos);
             return groundTile;
         }
+
+        private static RaycastHit2D[] hitResultsCache = new RaycastHit2D[10];
+
+        public static bool GroundRaycast(Vector2 castStart, Vector2 dir, float distance, ContactFilter2D filter,
+            float minValidDistance, bool ignoreOneWayPlatforms, out RaycastHit2D resultHit, bool showDebug = false)
+        {
+            resultHit = new RaycastHit2D();
+            int hitCount = Physics2D.Raycast(castStart, dir, filter, hitResultsCache, distance);
+
+            // Physics2D.Raycast results should be sorted by distance, so find the first valid result
+            for (int i = 0; i < hitCount; ++i)
+            {
+                var hit = hitResultsCache[i];
+
+                if (hit.distance < minValidDistance) // TODO: Should this be direct comparison of hit.y to castStart.y?
+                {
+                    // The hit is not within the valid distance range - it's outside of our step-up limit
+                    continue;
+                }
+
+                var platform = hit.collider.GetComponent<OneWayPlatform>();
+                if (platform != null && (ignoreOneWayPlatforms || !platform.CanCollideInDirection(Vector2.down)))
+                {
+                    continue;
+                }
+
+                if (ignoreOneWayPlatforms)
+                {
+                    var groundTile = Utils.GetGroundTile(hit, out var tileTransform, showDebug);
+                    if (groundTile != null && groundTile.IsOneWayPlatform) // TODO: Also check angle?
+                    {
+                        continue;
+                    }
+                }
+
+                resultHit = hit;
+                return true;
+            }
+            return false;
+        }
     }
 }
