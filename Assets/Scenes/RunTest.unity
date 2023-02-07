@@ -32819,55 +32819,6 @@ MonoBehaviour:
   softYCenterSlowYVelocityMax: 360
   softYCenterFastMoveSpeed: 960
   softYCenterFastGroundSpeedMin: 480
---- !u!1 &2145768488
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2145768490}
-  - component: {fileID: 2145768489}
-  m_Layer: 0
-  m_Name: ScatterRingController
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &2145768489
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2145768488}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26def13a00b5499783b5d06cbba6239a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  scatterRingPrefab: {fileID: 8212065975171165670, guid: 34718c3759367ba4eb95cc0bd52c650d,
-    type: 3}
-  scatterRingsCountLimit: 32
-  scatterRingsPerCircle: 16
-  scatterRingBaseSpeed: 240
---- !u!4 &2145768490
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2145768488}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2146195398
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -33288,6 +33239,75 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 70766fe3acc1d4897bdb442821b4094c, type: 3}
+--- !u!1001 &2810526435208360692
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2810526433784735452, guid: d75c1a488ed26bc4c8316ce55238348a,
+        type: 3}
+      propertyPath: m_Name
+      value: ScatterRingController
+      objectReference: {fileID: 0}
+    - target: {fileID: 2810526433784735454, guid: d75c1a488ed26bc4c8316ce55238348a,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2810526433784735454, guid: d75c1a488ed26bc4c8316ce55238348a,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2810526433784735454, guid: d75c1a488ed26bc4c8316ce55238348a,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2810526433784735454, guid: d75c1a488ed26bc4c8316ce55238348a,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2810526433784735454, guid: d75c1a488ed26bc4c8316ce55238348a,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2810526433784735454, guid: d75c1a488ed26bc4c8316ce55238348a,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2810526433784735454, guid: d75c1a488ed26bc4c8316ce55238348a,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2810526433784735454, guid: d75c1a488ed26bc4c8316ce55238348a,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2810526433784735454, guid: d75c1a488ed26bc4c8316ce55238348a,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2810526433784735454, guid: d75c1a488ed26bc4c8316ce55238348a,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2810526433784735454, guid: d75c1a488ed26bc4c8316ce55238348a,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d75c1a488ed26bc4c8316ce55238348a, type: 3}
 --- !u!1001 &3720865672053951379
 PrefabInstance:
   m_ObjectHideFlags: 0
