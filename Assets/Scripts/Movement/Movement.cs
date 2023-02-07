@@ -734,7 +734,7 @@ namespace Giometric.UniSonic
             if (ShowDebug)
             {
                 GUI.skin = debugGUISkin != null ? debugGUISkin : GUI.skin;
-                Rect areaRect = new Rect(5, 5, 180, 310);
+                Rect areaRect = new Rect(5, 5, 180, 330);
 
                 // Background box
                 Color oldColor = GUI.color;
@@ -768,6 +768,7 @@ namespace Giometric.UniSonic
                 GUILayout.Toggle(IsInvulnerable, "Is Invulnerable");
                 GUILayout.Label($"Rings: {Rings}");
                 GUILayout.Label(IsSpinDashing ? $"Spin Dash: {spinDashRev}": "SpinDash: --");
+                GUILayout.Label($"Timescale: {Time.timeScale:F2}x");
                 GUILayout.EndArea();
             }
         }
